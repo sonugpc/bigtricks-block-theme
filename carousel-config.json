@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "title": "Amazon Summer Sale: Up to 70% Off Electronics",
+    "excerpt": "Grab the biggest discounts on smartphones, laptops, and accessories. Limited time offers — prices drop every hour!",
+    "image": "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1200&q=80",
+    "link": "https://bigtricks.in/amazon-summer-sale/",
+    "badge": "Hot Deal",
+    "badge_color": "red",
+    "temperature": 95
+  },
+  {
+    "id": 2,
+    "title": "Flipkart Big Billion Days — Loot Price Alerts",
+    "excerpt": "Price errors, referral bonuses, and hidden coupons curated by our community. Join 1 lakh+ smart shoppers!",
+    "image": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200&q=80",
+    "link": "https://bigtricks.in/flipkart-big-billion/",
+    "badge": "Referral",
+    "badge_color": "emerald",
+    "temperature": 87
+  },
+  {
+    "id": 3,
+    "title": "HDFC Credit Card: 10% Off + 5X Reward Points",
+    "excerpt": "Apply for the best credit card offer of the season. Instant approval + exclusive welcome benefits worth ₹5000.",
+    "image": "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1200&q=80",
+    "link": "https://bigtricks.in/hdfc-credit-card-offer/",
+    "badge": "Credit Card",
+    "badge_color": "purple",
+    "temperature": 78
+  },
+  {
+    "id": 4,
+    "title": "Myntra End of Reason Sale: Fashion at ₹99",
+    "excerpt": "Branded clothing, footwear, and accessories at rock-bottom prices. Use code BIGTRICKS for extra 10% off.",
+    "image": "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1200&q=80",
+    "link": "https://bigtricks.in/myntra-eors/",
+    "badge": "Loot Deal",
+    "badge_color": "orange",
+    "temperature": 91
+  },
+  {
+    "id": 5,
+    "title": "IRCTC Tatkal Trick + Food Coupon Combo",
+    "excerpt": "Book faster with our IRCTC booking script and get free food vouchers. Step-by-step guide inside!",
+    "image": "https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=1200&q=80",
+    "link": "https://bigtricks.in/irctc-tatkal-guide/",
+    "badge": "Blog",
+    "badge_color": "blue",
+    "temperature": 65
+  }
+]
