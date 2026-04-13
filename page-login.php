@@ -18,14 +18,14 @@ get_header();
 		<div class="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden">
 
 			<!-- Card Header -->
-			<div class="bg-gradient-to-br from-indigo-600 to-blue-600 px-8 pt-10 pb-8 text-center text-white">
+			<div class="bg-gradient-to-br from-primary-600 to-blue-600 px-8 pt-10 pb-8 text-center text-white">
 				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="inline-flex items-center gap-2 text-3xl font-black text-white no-underline mb-3">
 					<div class="bg-white/20 p-2 rounded-xl border border-white/30">
 						<i data-lucide="zap" class="w-6 h-6 fill-current"></i>
 					</div>
 					<?php bloginfo( 'name' ); ?>
 				</a>
-				<p class="text-indigo-100 text-sm font-medium"><?php esc_html_e( 'Sign in to access exclusive deals and track your savings.', 'bigtricks' ); ?></p>
+				<p class="text-primary-100 text-sm font-medium"><?php esc_html_e( 'Sign in to access exclusive deals and track your savings.', 'bigtricks' ); ?></p>
 			</div>
 
 			<div class="px-8 py-8">
@@ -34,7 +34,7 @@ get_header();
 				<div class="space-y-3 mb-6">
 					<button
 						type="button"
-						class="w-full flex items-center justify-center gap-3 bg-white border-2 border-slate-200 hover:border-indigo-200 hover:bg-indigo-50 text-slate-700 font-bold py-3.5 rounded-2xl transition-all text-sm shadow-sm hover:shadow-md active:scale-[0.98]"
+						class="w-full flex items-center justify-center gap-3 bg-white border-2 border-slate-200 hover:border-primary-200 hover:bg-primary-50 text-slate-700 font-bold py-3.5 rounded-2xl transition-all text-sm shadow-sm hover:shadow-md active:scale-[0.98]"
 						onclick="alert('Google login requires a plugin like Social Login or WooCommerce Social Login.')"
 					>
 						<svg class="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
@@ -90,7 +90,7 @@ get_header();
 							name="log"
 							autocomplete="username"
 							required
-							class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-300 transition-all"
+							class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-300 transition-all"
 							placeholder="<?php esc_attr_e( 'your@email.com', 'bigtricks' ); ?>"
 						>
 					</div>
@@ -100,7 +100,7 @@ get_header();
 							<label for="bt-password" class="text-sm font-bold text-slate-700">
 								<?php esc_html_e( 'Password', 'bigtricks' ); ?>
 							</label>
-							<a href="<?php echo esc_url( wp_lostpassword_url() ); ?>" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors">
+							<a href="<?php echo esc_url( wp_lostpassword_url() ); ?>" class="text-xs font-bold text-primary-600 hover:text-primary-800 transition-colors">
 								<?php esc_html_e( 'Forgot password?', 'bigtricks' ); ?>
 							</a>
 						</div>
@@ -110,7 +110,7 @@ get_header();
 							name="pwd"
 							autocomplete="current-password"
 							required
-							class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-300 transition-all"
+							class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-300 transition-all"
 							placeholder="••••••••"
 						>
 					</div>
@@ -121,7 +121,7 @@ get_header();
 							type="checkbox"
 							name="rememberme"
 							value="forever"
-							class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+							class="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
 						>
 						<label for="bt-remember" class="text-sm font-medium text-slate-600">
 							<?php esc_html_e( 'Keep me signed in', 'bigtricks' ); ?>
@@ -131,7 +131,7 @@ get_header();
 					<button
 						type="submit"
 						name="wp-submit"
-						class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 rounded-2xl text-base shadow-lg shadow-indigo-200 hover:shadow-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+						class="w-full bg-primary-600 hover:bg-primary-700 text-white font-black py-4 rounded-2xl text-base shadow-lg shadow-primary-200 hover:shadow-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2"
 					>
 						<i data-lucide="log-in" class="w-5 h-5"></i>
 						<?php esc_html_e( 'Sign In', 'bigtricks' ); ?>
@@ -141,7 +141,7 @@ get_header();
 				<!-- Register link -->
 				<p class="mt-6 text-center text-sm text-slate-500 font-medium">
 					<?php esc_html_e( "Don't have an account?", 'bigtricks' ); ?>
-					<a href="<?php echo esc_url( wp_registration_url() ); ?>" class="font-bold text-indigo-600 hover:text-indigo-800 transition-colors ml-1">
+					<a href="<?php echo esc_url( wp_registration_url() ); ?>" class="font-bold text-primary-600 hover:text-primary-800 transition-colors ml-1">
 						<?php esc_html_e( 'Create one for free', 'bigtricks' ); ?>
 					</a>
 				</p>

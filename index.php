@@ -41,6 +41,7 @@ if ( is_home() && is_front_page() ) {
 					$cat_name     = ! empty( $cat_obj ) ? $cat_obj[0]->name : '';
 
 					$comments_num = (int) get_comments_number();
+					$upvotes      = absint( get_post_meta( $post_id, '_deal_upvotes', true ) );
 					?>
 				<article class="bg-white rounded-3xl shadow-sm border border-slate-200/60 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full">
 					<div class="flex flex-col sm:flex-row h-full">
@@ -53,11 +54,11 @@ if ( is_home() && is_front_page() ) {
 						<div class="p-5 sm:p-6 lg:p-8 flex-1 flex flex-col justify-between min-w-0">
 							<div>
 								<?php if ( $cat_name ) : ?>
-								<div class="mb-2 flex items-center gap-1.5 text-xs font-bold text-indigo-600 uppercase tracking-wider">
+								<div class="mb-2 flex items-center gap-1.5 text-xs font-bold text-primary-600 uppercase tracking-wider">
 									<i data-lucide="tag" class="w-3 h-3"></i> <?php echo esc_html( $cat_name ); ?>
 								</div>
 								<?php endif; ?>
-								<h2 class="font-black text-slate-900 group-hover:text-indigo-600 leading-snug mb-3 transition-colors text-lg sm:text-xl line-clamp-2 break-words">
+								<h2 class="font-black text-slate-900 group-hover:text-primary-600 leading-snug mb-3 transition-colors text-lg sm:text-xl line-clamp-2 break-words">
 									<a href="<?php the_permalink(); ?>" class="focus:outline-none focus:underline"><?php the_title(); ?></a>
 								</h2>
 								<div class="text-slate-600 text-sm line-clamp-2 break-words mb-4">
@@ -69,7 +70,7 @@ if ( is_home() && is_front_page() ) {
 									<span class="flex items-center gap-1.5 bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200">
 										<i data-lucide="thumbs-up" class="w-4 h-4"></i> <?php echo esc_html( $upvotes ); ?>
 									</span>
-									<a href="<?php echo esc_url( get_permalink() . '#comments' ); ?>" class="flex items-center gap-1.5 hover:text-indigo-600 transition-colors">
+									<a href="<?php echo esc_url( get_permalink() . '#comments' ); ?>" class="flex items-center gap-1.5 hover:text-primary-600 transition-colors">
 										<i data-lucide="message-square" class="w-4 h-4"></i> <?php echo esc_html( $comments_num ); ?>
 									</a>
 									<time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>" class="hidden lg:flex items-center gap-1.5 text-xs text-slate-400">
@@ -96,7 +97,7 @@ if ( is_home() && is_front_page() ) {
 					</div>
 					<h3 class="text-xl font-bold text-slate-900 mb-2"><?php esc_html_e( 'Nothing found', 'bigtricks' ); ?></h3>
 					<p class="text-slate-500 mb-6"><?php esc_html_e( 'Try a different search or browse all deals.', 'bigtricks' ); ?></p>
-					<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="bg-indigo-50 text-indigo-700 font-bold px-6 py-2 rounded-full hover:bg-indigo-100 transition-colors">
+					<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="bg-primary-50 text-primary-700 font-bold px-6 py-2 rounded-full hover:bg-primary-100 transition-colors">
 						<?php esc_html_e( 'Browse All Deals', 'bigtricks' ); ?>
 					</a>
 				</div>

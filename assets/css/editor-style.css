@@ -33,7 +33,7 @@
 .editor-styles-wrapper h1 { font-size: 2.25rem; }
 .editor-styles-wrapper h2 { font-size: 1.75rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
 .editor-styles-wrapper h3 { font-size: 1.4rem; }
-.editor-styles-wrapper h4 { font-size: 1.15rem; color: #4f46e5; }
+.editor-styles-wrapper h4 { font-size: 1.15rem; color: var(--bt-primary, #4f46e5); }
 
 /* ── Paragraph ────────────────────────────────────── */
 .editor-styles-wrapper p {
@@ -43,12 +43,12 @@
 
 /* ── Links ────────────────────────────────────────── */
 .editor-styles-wrapper a {
-  color: #4f46e5;
+  color: var(--bt-primary, #4f46e5);
   text-decoration: underline;
   text-underline-offset: 3px;
   font-weight: 600;
 }
-.editor-styles-wrapper a:hover { color: #4338ca; }
+.editor-styles-wrapper a:hover { color: var(--bt-primary-dark, #4338ca); }
 
 /* ── Lists ────────────────────────────────────────── */
 .editor-styles-wrapper ul,
@@ -66,17 +66,17 @@
   line-height: 1.7;
 }
 
-.editor-styles-wrapper li::marker { color: #4f46e5; }
+.editor-styles-wrapper li::marker { color: var(--bt-primary, #4f46e5); }
 
 /* ── Blockquote ───────────────────────────────────── */
 .editor-styles-wrapper blockquote {
-  border-left: 4px solid #4f46e5;
-  background: #eef2ff;
+  border-left: 4px solid var(--bt-primary, #4f46e5);
+  background: var(--bt-primary-50, #eef2ff);
   padding: 1rem 1.5rem;
   border-radius: 0 0.75rem 0.75rem 0;
   margin: 1.5rem 0;
   font-style: italic;
-  color: #4338ca;
+  color: var(--bt-primary-dark, #4338ca);
   font-weight: 600;
 }
 
@@ -141,7 +141,7 @@
 }
 
 .editor-styles-wrapper th {
-  background: #4f46e5;
+  background: var(--bt-primary, #4f46e5);
   color: #ffffff;
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 700;

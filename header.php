@@ -25,7 +25,7 @@
 			</button>
 
 			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="text-2xl font-black flex items-center gap-2 text-slate-900 no-underline hover:no-underline" aria-label="<?php bloginfo( 'name' ); ?> Home">
-				<div class="bg-indigo-600 text-white p-1.5 rounded-xl shadow-lg shadow-indigo-200">
+				<div class="bg-primary-600 text-white p-1.5 rounded-xl shadow-lg shadow-primary-200">
 					<i data-lucide="zap" class="w-5 h-5 fill-current"></i>
 				</div>
 				<span class="hidden xs:block"><?php bloginfo( 'name' ); ?></span>
@@ -48,16 +48,16 @@
 			} else {
 				// Fallback if no menu assigned
 				?>
-				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="flex items-center gap-1.5 hover:text-indigo-600 transition-colors font-bold text-sm py-1 px-2 rounded-lg <?php echo is_front_page() ? 'text-indigo-600' : ''; ?>">
+				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="flex items-center gap-1.5 hover:text-primary-600 transition-colors font-bold text-sm py-1 px-2 rounded-lg <?php echo is_front_page() ? 'text-primary-600' : ''; ?>">
 					<i data-lucide="home" class="w-4 h-4 shrink-0"></i><span><?php esc_html_e( 'Home', 'bigtricks' ); ?></span>
 				</a>
-				<a href="<?php echo esc_url( home_url( '/store/' ) ); ?>" class="flex items-center gap-1.5 hover:text-indigo-600 transition-colors font-bold text-sm py-1 px-2 rounded-lg">
+				<a href="<?php echo esc_url( home_url( '/store/' ) ); ?>" class="flex items-center gap-1.5 hover:text-primary-600 transition-colors font-bold text-sm py-1 px-2 rounded-lg">
 					<i data-lucide="shopping-bag" class="w-4 h-4 shrink-0"></i><span><?php esc_html_e( 'Stores', 'bigtricks' ); ?></span>
 				</a>
-				<a href="<?php echo esc_url( home_url( '/category/credit-cards/' ) ); ?>" class="flex items-center gap-1.5 hover:text-indigo-600 transition-colors font-bold text-sm py-1 px-2 rounded-lg">
+				<a href="<?php echo esc_url( home_url( '/category/credit-cards/' ) ); ?>" class="flex items-center gap-1.5 hover:text-primary-600 transition-colors font-bold text-sm py-1 px-2 rounded-lg">
 					<i data-lucide="credit-card" class="w-4 h-4 shrink-0"></i><span><?php esc_html_e( 'Cards', 'bigtricks' ); ?></span>
 				</a>
-				<a href="<?php echo esc_url( home_url( '/blog/' ) ); ?>" class="flex items-center gap-1.5 hover:text-indigo-600 transition-colors font-bold text-sm py-1 px-2 rounded-lg">
+				<a href="<?php echo esc_url( home_url( '/blog/' ) ); ?>" class="flex items-center gap-1.5 hover:text-primary-600 transition-colors font-bold text-sm py-1 px-2 rounded-lg">
 					<i data-lucide="book-open" class="w-4 h-4 shrink-0"></i><span><?php esc_html_e( 'Blog', 'bigtricks' ); ?></span>
 				</a>
 				<?php
@@ -75,10 +75,10 @@
 					name="s"
 					placeholder="<?php esc_attr_e( 'Search deals, stores, coupons...', 'bigtricks' ); ?>"
 					value="<?php echo esc_attr( get_search_query() ); ?>"
-					class="w-full py-2.5 pl-5 pr-12 rounded-full bg-slate-100 text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all border border-transparent focus:border-indigo-200 shadow-inner text-sm"
+					class="w-full py-2.5 pl-5 pr-12 rounded-full bg-slate-100 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:bg-white transition-all border border-transparent focus:border-primary-200 shadow-inner text-sm"
 					autocomplete="off"
 				>
-				<button type="submit" class="absolute right-1.5 top-1.5 bottom-1.5 px-3 bg-indigo-600 hover:bg-indigo-700 rounded-full text-white shadow-md flex items-center justify-center transition-colors" aria-label="<?php esc_attr_e( 'Search', 'bigtricks' ); ?>">
+				<button type="submit" class="absolute right-1.5 top-1.5 bottom-1.5 px-3 bg-primary-600 hover:bg-primary-700 rounded-full text-white shadow-md flex items-center justify-center transition-colors" aria-label="<?php esc_attr_e( 'Search', 'bigtricks' ); ?>">
 					<i data-lucide="search" class="w-4 h-4"></i>
 				</button>
 			</form>
@@ -111,20 +111,20 @@
 			</button>
 
 			<?php if ( is_user_logged_in() ) : ?>
-				<a href="<?php echo esc_url( admin_url( 'post-new.php' ) ); ?>" class="hidden sm:flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 px-4 py-2 rounded-full transition-all border border-slate-200 hover:border-indigo-200 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800">
+				<a href="<?php echo esc_url( admin_url( 'post-new.php' ) ); ?>" class="hidden sm:flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-primary-600 hover:bg-primary-50 px-4 py-2 rounded-full transition-all border border-slate-200 hover:border-primary-200 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800">
 					<i data-lucide="plus-circle" class="w-4 h-4"></i>
 					<span><?php esc_html_e( 'Submit', 'bigtricks' ); ?></span>
 				</a>
-				<a href="<?php echo esc_url( admin_url() ); ?>" class="flex items-center gap-2 text-sm font-bold bg-slate-900 hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-700 text-white px-4 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all active:scale-95">
+				<a href="<?php echo esc_url( admin_url() ); ?>" class="flex items-center gap-2 text-sm font-bold bg-slate-900 hover:bg-slate-800 dark:bg-primary-600 dark:hover:bg-primary-700 text-white px-4 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all active:scale-95">
 					<i data-lucide="user" class="w-4 h-4"></i>
 					<span class="hidden sm:inline"><?php esc_html_e( 'Dashboard', 'bigtricks' ); ?></span>
 				</a>
 			<?php else : ?>
-				<a href="<?php echo esc_url( home_url( '/submit-deal/' ) ); ?>" class="hidden sm:flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 px-4 py-2 rounded-full transition-all border border-slate-200 hover:border-indigo-200 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800">
+				<a href="<?php echo esc_url( home_url( '/submit-deal/' ) ); ?>" class="hidden sm:flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-primary-600 hover:bg-primary-50 px-4 py-2 rounded-full transition-all border border-slate-200 hover:border-primary-200 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800">
 					<i data-lucide="plus-circle" class="w-4 h-4"></i>
 					<span><?php esc_html_e( 'Submit', 'bigtricks' ); ?></span>
 				</a>
-				<a href="<?php echo esc_url( wp_login_url() ); ?>" class="flex items-center gap-2 text-sm font-bold bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all active:scale-95">
+				<a href="<?php echo esc_url( wp_login_url() ); ?>" class="flex items-center gap-2 text-sm font-bold bg-primary-600 hover:bg-primary-700 text-white px-5 py-2.5 rounded-full shadow-md shadow-primary-200 hover:shadow-lg transition-all active:scale-95">
 					<i data-lucide="user" class="w-4 h-4"></i>
 					<span class="hidden sm:inline"><?php esc_html_e( 'Sign In', 'bigtricks' ); ?></span>
 				</a>
@@ -141,7 +141,7 @@
 >
 	<div class="bg-slate-50 dark:bg-slate-800 px-5 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
 		<h2 class="font-black text-slate-900 dark:text-white flex items-center gap-2 text-sm">
-			<i data-lucide="bell" class="w-4 h-4 text-indigo-500"></i>
+			<i data-lucide="bell" class="w-4 h-4 text-primary-500"></i>
 			<?php esc_html_e( 'Latest Deals & Alerts', 'bigtricks' ); ?>
 		</h2>
 		<button id="bt-notif-close" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors p-1 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700" aria-label="<?php esc_attr_e( 'Close notifications', 'bigtricks' ); ?>">
@@ -156,7 +156,7 @@
 		</div>
 	</div>
 	<div class="p-3 bg-slate-50 dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 text-center">
-		<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="text-xs font-bold text-indigo-600 hover:underline">
+		<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="text-xs font-bold text-primary-600 hover:underline">
 			<?php esc_html_e( 'View all deals →', 'bigtricks' ); ?>
 		</a>
 	</div>
@@ -181,9 +181,9 @@
 				name="s"
 				placeholder="<?php esc_attr_e( 'Search deals...', 'bigtricks' ); ?>"
 				value="<?php echo esc_attr( get_search_query() ); ?>"
-				class="w-full py-3 pl-4 pr-12 rounded-xl bg-white border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
+				class="w-full py-3 pl-4 pr-12 rounded-xl bg-white border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 shadow-sm"
 			>
-			<button type="submit" class="absolute right-3 top-3 text-indigo-600" aria-label="<?php esc_attr_e( 'Search', 'bigtricks' ); ?>">
+			<button type="submit" class="absolute right-3 top-3 text-primary-600" aria-label="<?php esc_attr_e( 'Search', 'bigtricks' ); ?>">
 				<i data-lucide="search" class="w-5 h-5"></i>
 			</button>
 		</form>
@@ -191,20 +191,20 @@
 
 	<!-- Quick Links Grid -->
 	<div class="grid grid-cols-2 gap-2 p-4 border-b border-slate-100">
-		<a href="<?php echo esc_url( home_url( '/store/' ) ); ?>" class="bg-slate-50 p-3 rounded-xl flex flex-col items-center gap-2 font-bold text-slate-700 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
-			<i data-lucide="shopping-bag" class="w-6 h-6 text-indigo-500"></i>
+		<a href="<?php echo esc_url( home_url( '/store/' ) ); ?>" class="bg-slate-50 p-3 rounded-xl flex flex-col items-center gap-2 font-bold text-slate-700 hover:text-primary-600 hover:bg-primary-50 transition-colors">
+			<i data-lucide="shopping-bag" class="w-6 h-6 text-primary-500"></i>
 			<?php esc_html_e( 'Stores', 'bigtricks' ); ?>
 		</a>
-		<a href="<?php echo esc_url( home_url( '/category/credit-cards/' ) ); ?>" class="bg-slate-50 p-3 rounded-xl flex flex-col items-center gap-2 font-bold text-slate-700 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
-			<i data-lucide="credit-card" class="w-6 h-6 text-indigo-500"></i>
+		<a href="<?php echo esc_url( home_url( '/category/credit-cards/' ) ); ?>" class="bg-slate-50 p-3 rounded-xl flex flex-col items-center gap-2 font-bold text-slate-700 hover:text-primary-600 hover:bg-primary-50 transition-colors">
+			<i data-lucide="credit-card" class="w-6 h-6 text-primary-500"></i>
 			<?php esc_html_e( 'Cards', 'bigtricks' ); ?>
 		</a>
-		<a href="<?php echo esc_url( home_url( '/blog/' ) ); ?>" class="bg-slate-50 p-3 rounded-xl flex flex-col items-center gap-2 font-bold text-slate-700 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
-			<i data-lucide="book-open" class="w-6 h-6 text-indigo-500"></i>
+		<a href="<?php echo esc_url( home_url( '/blog/' ) ); ?>" class="bg-slate-50 p-3 rounded-xl flex flex-col items-center gap-2 font-bold text-slate-700 hover:text-primary-600 hover:bg-primary-50 transition-colors">
+			<i data-lucide="book-open" class="w-6 h-6 text-primary-500"></i>
 			<?php esc_html_e( 'Blog', 'bigtricks' ); ?>
 		</a>
-		<a href="<?php echo esc_url( home_url( '/submit-deal/' ) ); ?>" class="bg-slate-50 p-3 rounded-xl flex flex-col items-center gap-2 font-bold text-slate-700 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
-			<i data-lucide="plus-circle" class="w-6 h-6 text-indigo-500"></i>
+		<a href="<?php echo esc_url( home_url( '/submit-deal/' ) ); ?>" class="bg-slate-50 p-3 rounded-xl flex flex-col items-center gap-2 font-bold text-slate-700 hover:text-primary-600 hover:bg-primary-50 transition-colors">
+			<i data-lucide="plus-circle" class="w-6 h-6 text-primary-500"></i>
 			<?php esc_html_e( 'Submit', 'bigtricks' ); ?>
 		</a>
 	</div>
@@ -215,7 +215,7 @@
 	</div>
 	<ul role="list">
 		<li>
-			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="px-6 py-3 flex items-center justify-between font-bold text-slate-600 hover:bg-slate-50 border-l-4 border-transparent hover:border-indigo-300 transition-colors">
+			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="px-6 py-3 flex items-center justify-between font-bold text-slate-600 hover:bg-slate-50 border-l-4 border-transparent hover:border-primary-300 transition-colors">
 				<?php esc_html_e( 'All Deals', 'bigtricks' ); ?>
 				<i data-lucide="chevron-right" class="w-4 h-4 opacity-50"></i>
 			</a>
@@ -225,7 +225,7 @@
 		foreach ( $mobile_cats as $cat ) :
 			?>
 			<li>
-				<a href="<?php echo esc_url( get_category_link( $cat->term_id ) ); ?>" class="px-6 py-3 flex items-center justify-between font-bold text-slate-600 hover:bg-slate-50 border-l-4 border-transparent hover:border-indigo-300 transition-colors">
+				<a href="<?php echo esc_url( get_category_link( $cat->term_id ) ); ?>" class="px-6 py-3 flex items-center justify-between font-bold text-slate-600 hover:bg-slate-50 border-l-4 border-transparent hover:border-primary-300 transition-colors">
 					<span><?php echo esc_html( $cat->name ); ?></span>
 					<i data-lucide="chevron-right" class="w-4 h-4 opacity-50"></i>
 				</a>

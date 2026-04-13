@@ -90,8 +90,8 @@
 
       toggleBtns.forEach(function (btn) {
         const isActive = btn.dataset.view === mode;
-        btn.classList.toggle('bg-indigo-50',    isActive);
-        btn.classList.toggle('text-indigo-600', isActive);
+        btn.classList.toggle('bg-primary-50',    isActive);
+        btn.classList.toggle('text-primary-600', isActive);
         btn.classList.toggle('text-slate-400',  !isActive);
         btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
       });
@@ -223,8 +223,9 @@
         action: 'bigtricks_load_more',
         nonce:  btn.dataset.nonce || (bigtricksData.loadMoreNonce || ''),
         page:   nextPage,
-        cat:    btn.dataset.cat  || '0',
-        type:   btn.dataset.type || 'all',
+        cat:    btn.dataset.cat   || '0',
+        store:  btn.dataset.store || '0',
+        type:   btn.dataset.type  || 'all',
       });
 
       fetch(bigtricksData.ajaxUrl, {

@@ -93,7 +93,7 @@ $type_labels = [
 			aria-label="<?php esc_attr_e( 'Featured Deals', 'bigtricks' ); ?>"
 		>
 			<?php foreach ( $carousel_posts as $ci => $cp ) :
-				$badge_css = $badge_color_map[ $cp['badge_color'] ?? 'red' ] ?? 'bg-indigo-600 text-white';
+				$badge_css = $badge_color_map[ $cp['badge_color'] ?? 'red' ] ?? 'bg-primary-600 text-white';
 				?>
 			<div
 				class="absolute inset-0 transition-opacity duration-700 bt-carousel-slide <?php echo $ci === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'; ?>"
@@ -131,7 +131,7 @@ $type_labels = [
 
 					<!-- Title -->
 					<h2 class="text-2xl sm:text-3xl lg:text-4xl font-black text-white leading-tight mb-2 line-clamp-2 drop-shadow-lg" style="text-shadow:0 2px 8px rgba(0,0,0,0.4)">
-						<a href="<?php echo esc_url( $cp['link'] ?? '#' ); ?>" class="hover:text-indigo-300 transition-colors">
+						<a href="<?php echo esc_url( $cp['link'] ?? '#' ); ?>" class="hover:text-primary-300 transition-colors">
 							<?php echo esc_html( $cp['title'] ?? '' ); ?>
 						</a>
 					</h2>
@@ -143,7 +143,7 @@ $type_labels = [
 
 					<!-- CTA -->
 					<div class="flex">
-						<a href="<?php echo esc_url( $cp['link'] ?? '#' ); ?>" class="bg-white text-slate-900 px-7 py-3 rounded-xl font-black text-sm flex items-center gap-2 hover:bg-indigo-50 transition-all shadow-lg active:scale-95">
+						<a href="<?php echo esc_url( $cp['link'] ?? '#' ); ?>" class="bg-white text-slate-900 px-7 py-3 rounded-xl font-black text-sm flex items-center gap-2 hover:bg-primary-50 transition-all shadow-lg active:scale-95">
 							<?php esc_html_e( 'See Deal', 'bigtricks' ); ?> <i data-lucide="arrow-right" class="w-4 h-4"></i>
 						</a>
 					</div>
@@ -197,7 +197,7 @@ $type_labels = [
 						?>
 					<a
 						href="<?php echo esc_url( $filter_url ); ?>"
-						class="whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-bold transition-all <?php echo $is_active ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300'; ?>"
+						class="whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-bold transition-all <?php echo $is_active ? 'bg-primary-600 text-white shadow-md shadow-primary-200' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300'; ?>"
 						aria-current="<?php echo $is_active ? 'true' : 'false'; ?>"
 					>
 						<?php echo esc_html( $type_label ); ?>
@@ -209,7 +209,7 @@ $type_labels = [
 				<div class="hidden sm:flex items-center bg-white border border-slate-200 rounded-xl p-1 shadow-sm shrink-0">
 					<button
 						id="bt-view-list"
-						class="bt-view-toggle p-1.5 rounded-lg transition-colors bg-indigo-50 text-indigo-600"
+						class="bt-view-toggle p-1.5 rounded-lg transition-colors bg-primary-50 text-primary-600"
 						data-view="list"
 						aria-label="<?php esc_attr_e( 'List view', 'bigtricks' ); ?>"
 						aria-pressed="true"
@@ -247,7 +247,7 @@ $type_labels = [
 				</div>
 				<h3 class="text-xl font-bold text-slate-900 mb-2"><?php esc_html_e( 'No deals found', 'bigtricks' ); ?></h3>
 				<p class="text-slate-500 mb-6"><?php esc_html_e( 'Try selecting a different filter or category.', 'bigtricks' ); ?></p>
-				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="bg-indigo-50 text-indigo-700 font-bold px-6 py-2 rounded-full hover:bg-indigo-100 transition-colors">
+				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="bg-primary-50 text-primary-700 font-bold px-6 py-2 rounded-full hover:bg-primary-100 transition-colors">
 					<?php esc_html_e( 'View All Updates', 'bigtricks' ); ?>
 				</a>
 			</div>
@@ -270,17 +270,17 @@ $type_labels = [
 			$tpl_slug     = $card_template_map[ $current_type ] ?? 'card-post';
 			?>
 			<?php if ( $post_index === 3 ) : // In-feed CTA after 3rd post ?>
-			<div class="bg-gradient-to-r from-indigo-600 via-blue-600 to-cyan-500 rounded-3xl p-6 sm:p-10 text-white shadow-xl shadow-indigo-200/50 relative overflow-hidden group">
+			<div class="bg-gradient-to-r from-primary-600 via-blue-600 to-cyan-500 rounded-3xl p-6 sm:p-10 text-white shadow-xl shadow-primary-200/50 relative overflow-hidden group">
 				<div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
 				<div class="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-8">
 					<div class="text-center lg:text-left">
 						<h3 class="text-2xl sm:text-3xl font-black mb-3"><?php esc_html_e( 'Never Miss a Loot! 🚀', 'bigtricks' ); ?></h3>
-						<p class="text-indigo-100 text-base sm:text-lg font-medium max-w-xl">
+						<p class="text-primary-100 text-base sm:text-lg font-medium max-w-xl">
 							<?php esc_html_e( 'Join our community of over 100,000 smart shoppers. Get instant push notifications for price drops and secret coupons.', 'bigtricks' ); ?>
 						</p>
 					</div>
 					<div class="flex flex-col sm:flex-row gap-4 w-full lg:w-auto shrink-0">
-						<a href="https://t.me/bigtricks" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto bg-white text-indigo-600 font-black py-3.5 px-6 sm:px-8 rounded-2xl shadow-lg hover:scale-105 hover:shadow-xl transition-all flex items-center justify-center gap-3">
+						<a href="https://t.me/bigtricks" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto bg-white text-primary-600 font-black py-3.5 px-6 sm:px-8 rounded-2xl shadow-lg hover:scale-105 hover:shadow-xl transition-all flex items-center justify-center gap-3">
 							<i data-lucide="send" class="w-5 h-5 text-blue-500"></i>
 							<?php esc_html_e( 'Join Telegram', 'bigtricks' ); ?>
 						</a>
@@ -303,7 +303,7 @@ $type_labels = [
 		<div class="mt-8 flex justify-center" id="bt-load-more-wrap">
 			<button
 				id="bt-load-more"
-				class="flex items-center gap-3 bg-white border-2 border-slate-200 hover:border-indigo-400 text-slate-700 hover:text-indigo-600 font-black px-8 py-4 rounded-2xl shadow-sm hover:shadow-md transition-all active:scale-95 group"
+				class="flex items-center gap-3 bg-white border-2 border-slate-200 hover:border-primary-400 text-slate-700 hover:text-primary-600 font-black px-8 py-4 rounded-2xl shadow-sm hover:shadow-md transition-all active:scale-95 group"
 				data-page="1"
 				data-max-pages="<?php echo esc_attr( $max_pages ); ?>"
 				data-cat="<?php echo esc_attr( $active_cat ); ?>"

@@ -80,7 +80,7 @@ $cat_link = ! empty( $cat_obj ) ? esc_url( get_category_link( $cat_obj[0]->term_
 			<div>
 				<!-- Category -->
 				<?php if ( $cat_name ) : ?>
-				<div class="mb-2 flex items-center gap-1.5 text-xs font-bold text-indigo-600 uppercase tracking-wider">
+				<div class="mb-2 flex items-center gap-1.5 text-xs font-bold text-primary-600 uppercase tracking-wider">
 					<i data-lucide="tag" class="w-3 h-3"></i>
 					<?php if ( $cat_link ) : ?>
 					<a href="<?php echo $cat_link; ?>" class="hover:underline"><?php echo $cat_name; ?></a>
@@ -90,7 +90,7 @@ $cat_link = ! empty( $cat_obj ) ? esc_url( get_category_link( $cat_obj[0]->term_
 				</div>
 				<?php endif; ?>
 
-				<h2 class="font-black text-slate-900 group-hover:text-indigo-600 leading-snug mb-2 transition-colors break-words text-lg sm:text-xl line-clamp-2">
+				<h2 class="font-black text-slate-900 group-hover:text-primary-600 leading-snug mb-2 transition-colors break-words text-lg sm:text-xl line-clamp-2">
 					<a href="<?php echo $permalink; ?>" class="focus:outline-none focus:underline">
 						<span class="absolute inset-0 z-0" aria-hidden="true"></span>
 						<?php the_title(); ?>
@@ -124,7 +124,7 @@ $cat_link = ! empty( $cat_obj ) ? esc_url( get_category_link( $cat_obj[0]->term_
 					</button>
 					<?php endif; ?>
 					<?php if ( $comments > 0 ) : ?>
-					<a href="<?php echo esc_url( $permalink . '#comments' ); ?>" class="flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">
+					<a href="<?php echo esc_url( $permalink . '#comments' ); ?>" class="flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-primary-600 transition-colors">
 						<i data-lucide="message-square" class="w-4 h-4"></i>
 						<span><?php echo esc_html( $comments ); ?></span>
 					</a>
@@ -135,7 +135,7 @@ $cat_link = ! empty( $cat_obj ) ? esc_url( get_category_link( $cat_obj[0]->term_
 						href="<?php echo $dest_url; ?>"
 						target="<?php echo $referral_link ? '_blank' : '_self'; ?>"
 						rel="<?php echo $referral_link ? 'noopener noreferrer nofollow' : ''; ?>"
-						class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-200 transition-all active:scale-95"
+						class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black bg-primary-600 hover:bg-primary-700 text-white shadow-md shadow-primary-200 transition-all active:scale-95"
 					>
 						<?php echo $referral_link ? esc_html__( 'Get Referral', 'bigtricks' ) : esc_html__( 'View Details', 'bigtricks' ); ?>
 						<i data-lucide="external-link" class="w-4 h-4 shrink-0"></i>

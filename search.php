@@ -11,14 +11,14 @@ get_header();
 <main class="max-w-[1400px] mx-auto px-4 py-6 md:py-8 flex flex-col lg:flex-row gap-8 flex-1 w-full" id="main-content">
 	<div class="flex-1 min-w-0">
 		<h1 class="text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
-			<div class="bg-indigo-100 p-2 rounded-xl text-indigo-600">
+			<div class="bg-primary-100 p-2 rounded-xl text-primary-600">
 				<i data-lucide="search" class="w-6 h-6"></i>
 			</div>
 			<?php
 			printf(
 				/* translators: %s: search term */
 				esc_html__( 'Search: "%s"', 'bigtricks' ),
-				'<span class="text-indigo-600">' . esc_html( get_search_query() ) . '</span>'
+				'<span class="text-primary-600">' . esc_html( get_search_query() ) . '</span>'
 			);
 			?>
 		</h1>
@@ -49,18 +49,18 @@ get_header();
 					<div class="p-5 sm:p-6 lg:p-8 flex-1 flex flex-col justify-between min-w-0">
 						<div>
 							<?php if ( $cat_name ) : ?>
-							<div class="mb-2 flex items-center gap-1.5 text-xs font-bold text-indigo-600 uppercase tracking-wider">
+							<div class="mb-2 flex items-center gap-1.5 text-xs font-bold text-primary-600 uppercase tracking-wider">
 								<i data-lucide="tag" class="w-3 h-3"></i> <?php echo esc_html( $cat_name ); ?>
 							</div>
 							<?php endif; ?>
-							<h2 class="font-black text-slate-900 group-hover:text-indigo-600 leading-snug mb-3 transition-colors text-lg sm:text-xl line-clamp-2 break-words">
+							<h2 class="font-black text-slate-900 group-hover:text-primary-600 leading-snug mb-3 transition-colors text-lg sm:text-xl line-clamp-2 break-words">
 								<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
 							</h2>
 							<div class="text-slate-600 text-sm line-clamp-2 break-words mb-4"><?php the_excerpt(); ?></div>
 						</div>
 						<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-slate-100">
 							<div class="flex items-center gap-4 text-sm font-bold text-slate-500">
-								<a href="<?php echo esc_url( get_permalink() . '#comments' ); ?>" class="flex items-center gap-1.5 hover:text-indigo-600">
+								<a href="<?php echo esc_url( get_permalink() . '#comments' ); ?>" class="flex items-center gap-1.5 hover:text-primary-600">
 									<i data-lucide="message-square" class="w-4 h-4"></i> <?php echo esc_html( $comments_n ); ?>
 								</a>
 								<time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>" class="hidden lg:flex items-center gap-1.5 text-xs text-slate-400">
@@ -82,7 +82,7 @@ get_header();
 			</div>
 			<h3 class="text-xl font-bold text-slate-900 mb-2"><?php esc_html_e( 'No results found', 'bigtricks' ); ?></h3>
 			<p class="text-slate-500 mb-6"><?php esc_html_e( 'Try a different search term or browse all deals.', 'bigtricks' ); ?></p>
-			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="bg-indigo-50 text-indigo-700 font-bold px-6 py-2 rounded-full hover:bg-indigo-100 transition-colors">
+			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="bg-primary-50 text-primary-700 font-bold px-6 py-2 rounded-full hover:bg-primary-100 transition-colors">
 				<?php esc_html_e( 'Browse All Deals', 'bigtricks' ); ?>
 			</a>
 		</div>

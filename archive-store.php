@@ -18,7 +18,7 @@ $pastel_colors = [
 	'bg-orange-100 text-orange-700',
 	'bg-cyan-100 text-cyan-700',
 	'bg-teal-100 text-teal-700',
-	'bg-indigo-100 text-indigo-700',
+	'bg-primary-100 text-primary-700',
 	'bg-pink-100 text-pink-700',
 ];
 
@@ -35,7 +35,7 @@ $store_terms = get_terms( [
 
 	<header class="mb-8">
 		<h1 class="text-2xl font-black text-slate-900 flex items-center gap-3 mb-2">
-			<div class="bg-indigo-100 p-2 rounded-xl text-indigo-600">
+			<div class="bg-primary-100 p-2 rounded-xl text-primary-600">
 				<i data-lucide="shopping-bag" class="w-6 h-6"></i>
 			</div>
 			<?php esc_html_e( 'Top Stores', 'bigtricks' ); ?>
@@ -47,7 +47,7 @@ $store_terms = get_terms( [
 	<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
 		<?php $store_i = 0; foreach ( $store_terms as $term ) :
 			$term_link  = esc_url( get_term_link( $term ) );
-			$icon_meta  = get_term_meta( $term->term_id, 'tag-image', true );
+			$icon_meta  = get_term_meta( $term->term_id, 'thumb_image', true );
 			$has_icon   = ! empty( $icon_meta );
 			$icon_url   = '';
 			if ( $has_icon ) {
@@ -66,7 +66,7 @@ $store_terms = get_terms( [
 			aria-label="<?php echo esc_attr( $term->name ); ?>"
 		>
 			<!-- Logo / Initials Circle -->
-			<div class="w-20 h-20 rounded-full flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-105 group-hover:ring-4 group-hover:ring-indigo-100 <?php echo $icon_url ? 'bg-slate-50' : esc_attr( $pastel ); ?> overflow-hidden">
+			<div class="w-20 h-20 rounded-full flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-105 group-hover:ring-4 group-hover:ring-primary-100 <?php echo $icon_url ? 'bg-slate-50' : esc_attr( $pastel ); ?> overflow-hidden">
 				<?php if ( $icon_url ) : ?>
 				<img
 					src="<?php echo $icon_url; ?>"
@@ -80,11 +80,11 @@ $store_terms = get_terms( [
 				<?php endif; ?>
 			</div>
 
-			<h2 class="font-black text-slate-900 text-sm leading-tight line-clamp-2 group-hover:text-indigo-600 transition-colors">
+			<h2 class="font-black text-slate-900 text-sm leading-tight line-clamp-2 group-hover:text-primary-600 transition-colors">
 				<?php echo esc_html( $term->name ); ?>
 			</h2>
 
-			<span class="mt-2 text-xs font-bold px-2 py-1 rounded-full <?php echo $count > 0 ? 'text-indigo-600 bg-indigo-50' : 'text-slate-400 bg-slate-50'; ?>">
+			<span class="mt-2 text-xs font-bold px-2 py-1 rounded-full <?php echo $count > 0 ? 'text-primary-600 bg-primary-50' : 'text-slate-400 bg-slate-50'; ?>">
 				<?php if ( $count > 0 ) :
 					/* translators: %d: number of posts */
 					printf( esc_html( _n( '%d Post', '%d Posts', $count, 'bigtricks' ) ), esc_html( $count ) );

@@ -115,12 +115,12 @@ get_header();
 							<?php echo esc_html( get_the_date( 'M j, Y' ) ); ?>
 						</time>
 					</div>
-					<a href="#comments" class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-indigo-50 hover:text-indigo-600 transition-colors">
+					<a href="#comments" class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-primary-50 hover:text-primary-600 transition-colors">
 						<i data-lucide="message-square" class="w-4 h-4"></i>
 						<?php echo esc_html( $comments_num ); ?> <?php esc_html_e( 'Comments', 'bigtricks' ); ?>
 					</a>
 					<?php if ( $cat_name ) : ?>
-					<a href="<?php echo esc_url( $cat_link ); ?>" class="sm:hidden flex items-center gap-2 text-xs font-black text-indigo-600 uppercase tracking-wider bg-indigo-50 px-3 py-1.5 rounded-full border border-indigo-100">
+					<a href="<?php echo esc_url( $cat_link ); ?>" class="sm:hidden flex items-center gap-2 text-xs font-black text-primary-600 uppercase tracking-wider bg-primary-50 px-3 py-1.5 rounded-full border border-primary-100">
 						<i data-lucide="tag" class="w-3 h-3"></i> <?php echo esc_html( $cat_name ); ?>
 					</a>
 					<?php endif; ?>
@@ -180,7 +180,7 @@ get_header();
 
 				<!-- Post Content -->
 				<div
-					class="prose prose-lg prose-slate max-w-none prose-img:rounded-3xl prose-img:shadow-md prose-a:text-indigo-600 hover:prose-a:text-indigo-800 prose-headings:font-black prose-p:leading-relaxed break-words"
+					class="prose prose-lg prose-slate max-w-none prose-img:rounded-3xl prose-img:shadow-md prose-a:text-primary-600 hover:prose-a:text-primary-800 prose-headings:font-black prose-p:leading-relaxed break-words"
 					itemprop="articleBody"
 				>
 					<?php the_content(); ?>
@@ -190,7 +190,7 @@ get_header();
 				<?php $tags = get_the_tags(); if ( $tags ) : ?>
 				<div class="mt-10 pt-8 border-t border-slate-100 flex flex-wrap gap-2">
 					<?php foreach ( $tags as $tag ) : ?>
-					<a href="<?php echo esc_url( get_tag_link( $tag->term_id ) ); ?>" class="bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1.5 rounded-full hover:bg-indigo-100 hover:text-indigo-700 transition-colors">
+					<a href="<?php echo esc_url( get_tag_link( $tag->term_id ) ); ?>" class="bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1.5 rounded-full hover:bg-primary-100 hover:text-primary-700 transition-colors">
 						#<?php echo esc_html( $tag->name ); ?>
 					</a>
 					<?php endforeach; ?>
@@ -213,7 +213,7 @@ get_header();
 				<?php if ( $related_query->have_posts() ) : ?>
 				<div class="mt-12">
 					<h2 class="text-2xl font-black text-slate-900 mb-6 flex items-center gap-2">
-						<i data-lucide="zap" class="w-5 h-5 text-indigo-500"></i>
+						<i data-lucide="zap" class="w-5 h-5 text-primary-500"></i>
 						<?php esc_html_e( 'Related Deals', 'bigtricks' ); ?>
 					</h2>
 					<div class="grid sm:grid-cols-3 gap-4">
@@ -226,7 +226,7 @@ get_header();
 								<img src="<?php echo esc_url( $rel_thumb ); ?>" alt="<?php the_title_attribute(); ?>" class="max-h-full max-w-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform" loading="lazy" decoding="async">
 							</div>
 							<div class="p-4">
-								<h3 class="font-bold text-slate-900 text-sm line-clamp-2 group-hover:text-indigo-600 transition-colors"><?php the_title(); ?></h3>
+								<h3 class="font-bold text-slate-900 text-sm line-clamp-2 group-hover:text-primary-600 transition-colors"><?php the_title(); ?></h3>
 								<time class="text-xs text-slate-400 mt-1 block"><?php echo esc_html( get_the_date( 'M j, Y' ) ); ?></time>
 							</div>
 						</a>

@@ -121,7 +121,7 @@ add_action( 'wp_head', function () {
 	// Must be priority 5 (before CDN) so the class is set before any rendering.
 	echo '<script>!function(){var s=localStorage.getItem("bt_dark_mode");if(s==="1"||(s===null&&window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark")}}</script>' . "\n";
 	// Pre-set tailwind config BEFORE the CDN loads so it reads darkMode:'class' on init.
-	echo '<script>window.tailwind={config:{darkMode:"class",theme:{extend:{fontFamily:{sans:["Plus Jakarta Sans","Inter","sans-serif"],body:["Inter","sans-serif"]}}}}}</script>' . "\n";
+	echo '<script>window.tailwind={config:{darkMode:"class",theme:{extend:{fontFamily:{sans:["Plus Jakarta Sans","Inter","sans-serif"],body:["Inter","sans-serif"]},colors:{primary:{50:"#eef2ff",100:"#e0e7ff",200:"#c7d2fe",300:"#a5b4fc",400:"#818cf8",500:"#6366f1",600:"#4f46e5",700:"#4338ca",800:"#3730a3",900:"#312e81",DEFAULT:"#4f46e5"},secondary:{DEFAULT:"#0f172a",hover:"#1e293b"}}}}}}</script>' . "\n";
 }, 5 );
 
 // Also set tailwind.config AFTER the CDN loads (priority 20 > scripts at priority 9)
@@ -139,10 +139,23 @@ add_action( 'wp_head', function () {
 						body: ['Inter', 'sans-serif'],
 					},
 					colors: {
-						brand: {
-							indigo: '#4f46e5',
-							'indigo-hover': '#4338ca',
-						}
+						primary: {
+							50:  '#eef2ff',
+							100: '#e0e7ff',
+							200: '#c7d2fe',
+							300: '#a5b4fc',
+							400: '#818cf8',
+							500: '#6366f1',
+							600: '#4f46e5',
+							700: '#4338ca',
+							800: '#3730a3',
+							900: '#312e81',
+							DEFAULT: '#4f46e5',
+						},
+						secondary: {
+							DEFAULT: '#0f172a',
+							hover:   '#1e293b',
+						},
 					}
 				}
 			}
@@ -225,7 +238,7 @@ function bigtricks_deal_cta_button( int $post_id, string $size = 'normal' ): str
 		case 'deal':
 			$offer_url = esc_url( (string) get_post_meta( $post_id, '_btdeals_offer_url', true ) );
 			$href      = $offer_url ?: $permalink;
-			return '<a href="' . $href . '" target="_blank" rel="noopener noreferrer nofollow" class="' . $base_classes . ' bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-200">'
+			return '<a href="' . $href . '" target="_blank" rel="noopener noreferrer nofollow" class="' . $base_classes . ' bg-primary-600 hover:bg-primary-700 text-white shadow-primary-200">'
 				. 'Get Deal <i data-lucide="external-link" class="w-4 h-4 shrink-0"></i></a>';
 
 		case 'referral-codes':
@@ -247,7 +260,7 @@ function bigtricks_deal_cta_button( int $post_id, string $size = 'normal' ): str
 
 		case 'post':
 		default:
-			return '<a href="' . $permalink . '" class="' . $base_classes . ' bg-slate-900 hover:bg-slate-800 text-white">'
+			return '<a href="' . $permalink . '" class="' . $base_classes . ' bg-primary-600 hover:bg-primary-700 text-white shadow-primary-200">'
 				. 'Read Article <i data-lucide="chevron-right" class="w-4 h-4 shrink-0"></i></a>';
 	}
 }
@@ -306,6 +319,7 @@ function bigtricks_ajax_load_more(): void {
 
 	$page     = isset( $_POST['page'] ) ? absint( $_POST['page'] ) : 1;
 	$cat      = isset( $_POST['cat'] )  ? absint( $_POST['cat'] )  : 0;
+	$store    = isset( $_POST['store'] ) ? absint( $_POST['store'] ) : 0;
 	$type_raw = isset( $_POST['type'] ) ? sanitize_text_field( wp_unslash( $_POST['type'] ) ) : 'all';
 
 	$allowed_types = [ 'all', 'post', 'deal', 'referral-codes', 'credit-card' ];
@@ -330,6 +344,14 @@ function bigtricks_ajax_load_more(): void {
 				'taxonomy' => 'category',
 				'field'    => 'term_id',
 				'terms'    => $cat,
+			],
+		];
+	} elseif ( $store > 0 ) {
+		$args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery
+			[
+				'taxonomy' => 'store',
+				'field'    => 'term_id',
+				'terms'    => $store,
 			],
 		];
 	}
@@ -365,7 +387,7 @@ function bigtricks_ajax_load_more(): void {
 }
 
 // ─────────────────────────────────────────────
-// 11. Term meta: tag-image for categories
+// 11. Term meta: tag-image for categories + store meta (tag-image, st_link)
 // ─────────────────────────────────────────────
 
 add_action( 'init', function () {
@@ -377,37 +399,128 @@ add_action( 'init', function () {
 		'auth_callback'     => function () { return current_user_can( 'manage_categories' ); },
 		'show_in_rest'      => true,
 	] );
+
+	// Store taxonomy: logo image (key: thumb_image)
+	register_term_meta( 'store', 'thumb_image', [
+		'type'              => 'string',
+		'description'       => 'Store logo URL or attachment ID',
+		'single'            => true,
+		'sanitize_callback' => 'sanitize_text_field',
+		'auth_callback'     => function () { return current_user_can( 'manage_categories' ); },
+		'show_in_rest'      => true,
+	] );
+
+	// Store taxonomy: official website link
+	register_term_meta( 'store', 'st_link', [
+		'type'              => 'string',
+		'description'       => 'Store official website URL',
+		'single'            => true,
+		'sanitize_callback' => 'esc_url_raw',
+		'auth_callback'     => function () { return current_user_can( 'manage_categories' ); },
+		'show_in_rest'      => true,
+	] );
 } );
+
+// Admin UI: enqueue WP media library on term edit screens + shared JS picker
+add_action( 'admin_enqueue_scripts', function ( string $hook ) {
+	if ( ! in_array( $hook, [ 'edit-tags.php', 'term.php' ], true ) ) {
+		return;
+	}
+	wp_enqueue_media();
+} );
+
+add_action( 'admin_footer-edit-tags.php', 'bigtricks_term_media_picker_js' );
+add_action( 'admin_footer-term.php',      'bigtricks_term_media_picker_js' );
+
+function bigtricks_term_media_picker_js(): void {
+	?>
+	<script>
+	var taxonomies = document.querySelector( 'body' );
+	if ( taxonomies && typeof wp !== 'undefined' && wp.media ) {
+		jQuery(function( $ ){
+			// Open media library
+			$( 'body' ).on( 'click', '.bt-media-picker-btn', function ( e ) {
+				e.preventDefault();
+				var $wrap    = $( this ).closest( '.bt-media-picker-wrap' );
+				var $input   = $wrap.find( '.bt-media-url-input' );
+				var $preview = $wrap.find( '.bt-media-preview' );
+				var frame = wp.media( {
+					title   : $( this ).data( 'title' ) || 'Select Image',
+					button  : { text: 'Use this image' },
+					multiple: false,
+					library : { type: 'image' },
+				} );
+				frame.on( 'select', function () {
+					var att = frame.state().get( 'selection' ).first().toJSON();
+					$input.val( att.url ).trigger( 'change' );
+				} );
+				frame.open();
+			} );
+			// Live preview on manual URL paste / clear
+			$( 'body' ).on( 'change blur', '.bt-media-url-input', function () {
+				var val      = $( this ).val();
+				var $preview = $( this ).closest( '.bt-media-picker-wrap' ).find( '.bt-media-preview' );
+				if ( val ) {
+					$preview.html( '<img src="' + val + '" style="max-height:80px;margin-top:6px;border-radius:8px;display:block;" onerror="this.style.display=\'none\'">' );
+				} else {
+					$preview.html( '' );
+				}
+			} );
+		});
+	}
+	</script>
+	<?php
+}
 
 // Admin UI: category tag-image fields
 add_action( 'category_add_form_fields', function () {
 	wp_nonce_field( 'bt_cat_meta_nonce', 'bt_cat_meta_nonce_field' );
 	?>
 	<div class="form-field">
-		<label for="bt-tag-image"><?php esc_html_e( 'Category Icon / Image URL', 'bigtricks' ); ?></label>
-		<input type="text" id="bt-tag-image" name="bt_tag_image" value="" placeholder="https://... or attachment ID">
-		<p class="description"><?php esc_html_e( 'Enter a URL or media attachment ID for the category icon.', 'bigtricks' ); ?></p>
+		<label for="bt-tag-image"><?php esc_html_e( 'Category Icon / Image', 'bigtricks' ); ?></label>
+		<div class="bt-media-picker-wrap">
+			<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+				<input type="text" id="bt-tag-image" name="bt_tag_image" value="" placeholder="https://... or select from Media Library" class="bt-media-url-input" style="flex:1;">
+				<button type="button" class="button bt-media-picker-btn" data-title="<?php esc_attr_e( 'Select Category Icon', 'bigtricks' ); ?>">
+					<span class="dashicons dashicons-format-image" style="margin-top:3px;"></span>
+					<?php esc_html_e( 'Choose Image', 'bigtricks' ); ?>
+				</button>
+			</div>
+			<div class="bt-media-preview"></div>
+			<p class="description"><?php esc_html_e( 'Pick from the Media Library or paste an external URL.', 'bigtricks' ); ?></p>
+		</div>
 	</div>
 	<?php
 } );
 
 add_action( 'category_edit_form_fields', function ( WP_Term $term ) {
-	$val = get_term_meta( $term->term_id, 'tag-image', true );
+	$val         = get_term_meta( $term->term_id, 'tag-image', true );
+	$preview_url = '';
+	if ( $val ) {
+		$preview_url = is_numeric( $val )
+			? (string) wp_get_attachment_image_url( (int) $val, 'medium' )
+			: $val;
+	}
 	wp_nonce_field( 'bt_cat_meta_nonce', 'bt_cat_meta_nonce_field' );
 	?>
 	<tr class="form-field">
-		<th scope="row"><label for="bt-tag-image"><?php esc_html_e( 'Category Icon / Image URL', 'bigtricks' ); ?></label></th>
+		<th scope="row"><label for="bt-tag-image"><?php esc_html_e( 'Category Icon / Image', 'bigtricks' ); ?></label></th>
 		<td>
-			<input type="text" id="bt-tag-image" name="bt_tag_image" value="<?php echo esc_attr( $val ); ?>" placeholder="https://... or attachment ID" class="large-text">
-			<?php if ( $val && is_numeric( $val ) ) :
-				$icon_url = wp_get_attachment_image_url( (int) $val, 'thumbnail' );
-				if ( $icon_url ) : ?>
-				<img src="<?php echo esc_url( $icon_url ); ?>" alt="" style="max-height:60px;margin-top:6px;border-radius:8px;">
-				<?php endif; ?>
-			<?php elseif ( $val ) : ?>
-				<img src="<?php echo esc_url( $val ); ?>" alt="" style="max-height:60px;margin-top:6px;border-radius:8px;">
-			<?php endif; ?>
-			<p class="description"><?php esc_html_e( 'Enter a full URL or media attachment ID.', 'bigtricks' ); ?></p>
+			<div class="bt-media-picker-wrap">
+				<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+					<input type="text" id="bt-tag-image" name="bt_tag_image" value="<?php echo esc_attr( $val ); ?>" placeholder="https://... or select from Media Library" class="large-text bt-media-url-input">
+					<button type="button" class="button bt-media-picker-btn" data-title="<?php esc_attr_e( 'Select Category Icon', 'bigtricks' ); ?>">
+						<span class="dashicons dashicons-format-image" style="margin-top:3px;"></span>
+						<?php esc_html_e( 'Choose Image', 'bigtricks' ); ?>
+					</button>
+				</div>
+				<div class="bt-media-preview">
+					<?php if ( $preview_url ) : ?>
+					<img src="<?php echo esc_url( $preview_url ); ?>" alt="" style="max-height:80px;margin-top:4px;border-radius:8px;display:block;">
+					<?php endif; ?>
+				</div>
+				<p class="description"><?php esc_html_e( 'Pick from the Media Library or paste an external URL.', 'bigtricks' ); ?></p>
+			</div>
 		</td>
 	</tr>
 	<?php
@@ -429,6 +542,99 @@ function bigtricks_save_category_meta( int $term_id ): void {
 	if ( isset( $_POST['bt_tag_image'] ) ) {
 		$val = sanitize_text_field( wp_unslash( $_POST['bt_tag_image'] ) );
 		update_term_meta( $term_id, 'tag-image', $val );
+	}
+}
+
+// ─────────────────────────────────────────────
+// 11b. Term meta admin UI for 'store' taxonomy
+// ─────────────────────────────────────────────
+
+add_action( 'store_add_form_fields', function () {
+	wp_nonce_field( 'bt_store_meta_nonce', 'bt_store_meta_nonce_field' );
+	?>
+	<div class="form-field">
+		<label for="bt-store-thumb-image"><?php esc_html_e( 'Store Logo', 'bigtricks' ); ?></label>
+		<div class="bt-media-picker-wrap">
+			<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+				<input type="text" id="bt-store-thumb-image" name="bt_store_thumb_image" value="" placeholder="https://... or select from Media Library" class="bt-media-url-input" style="flex:1;">
+				<button type="button" class="button bt-media-picker-btn" data-title="<?php esc_attr_e( 'Select Store Logo', 'bigtricks' ); ?>">
+					<span class="dashicons dashicons-format-image" style="margin-top:3px;"></span>
+					<?php esc_html_e( 'Choose Image', 'bigtricks' ); ?>
+				</button>
+			</div>
+			<div class="bt-media-preview"></div>
+			<p class="description"><?php esc_html_e( 'Pick from the Media Library or paste an external image URL.', 'bigtricks' ); ?></p>
+		</div>
+	</div>
+	<div class="form-field">
+		<label for="bt-store-st-link"><?php esc_html_e( 'Store Website URL', 'bigtricks' ); ?></label>
+		<input type="url" id="bt-store-st-link" name="bt_store_st_link" value="" placeholder="https://storedomain.com" class="large-text">
+		<p class="description"><?php esc_html_e( 'Official store website. Used for the "Visit Store" button.', 'bigtricks' ); ?></p>
+	</div>
+	<?php
+} );
+
+add_action( 'store_edit_form_fields', function ( WP_Term $term ) {
+	$img_val     = get_term_meta( $term->term_id, 'thumb_image', true );
+	$link_val    = get_term_meta( $term->term_id, 'st_link', true );
+	$preview_url = '';
+	if ( $img_val ) {
+		$preview_url = is_numeric( $img_val )
+			? (string) wp_get_attachment_image_url( (int) $img_val, 'medium' )
+			: $img_val;
+	}
+	wp_nonce_field( 'bt_store_meta_nonce', 'bt_store_meta_nonce_field' );
+	?>
+	<tr class="form-field">
+		<th scope="row"><label for="bt-store-thumb-image"><?php esc_html_e( 'Store Logo', 'bigtricks' ); ?></label></th>
+		<td>
+			<div class="bt-media-picker-wrap">
+				<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+					<input type="text" id="bt-store-thumb-image" name="bt_store_thumb_image" value="<?php echo esc_attr( $img_val ); ?>" placeholder="https://... or select from Media Library" class="large-text bt-media-url-input">
+					<button type="button" class="button bt-media-picker-btn" data-title="<?php esc_attr_e( 'Select Store Logo', 'bigtricks' ); ?>">
+						<span class="dashicons dashicons-format-image" style="margin-top:3px;"></span>
+						<?php esc_html_e( 'Choose Image', 'bigtricks' ); ?>
+					</button>
+				</div>
+				<div class="bt-media-preview">
+					<?php if ( $preview_url ) : ?>
+					<img src="<?php echo esc_url( $preview_url ); ?>" alt="" style="max-height:80px;margin-top:4px;border-radius:8px;display:block;">
+					<?php endif; ?>
+				</div>
+				<p class="description"><?php esc_html_e( 'Pick from the Media Library or paste an external image URL.', 'bigtricks' ); ?></p>
+			</div>
+		</td>
+	</tr>
+	<tr class="form-field">
+		<th scope="row"><label for="bt-store-st-link"><?php esc_html_e( 'Store Website URL', 'bigtricks' ); ?></label></th>
+		<td>
+			<input type="url" id="bt-store-st-link" name="bt_store_st_link" value="<?php echo esc_attr( $link_val ); ?>" placeholder="https://storedomain.com" class="large-text">
+			<p class="description"><?php esc_html_e( 'Official store website. Used for the "Visit Store" button.', 'bigtricks' ); ?></p>
+		</td>
+	</tr>
+	<?php
+} );
+
+add_action( 'created_store', function ( int $term_id ) {
+	bigtricks_save_store_meta( $term_id );
+} );
+
+add_action( 'edited_store', function ( int $term_id ) {
+	bigtricks_save_store_meta( $term_id );
+} );
+
+function bigtricks_save_store_meta( int $term_id ): void {
+	if ( ! isset( $_POST['bt_store_meta_nonce_field'] ) ) return;
+	if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['bt_store_meta_nonce_field'] ) ), 'bt_store_meta_nonce' ) ) return;
+	if ( ! current_user_can( 'manage_categories' ) ) return;
+
+	if ( isset( $_POST['bt_store_thumb_image'] ) ) {
+		$val = sanitize_text_field( wp_unslash( $_POST['bt_store_thumb_image'] ) );
+		update_term_meta( $term_id, 'thumb_image', $val );
+	}
+	if ( isset( $_POST['bt_store_st_link'] ) ) {
+		$val = esc_url_raw( wp_unslash( $_POST['bt_store_st_link'] ) );
+		update_term_meta( $term_id, 'st_link', $val );
 	}
 }
 
@@ -463,10 +669,10 @@ class Bigtricks_Icon_Nav_Walker extends Walker_Nav_Menu {
 		$atts['aria-current'] = $item->current ? 'page' : '';
 
 		$is_active   = $item->current || $item->current_item_ancestor;
-		$active_cls  = $is_active ? ' text-indigo-600' : '';
+		$active_cls  = $is_active ? ' text-primary-600' : '';
 		$depth_cls   = $depth === 0
-			? 'flex items-center gap-1.5 hover:text-indigo-600 transition-colors font-bold text-slate-600 text-sm py-1' . $active_cls
-			: 'block px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 transition-colors';
+			? 'flex items-center gap-1.5 hover:text-primary-600 transition-colors font-bold text-slate-600 text-sm py-1' . $active_cls
+			: 'block px-4 py-2.5 text-sm font-bold text-slate-700 hover:bg-primary-50 hover:text-primary-600 transition-colors';
 
 		$atts['class'] = $depth_cls;
 

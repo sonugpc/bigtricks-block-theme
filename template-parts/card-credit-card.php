@@ -41,7 +41,7 @@ $rating        = (float) get_post_meta( $post_id, 'rating', true );
 $review_count  = (int) get_post_meta( $post_id, 'review_count', true );
 $is_featured   = (bool) get_post_meta( $post_id, 'featured', true );
 $is_trending   = (bool) get_post_meta( $post_id, 'trending', true );
-$card_gradient = sanitize_text_field( (string) get_post_meta( $post_id, 'gradient', true ) ) ?: 'from-indigo-500 to-purple-600';
+$card_gradient = sanitize_text_field( (string) get_post_meta( $post_id, 'gradient', true ) ) ?: 'from-primary-500 to-purple-600';
 
 // Thumbnail
 $thumb_url = bigtricks_get_thumbnail_url( $post_id, 'medium_large' );
@@ -181,7 +181,7 @@ $star_empty   = 5 - $star_filled - $star_half;
 					<?php elseif ( $reward_rate ) : ?>
 					<div class="flex flex-col bg-slate-50 rounded-xl px-3 py-2 border border-slate-100">
 						<span class="text-xs text-slate-500 font-medium leading-none mb-0.5">Rewards</span>
-						<span class="text-sm font-black text-indigo-600"><?php echo esc_html( $reward_rate ); ?></span>
+						<span class="text-sm font-black text-primary-600"><?php echo esc_html( $reward_rate ); ?></span>
 					</div>
 					<?php endif; ?>
 					<?php if ( $welcome_bonus ) : ?>

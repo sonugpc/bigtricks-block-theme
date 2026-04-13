@@ -41,7 +41,7 @@ class Bigtricks_Chat_Comment_Walker extends Walker_Comment {
 					<div class="flex flex-wrap items-center gap-2 mb-1.5">
 						<span class="font-black text-slate-900 text-sm"><?php echo $author; ?></span>
 						<?php if ( $comment->user_id && user_can( (int) $comment->user_id, 'edit_posts' ) ) : ?>
-						<span class="bg-indigo-100 text-indigo-700 text-xs font-black px-2 py-0.5 rounded-full">Team</span>
+						<span class="bg-primary-100 text-primary-700 text-xs font-black px-2 py-0.5 rounded-full">Team</span>
 						<?php endif; ?>
 						<time class="text-slate-400 text-xs ml-auto"><?php echo $date_str; ?></time>
 					</div>
@@ -60,12 +60,12 @@ class Bigtricks_Chat_Comment_Walker extends Walker_Comment {
 					<!-- Actions (reply, edit) -->
 					<div class="flex items-center gap-3 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
 						<?php if ( $reply_link ) : ?>
-						<span class="text-xs font-bold text-slate-400 hover:text-indigo-600 transition-colors cursor-pointer bt-reply-link">
+						<span class="text-xs font-bold text-slate-400 hover:text-primary-600 transition-colors cursor-pointer bt-reply-link">
 							<?php echo wp_kses_post( $reply_link ); ?>
 						</span>
 						<?php endif; ?>
 						<?php if ( current_user_can( 'edit_comment', $comment->comment_ID ) && $edit_link ) : ?>
-						<a href="<?php echo esc_url( $edit_link ); ?>" class="text-xs font-bold text-slate-400 hover:text-indigo-600 transition-colors">
+						<a href="<?php echo esc_url( $edit_link ); ?>" class="text-xs font-bold text-slate-400 hover:text-primary-600 transition-colors">
 							<?php esc_html_e( 'Edit', 'bigtricks' ); ?>
 						</a>
 						<?php endif; ?>
@@ -97,14 +97,14 @@ $comment_count = get_comments_number();
 	<!-- HEADER -->
 	<div class="flex items-center justify-between mb-6">
 		<h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
-			<div class="bg-indigo-100 p-1.5 rounded-lg">
-				<i data-lucide="message-circle" class="w-5 h-5 text-indigo-600"></i>
+			<div class="bg-primary-100 p-1.5 rounded-lg">
+				<i data-lucide="message-circle" class="w-5 h-5 text-primary-600"></i>
 			</div>
 			<?php
 			if ( $comment_count > 0 ) {
 				printf(
 					esc_html( _n( '%s Comment', '%s Comments', $comment_count, 'bigtricks' ) ),
-					'<span class="text-indigo-600">' . esc_html( number_format_i18n( $comment_count ) ) . '</span>'
+					'<span class="text-primary-600">' . esc_html( number_format_i18n( $comment_count ) ) . '</span>'
 				);
 			} else {
 				esc_html_e( 'Be the first to comment!', 'bigtricks' );
@@ -131,8 +131,8 @@ $comment_count = get_comments_number();
 		<?php
 		$prev = get_previous_comments_link( __( '← Older Comments', 'bigtricks' ) );
 		$next = get_next_comments_link( __( 'Newer Comments →', 'bigtricks' ) );
-		if ( $prev ) echo '<span class="text-indigo-600 hover:underline">' . wp_kses_post( $prev ) . '</span>';
-		if ( $next ) echo '<span class="text-indigo-600 hover:underline ml-auto">' . wp_kses_post( $next ) . '</span>';
+		if ( $prev ) echo '<span class="text-primary-600 hover:underline">' . wp_kses_post( $prev ) . '</span>';
+		if ( $next ) echo '<span class="text-primary-600 hover:underline ml-auto">' . wp_kses_post( $next ) . '</span>';
 		?>
 	</nav>
 	<?php endif; ?>
@@ -146,11 +146,11 @@ $comment_count = get_comments_number();
 	<div class="bt-comment-form-wrap bg-slate-50 rounded-2xl p-5 sm:p-6 border border-slate-200">
 		<div class="flex items-center gap-3 mb-4">
 			<!-- Avatar placeholder for form -->
-			<div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
+			<div class="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center shrink-0">
 				<?php if ( is_user_logged_in() ) :
 					echo get_avatar( get_current_user_id(), 40, '', '', [ 'class' => 'w-10 h-10 rounded-full object-cover' ] );
 				else : ?>
-				<i data-lucide="user" class="w-5 h-5 text-indigo-500"></i>
+				<i data-lucide="user" class="w-5 h-5 text-primary-500"></i>
 				<?php endif; ?>
 			</div>
 			<h3 class="font-black text-slate-900 text-base">
@@ -169,17 +169,17 @@ $comment_count = get_comments_number();
 			'title_reply_to'       => esc_html__( 'Reply to %s', 'bigtricks' ),
 			'cancel_reply_link'    => esc_html__( 'Cancel reply', 'bigtricks' ),
 			'label_submit'         => esc_html__( 'Post Comment', 'bigtricks' ),
-			'class_submit'         => 'bt-submit-btn bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3 px-7 rounded-xl transition-colors cursor-pointer border-0 text-sm flex items-center gap-2',
+			'class_submit'         => 'bt-submit-btn bg-primary-600 hover:bg-primary-700 text-white font-black py-3 px-7 rounded-xl transition-colors cursor-pointer border-0 text-sm flex items-center gap-2',
 			'submit_button'        => '<button name="%1$s" type="submit" id="%2$s" class="%3$s"><i data-lucide="send" class="w-4 h-4"></i> %4$s</button>',
 			'submit_field'         => '<div class="flex items-center justify-between gap-4 pt-1">%1$s %2$s</div>',
-			'comment_field'        => '<div class="relative"><textarea id="comment" name="comment" rows="3" placeholder="' . esc_attr__( 'Write a comment…', 'bigtricks' ) . '" class="bt-chat-textarea w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent resize-none transition-all"' . $aria_req . '></textarea></div>',
+			'comment_field'        => '<div class="relative"><textarea id="comment" name="comment" rows="3" placeholder="' . esc_attr__( 'Write a comment…', 'bigtricks' ) . '" class="bt-chat-textarea w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent resize-none transition-all"' . $aria_req . '></textarea></div>',
 			'fields'               => apply_filters( 'comment_form_default_fields', [
 				'author' => '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><div>'
 					. '<label for="author" class="block text-xs font-bold text-slate-500 mb-1">' . esc_html__( 'Name', 'bigtricks' ) . ' <span class="text-red-400">*</span></label>'
-					. '<input id="author" name="author" type="text" placeholder="' . esc_attr__( 'Your name', 'bigtricks' ) . '" value="' . esc_attr( $commenter['comment_author'] ) . '" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all"' . $aria_req . '></div>',
+					. '<input id="author" name="author" type="text" placeholder="' . esc_attr__( 'Your name', 'bigtricks' ) . '" value="' . esc_attr( $commenter['comment_author'] ) . '" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all"' . $aria_req . '></div>',
 				'email'  => '<div>'
 					. '<label for="email" class="block text-xs font-bold text-slate-500 mb-1">' . esc_html__( 'Email', 'bigtricks' ) . ' <span class="text-red-400">*</span></label>'
-					. '<input id="email" name="email" type="email" placeholder="' . esc_attr__( 'your@email.com', 'bigtricks' ) . '" value="' . esc_attr( $commenter['comment_author_email'] ) . '" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all"' . $aria_req . '><p class="text-xs text-slate-400 mt-1">' . esc_html__( 'Never shown publicly.', 'bigtricks' ) . '</p></div></div>',
+					. '<input id="email" name="email" type="email" placeholder="' . esc_attr__( 'your@email.com', 'bigtricks' ) . '" value="' . esc_attr( $commenter['comment_author_email'] ) . '" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all"' . $aria_req . '><p class="text-xs text-slate-400 mt-1">' . esc_html__( 'Never shown publicly.', 'bigtricks' ) . '</p></div></div>',
 				'url'    => '', // Remove website field
 			] ),
 			'logged_in_as'         => '',

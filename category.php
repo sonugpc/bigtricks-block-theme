@@ -52,7 +52,7 @@ $type_labels = [
 
 // Pastel colours for initials fallback
 $pastel_colors = [
-	'bg-indigo-100 text-indigo-600',
+	'bg-primary-100 text-primary-600',
 	'bg-pink-100 text-pink-600',
 	'bg-emerald-100 text-emerald-600',
 	'bg-orange-100 text-orange-600',
@@ -69,7 +69,7 @@ $color_class = $cat_id ? $pastel_colors[ $cat_id % count( $pastel_colors ) ] : $
 		<!-- ═══ CATEGORY HERO ═══ -->
 		<div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-6 overflow-hidden relative">
 			<!-- Decorative bg -->
-			<div class="absolute inset-0 bg-gradient-to-br from-indigo-50/60 via-white to-purple-50/30 pointer-events-none"></div>
+			<div class="absolute inset-0 bg-gradient-to-br from-primary-50/60 via-white to-purple-50/30 pointer-events-none"></div>
 
 			<!-- Category Icon / Image -->
 			<div class="relative z-10 shrink-0">
@@ -97,7 +97,7 @@ $color_class = $cat_id ? $pastel_colors[ $cat_id % count( $pastel_colors ) ] : $
 			<!-- Category Info -->
 			<div class="relative z-10 flex-1 min-w-0">
 				<div class="flex items-center gap-3 mb-2 flex-wrap">
-					<span class="bg-indigo-100 text-indigo-700 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider border border-indigo-200">
+					<span class="bg-primary-100 text-primary-700 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider border border-primary-200">
 						<?php esc_html_e( 'Category', 'bigtricks' ); ?>
 					</span>
 					<span class="text-slate-400 text-sm font-bold">
@@ -128,7 +128,7 @@ $color_class = $cat_id ? $pastel_colors[ $cat_id % count( $pastel_colors ) ] : $
 					?>
 				<a
 					href="<?php echo esc_url( $filter_url ); ?>"
-					class="whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-bold transition-all <?php echo $is_active ? 'bg-slate-900 text-white shadow-md' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'; ?>"
+					class="whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-bold transition-all <?php echo $is_active ? 'bg-primary-600 text-white shadow-md shadow-primary-200' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300'; ?>"
 					aria-current="<?php echo $is_active ? 'true' : 'false'; ?>"
 				>
 					<?php echo esc_html( $type_label ); ?>
@@ -138,7 +138,7 @@ $color_class = $cat_id ? $pastel_colors[ $cat_id % count( $pastel_colors ) ] : $
 
 			<!-- View Toggle -->
 			<div class="hidden sm:flex items-center bg-white border border-slate-200 rounded-xl p-1 shadow-sm shrink-0">
-				<button id="bt-view-list" class="bt-view-toggle p-1.5 rounded-lg transition-colors bg-indigo-50 text-indigo-600" data-view="list" aria-label="<?php esc_attr_e( 'List view', 'bigtricks' ); ?>" aria-pressed="true">
+				<button id="bt-view-list" class="bt-view-toggle p-1.5 rounded-lg transition-colors bg-primary-50 text-primary-600" data-view="list" aria-label="<?php esc_attr_e( 'List view', 'bigtricks' ); ?>" aria-pressed="true">
 					<i data-lucide="list" class="w-4 h-4"></i>
 				</button>
 				<button id="bt-view-grid" class="bt-view-toggle p-1.5 rounded-lg transition-colors text-slate-400 hover:text-slate-600" data-view="grid" aria-label="<?php esc_attr_e( 'Grid view', 'bigtricks' ); ?>" aria-pressed="false">
@@ -163,7 +163,7 @@ $color_class = $cat_id ? $pastel_colors[ $cat_id % count( $pastel_colors ) ] : $
 					<i data-lucide="search" class="w-8 h-8 text-slate-400"></i>
 				</div>
 				<h3 class="text-xl font-bold text-slate-900 mb-2"><?php esc_html_e( 'No posts found', 'bigtricks' ); ?></h3>
-				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="mt-4 inline-block bg-indigo-50 text-indigo-700 font-bold px-6 py-2 rounded-full hover:bg-indigo-100 transition-colors">
+				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="mt-4 inline-block bg-primary-50 text-primary-700 font-bold px-6 py-2 rounded-full hover:bg-primary-100 transition-colors">
 					<?php esc_html_e( 'View All', 'bigtricks' ); ?>
 				</a>
 			</div>
@@ -192,7 +192,7 @@ $color_class = $cat_id ? $pastel_colors[ $cat_id % count( $pastel_colors ) ] : $
 		<div class="mt-8 flex justify-center" id="bt-load-more-wrap">
 			<button
 				id="bt-load-more"
-				class="flex items-center gap-3 bg-white border-2 border-slate-200 hover:border-indigo-400 text-slate-700 hover:text-indigo-600 font-black px-8 py-4 rounded-2xl shadow-sm hover:shadow-md transition-all active:scale-95"
+				class="flex items-center gap-3 bg-white border-2 border-slate-200 hover:border-primary-400 text-slate-700 hover:text-primary-600 font-black px-8 py-4 rounded-2xl shadow-sm hover:shadow-md transition-all active:scale-95"
 				data-page="1"
 				data-max-pages="<?php echo esc_attr( $max_pages ); ?>"
 				data-cat="<?php echo esc_attr( $cat_id ); ?>"

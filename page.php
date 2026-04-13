@@ -23,7 +23,7 @@ get_header();
 				<h1 class="text-3xl md:text-4xl font-black text-slate-900 mb-8">
 					<?php the_title(); ?>
 				</h1>
-				<div class="prose prose-lg prose-slate max-w-none prose-headings:font-black prose-a:text-indigo-600 hover:prose-a:text-indigo-800 break-words">
+				<div class="prose prose-lg prose-slate max-w-none prose-headings:font-black prose-a:text-primary-600 hover:prose-a:text-primary-800 break-words">
 					<?php the_content(); ?>
 				</div>
 			</div>
