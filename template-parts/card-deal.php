@@ -28,15 +28,21 @@ $offer_url   = esc_url( (string) get_post_meta( $post_id, '_btdeals_offer_url', 
 $sale_price  = sanitize_text_field( (string) get_post_meta( $post_id, '_btdeals_offer_sale_price', true ) );
 $old_price   = sanitize_text_field( (string) get_post_meta( $post_id, '_btdeals_offer_old_price', true ) );
 $coupon      = sanitize_text_field( (string) get_post_meta( $post_id, '_btdeals_coupon_code', true ) );
-$brand_logo  = esc_url( (string) get_post_meta( $post_id, '_btdeals_brand_logo_url', true ) );
 $short_desc  = wp_kses_post( (string) get_post_meta( $post_id, '_btdeals_short_description', true ) );
 $btn_text    = sanitize_text_field( (string) get_post_meta( $post_id, '_btdeals_button_text', true ) ) ?: 'Get Deal';
 $is_expired  = (bool) get_post_meta( $post_id, '_btdeals_is_expired', true );
 
-// Thumbnail: prefer featured image, fallback to brand logo, then placeholder
-$thumb_url = bigtricks_get_thumbnail_url( $post_id, 'medium_large' );
-if ( ! has_post_thumbnail( $post_id ) && $brand_logo ) {
-	$thumb_url = $brand_logo;
+// Thumbnail priority: featured image > product_thumbnail_url > offer_thumbnail_url
+$offer_thumb   = sanitize_text_field( (string) get_post_meta( $post_id, '_btdeals_offer_thumbnail_url', true ) );
+$product_thumb = sanitize_text_field( (string) get_post_meta( $post_id, '_btdeals_product_thumbnail_url', true ) );
+if ( has_post_thumbnail( $post_id ) ) {
+	$thumb_url = esc_url( (string) get_the_post_thumbnail_url( $post_id, 'medium_large' ) );
+} elseif ( $product_thumb ) {
+	$thumb_url = esc_url( $product_thumb );
+} elseif ( $offer_thumb ) {
+	$thumb_url = esc_url( $offer_thumb );
+} else {
+	$thumb_url = esc_url( BIGTRICKS_URI . '/assets/images/placeholder.svg' );
 }
 
 // Store taxonomy
@@ -63,7 +69,7 @@ if ( $sale_price && $old_price && is_numeric( str_replace( ',', '', $old_price )
 $dest_url = $offer_url ?: $permalink;
 ?>
 <article
-	class="bt-deal-card bg-white rounded-3xl shadow-sm border border-slate-200/60 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full w-full<?php echo $is_expired ? ' opacity-70' : ''; ?>"
+	class="bt-deal-card bg-white rounded-3xl shadow-sm border border-slate-200/60 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300  group flex flex-col h-full w-full<?php echo $is_expired ? ' opacity-70' : ''; ?>"
 	data-post-id="<?php echo esc_attr( $post_id ); ?>"
 	data-post-type="deal"
 >
@@ -73,18 +79,19 @@ $dest_url = $offer_url ?: $permalink;
 		<a
 			href="<?php echo $is_expired ? $permalink : $dest_url; ?>"
 			<?php echo ! $is_expired && $offer_url ? 'target="_blank" rel="noopener noreferrer nofollow"' : ''; ?>
-			class="bt-card-thumb sm:w-[220px] shrink-0 bg-slate-50 flex items-center justify-center sm:border-r sm:border-b-0 border-b border-slate-100 relative overflow-hidden"
+			class="bt-card-thumb h-[200px] sm:h-auto sm:w-[220px] shrink-0 bg-slate-50 sm:border-r sm:border-b-0 border-b border-slate-100 relative overflow-hidden"
 			tabindex="-1"
 			aria-hidden="true"
 		>
 			<img
 				src="<?php echo esc_url( $thumb_url ); ?>"
 				alt="<?php the_title_attribute(); ?>"
-				class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+				class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110 max-h-64  sm:h-[310px]"
+				onerror="this.onerror=null;this.src='<?php echo esc_url( BIGTRICKS_URI . '/assets/images/placeholder.svg' ); ?>';"
 				loading="lazy"
 				decoding="async"
 				width="220"
-				height="180"
+				height="200"
 			>
 			<!-- Badges row -->
 			<div class="absolute top-3 left-3 flex flex-col gap-1.5">

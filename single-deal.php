@@ -36,14 +36,14 @@ get_header();
 		$short_description      = get_post_meta( $post_id, '_btdeals_short_description', true );
 		$store_name_meta        = get_post_meta( $post_id, '_btdeals_store', true );
 		
-		// Thumbnail priority: offer_thumbnail_url > product_thumbnail_url > featured image
+		// Thumbnail priority: featured image > product_thumbnail_url > offer_thumbnail_url
 		$product_image_url = '';
-		if ( $offer_thumbnail_url ) {
-			$product_image_url = $offer_thumbnail_url;
+		if ( has_post_thumbnail() ) {
+			$product_image_url = get_the_post_thumbnail_url( $post_id, 'large' );
 		} elseif ( $product_thumbnail_url ) {
 			$product_image_url = $product_thumbnail_url;
-		} elseif ( has_post_thumbnail() ) {
-			$product_image_url = get_the_post_thumbnail_url( $post_id, 'large' );
+		} elseif ( $offer_thumbnail_url ) {
+			$product_image_url = $offer_thumbnail_url;
 		}
 		
 		// Calculate savings
@@ -128,8 +128,7 @@ get_header();
 				<div class="flex justify-center">
 					<?php if ( $product_image_url ) : ?>
 						<div class="relative w-full max-w-[200px] sm:max-w-[280px] h-[200px] sm:h-[280px] flex items-center justify-center bg-white rounded-2xl p-4">
-							<img src="<?php echo esc_url( $product_image_url ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?>" class="max-w-full max-h-full object-contain">
-							
+						<img src="<?php echo esc_url( $product_image_url ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?>" class="max-w-full max-h-full object-contain" loading="eager" fetchpriority="high" decoding="async">
 							<?php if ( $verify_label ) : ?>
 							<div class="absolute top-3 left-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-lg text-sm font-bold shadow-lg">
 								<i data-lucide="shield-check" class="w-4 h-4"></i>
@@ -209,12 +208,12 @@ get_header();
 								<?php if ( $store_logo ) : ?>
 								<?php if ( ! empty( $stores ) && ! is_wp_error( $stores ) ) : ?>
 									<a href="<?php echo esc_url( get_term_link( $stores[0] ) ); ?>" class="flex items-center gap-2 bg-white dark:bg-slate-700 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-600 hover:border-primary-400 transition-colors">
-										<img src="<?php echo esc_url( $store_logo ); ?>" alt="<?php echo esc_attr( $store_name ); ?>" class="w-5 h-5 object-contain">
+										<img src="<?php echo esc_url( $store_logo ); ?>" alt="<?php echo esc_attr( $store_name ); ?>" class="w-6 h-6 object-contain rounded-full border border-slate-100">
 										<span class="text-xs font-bold text-slate-700 dark:text-slate-200"><?php echo esc_html( $store_name ); ?></span>
 									</a>
 								<?php else : ?>
 									<div class="flex items-center gap-2 bg-white dark:bg-slate-700 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-600">
-										<img src="<?php echo esc_url( $store_logo ); ?>" alt="<?php echo esc_attr( $store_name ); ?>" class="w-5 h-5 object-contain">
+										<img src="<?php echo esc_url( $store_logo ); ?>" alt="<?php echo esc_attr( $store_name ); ?>" class="w-6 h-6 object-contain rounded-full border border-slate-100">
 										<span class="text-xs font-bold text-slate-700 dark:text-slate-200"><?php echo esc_html( $store_name ); ?></span>
 									</div>
 								<?php endif; ?>
@@ -503,14 +502,14 @@ get_header();
 					$rel_discount_tag = get_post_meta( $rel_post_id, '_btdeals_discount_tag', true );
 					$rel_is_expired = (bool) get_post_meta( $rel_post_id, '_btdeals_is_expired', true );
 					
-					// Thumbnail priority: offer_thumbnail_url > product_thumbnail_url > featured_image
-					$rel_thumb = '';
-					if ( $rel_offer_thumbnail_url ) {
-						$rel_thumb = $rel_offer_thumbnail_url;
-					} elseif ( $rel_product_thumbnail_url ) {
-						$rel_thumb = $rel_product_thumbnail_url;
-					} elseif ( has_post_thumbnail() ) {
-						$rel_thumb = get_the_post_thumbnail_url( $rel_post_id, 'medium' );
+// Thumbnail priority: featured_image > product_thumbnail_url > offer_thumbnail_url
+				$rel_thumb = '';
+				if ( has_post_thumbnail() ) {
+					$rel_thumb = get_the_post_thumbnail_url( $rel_post_id, 'medium' );
+				} elseif ( $rel_product_thumbnail_url ) {
+					$rel_thumb = $rel_product_thumbnail_url;
+				} elseif ( $rel_offer_thumbnail_url ) {
+					$rel_thumb = $rel_offer_thumbnail_url;
 					}
 					
 					// Calculate discount if not in meta

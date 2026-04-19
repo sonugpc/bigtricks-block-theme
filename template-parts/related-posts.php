@@ -53,15 +53,15 @@ if ( $related_query->have_posts() ) : ?>
 	<div class="grid sm:grid-cols-3 gap-4">
 		<?php while ( $related_query->have_posts() ) :
 			$related_query->the_post();
-			$rel_thumb = has_post_thumbnail() ? get_the_post_thumbnail_url( get_the_ID(), 'medium' ) : '';
+			$rel_thumb = has_post_thumbnail() ? get_the_post_thumbnail_url( get_the_ID(), 'medium_large' ) : '';
 			if ( empty( $rel_thumb ) && function_exists( 'bigtricks_get_thumbnail_url' ) ) {
-				$rel_thumb = bigtricks_get_thumbnail_url( get_the_ID(), 'medium' );
+				$rel_thumb = bigtricks_get_thumbnail_url( get_the_ID(), 'medium_large' );
 			}
 			?>
 		<a href="<?php the_permalink(); ?>" class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden hover:shadow-md hover:-translate-y-1 transition-all duration-300 group block">
 			<?php if ( $rel_thumb ) : ?>
-			<div class="h-32 bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-4 border-b border-slate-100 dark:border-slate-700">
-				<img src="<?php echo esc_url( $rel_thumb ); ?>" alt="<?php the_title_attribute(); ?>" class="max-h-full max-w-full object-contain mix-blend-multiply dark:mix-blend-normal group-hover:scale-105 transition-transform" loading="lazy" decoding="async">
+			<div class="h-40 bg-slate-100 dark:bg-slate-900 overflow-hidden">
+				<img src="<?php echo esc_url( $rel_thumb ); ?>" alt="<?php the_title_attribute(); ?>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" decoding="async">
 			</div>
 			<?php endif; ?>
 			<div class="p-4">

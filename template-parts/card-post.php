@@ -22,7 +22,7 @@ $cat_link  = ! empty( $cat_obj ) ? esc_url( get_category_link( $cat_obj[0]->term
 $comments  = (int) get_comments_number();
 ?>
 <article
-	class="bt-deal-card bg-white rounded-3xl shadow-sm border border-slate-200/60 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full w-full"
+	class="bt-deal-card bg-white rounded-3xl shadow-sm border border-slate-200/60 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col w-full "
 	data-post-id="<?php echo esc_attr( $post_id ); ?>"
 	data-post-type="post"
 >
@@ -31,18 +31,19 @@ $comments  = (int) get_comments_number();
 		<!-- Thumbnail -->
 		<a
 			href="<?php echo $permalink; ?>"
-			class="bt-card-thumb sm:w-[220px] shrink-0 bg-slate-50 flex items-center justify-center sm:border-r sm:border-b-0 border-b border-slate-100 relative overflow-hidden"
+			class="bt-card-thumb h-[220px] sm:h-full sm:w-[220px] shrink-0 bg-slate-50 sm:border-r sm:border-b-0 border-b border-slate-100 relative overflow-hidden"
 			tabindex="-1"
 			aria-hidden="true"
 		>
 			<img
 				src="<?php echo esc_url( $thumb_url ); ?>"
 				alt="<?php the_title_attribute(); ?>"
-				class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+				class="w-full h-full object-cover max-h-64  sm:h-[310px] transition-transform duration-500 group-hover:scale-110"
+				onerror="this.onerror=null;this.src='<?php echo esc_url( BIGTRICKS_URI . '/assets/images/placeholder.svg' ); ?>';"
 				loading="lazy"
 				decoding="async"
 				width="220"
-				height="180"
+				height="220"
 			>
 			<!-- Type Badge -->
 			<div class="absolute top-3 left-3">

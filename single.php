@@ -57,6 +57,7 @@ get_header();
 					alt="<?php the_title_attribute(); ?>"
 					class="max-h-full max-w-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
 					loading="eager"
+					fetchpriority="high"
 					decoding="async"
 					itemprop="image"
 				>

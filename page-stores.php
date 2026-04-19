@@ -213,40 +213,51 @@ $show_sidebar = apply_filters( 'bigtricks_show_sidebar', true );
 					?>
 				<a 
 					href="<?php echo esc_url( $store_url ); ?>" 
-					class="group relative bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden hover:-translate-y-1 flex flex-col"
+					class="group relative bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col items-center p-5 text-center"
 					data-store-name="<?php echo esc_attr( strtolower( $store_name ) ); ?>"
 				>
 					<!-- Featured Badge -->
 					<?php if ( $is_featured ) : ?>
 					<div class="absolute top-2 right-2 z-10 flex items-center gap-1 px-2 py-1 bg-amber-50 border border-amber-200 rounded-full shadow-sm">
-						<i data-lucide="star" class="w-3 h-3 text-amber-500" fill="currentColor"></i>
+						<i data-lucide="star" class="w-3 h-3 text-amber-500 fill-current"></i>
 						<span class="text-xs font-black text-amber-700 uppercase tracking-wide"><?php esc_html_e( 'Featured', 'bigtricks' ); ?></span>
 					</div>
 					<?php endif; ?>
 
-					<!-- Store Logo - Full Height Edge to Edge -->
-					<div class="aspect-square w-full bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center overflow-hidden flex-1">
+					<!-- Store Logo Circle -->
+					<div class="w-20 h-20 rounded-full border-2 border-slate-100 bg-white overflow-hidden mb-4 shrink-0 group-hover:border-primary-200 transition-colors shadow-sm">
 						<?php if ( $logo_url ) : ?>
 						<img
 							src="<?php echo esc_url( $logo_url ); ?>"
 							alt="<?php echo esc_attr( $store_name ); ?>"
-							class="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-300"
+							class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
 							loading="lazy"
 							decoding="async"
+							width="80"
+							height="80"
 						>
 						<?php else : ?>
-						<div class="w-full h-full flex items-center justify-center text-3xl sm:text-4xl font-black <?php echo esc_attr( $logo_bg_class ); ?>">
+						<div class="w-full h-full flex items-center justify-center text-2xl font-black <?php echo esc_attr( $logo_bg_class ); ?> rounded-full">
 							<?php echo esc_html( mb_strtoupper( mb_substr( $store_name, 0, 2 ) ) ); ?>
 						</div>
 						<?php endif; ?>
 					</div>
 
 					<!-- Store Name -->
-					<div class="px-4 py-3 bg-white">
-						<h3 class="text-sm sm:text-base font-black text-slate-900 line-clamp-2 group-hover:text-primary-600 transition-colors">
-							<?php echo esc_html( $store_name ); ?>
-						</h3>
-					</div>
+					<h3 class="text-sm sm:text-base font-black text-slate-900 line-clamp-1 group-hover:text-primary-600 transition-colors mb-1">
+						<?php echo esc_html( $store_name ); ?>
+					</h3>
+
+					<!-- Post Count -->
+					<p class="text-xs text-slate-600 font-semibold">
+						<?php
+						printf(
+							/* translators: %d: number of posts */
+							esc_html( _n( '%d Deal', '%d Deals', (int) $store->count, 'bigtricks' ) ),
+							(int) $store->count
+						);
+						?>
+					</p>
 
 				</a><!-- /.store-card -->
 				<?php

@@ -1,7 +1,7 @@
 <!-- ──────────────────── POPULAR LINKS SECTION ──────────────────── -->
-<section class="bg-slate-900 text-slate-400 py-12 w-full border-t border-slate-800">
+<section class="bg-slate-900 text-slate-300 py-12 w-full border-t border-slate-800">
 	<div class="max-w-[1400px] mx-auto px-4">
-		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 footer-popular-links">
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 footer-popular-links [&_a]:text-slate-300 [&_a]:hover:text-white [&_a]:transition-colors">
 			
 			<!-- Top Refer & Earn Articles -->
 			<div>
@@ -111,7 +111,7 @@
 </section>
 
 <!-- ──────────────────── FOOTER ──────────────────── -->
-<footer class="bg-slate-950 text-slate-400 pt-16 pb-8 border-t-4 border-primary-600 w-full mt-auto" role="contentinfo">
+<footer class="pt-16 pb-8 border-t-4 border-primary-600 w-full mt-auto" role="contentinfo" style="background-color:var(--bt-footer-bg,#020617);color:var(--bt-footer-text,#cbd5e1)">
 	<div class="max-w-[1400px] mx-auto px-4">
 
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
@@ -176,11 +176,11 @@
 			<div>
 				<h2 class="text-white font-bold mb-4 uppercase tracking-wider text-sm"><?php esc_html_e( 'Quick Links', 'bigtricks' ); ?></h2>
 				<ul class="space-y-3 font-medium">
-					<li><a href="<?php echo esc_url( home_url( '/loot-deals/' ) ); ?>" class="hover:text-primary-400 transition-colors"><?php esc_html_e( 'Loot Deals', 'bigtricks' ); ?></a></li>
-					<li><a href="<?php echo esc_url( home_url( '/price-history/' ) ); ?>" class="hover:text-primary-400 transition-colors"><?php esc_html_e( 'Price History', 'bigtricks' ); ?></a></li>
-					<li><a href="<?php echo esc_url( home_url( '/telegram-updates/' ) ); ?>" class="hover:text-primary-400 transition-colors"><?php esc_html_e( 'Live Deals', 'bigtricks' ); ?></a></li>
-					<li><a href="<?php echo esc_url( home_url( '/category/freebies/' ) ); ?>" class="hover:text-primary-400 transition-colors"><?php esc_html_e( 'Freebies', 'bigtricks' ); ?></a></li>
-					<li><a href="<?php echo esc_url( home_url( '/category/free-recharge-tricks/' ) ); ?>" class="hover:text-primary-400 transition-colors"><?php esc_html_e( 'Free Recharge Tricks', 'bigtricks' ); ?></a></li>
+				<li><a href="<?php echo esc_url( home_url( '/loot-deals/' ) ); ?>" class="hover:text-white transition-colors" style="color:var(--bt-footer-link,#cbd5e1)"><?php esc_html_e( 'Loot Deals', 'bigtricks' ); ?></a></li>
+				<li><a href="<?php echo esc_url( home_url( '/price-history/' ) ); ?>" class="hover:text-white transition-colors" style="color:var(--bt-footer-link,#cbd5e1)"><?php esc_html_e( 'Price History', 'bigtricks' ); ?></a></li>
+				<li><a href="<?php echo esc_url( home_url( '/telegram-updates/' ) ); ?>" class="hover:text-white transition-colors" style="color:var(--bt-footer-link,#cbd5e1)"><?php esc_html_e( 'Live Deals', 'bigtricks' ); ?></a></li>
+				<li><a href="<?php echo esc_url( home_url( '/category/freebies/' ) ); ?>" class="hover:text-white transition-colors" style="color:var(--bt-footer-link,#cbd5e1)"><?php esc_html_e( 'Freebies', 'bigtricks' ); ?></a></li>
+				<li><a href="<?php echo esc_url( home_url( '/category/free-recharge-tricks/' ) ); ?>" class="hover:text-white transition-colors" style="color:var(--bt-footer-link,#cbd5e1)"><?php esc_html_e( 'Free Recharge Tricks', 'bigtricks' ); ?></a></li>
 				</ul>
 			</div>
 
@@ -188,11 +188,11 @@
 			<div>
 				<h2 class="text-white font-bold mb-4 uppercase tracking-wider text-sm"><?php esc_html_e( 'Important Links', 'bigtricks' ); ?></h2>
 				<ul class="space-y-3 font-medium">
-					<li><a href="<?php echo esc_url( home_url( '/submit-post/' ) ); ?>" class="hover:text-primary-400 transition-colors"><?php esc_html_e( 'Submit a Post', 'bigtricks' ); ?></a></li>
-					<li><a href="https://www.bigtricks.in/best-loot-deals-telegram-channel/" class="hover:text-primary-400 transition-colors"><?php esc_html_e( 'Telegram Channel', 'bigtricks' ); ?></a></li>
-					<li><a href="https://www.bigtricks.in/bigtricks-push-notificationssubscribe-get-latest-loot-updates-get-chance-win-amazon-vouchers/" class="hover:text-primary-400 transition-colors"><?php esc_html_e( 'Push Notifications', 'bigtricks' ); ?></a></li>
-					<li><a href="https://www.bigtricks.in/affiliate-disclosure/" class="hover:text-primary-400 transition-colors"><?php esc_html_e( 'Affiliate Disclosure', 'bigtricks' ); ?></a></li>
-					<li><a href="<?php echo esc_url( home_url( '/sitemap_index.xml' ) ); ?>" class="hover:text-primary-400 transition-colors"><?php esc_html_e( 'Sitemap', 'bigtricks' ); ?></a></li>
+					<li><a href="<?php echo esc_url( home_url( '/submit-post/' ) ); ?>" class="hover:text-white transition-colors" style="color:var(--bt-footer-link,#cbd5e1)"><?php esc_html_e( 'Submit a Post', 'bigtricks' ); ?></a></li>
+					<li><a href="https://www.bigtricks.in/best-loot-deals-telegram-channel/" class="hover:text-white transition-colors" style="color:var(--bt-footer-link,#cbd5e1)"><?php esc_html_e( 'Telegram Channel', 'bigtricks' ); ?></a></li>
+					<li><a href="https://www.bigtricks.in/bigtricks-push-notificationssubscribe-get-latest-loot-updates-get-chance-win-amazon-vouchers/" class="hover:text-white transition-colors" style="color:var(--bt-footer-link,#cbd5e1)"><?php esc_html_e( 'Push Notifications', 'bigtricks' ); ?></a></li>
+					<li><a href="https://www.bigtricks.in/affiliate-disclosure/" class="hover:text-white transition-colors" style="color:var(--bt-footer-link,#cbd5e1)"><?php esc_html_e( 'Affiliate Disclosure', 'bigtricks' ); ?></a></li>
+					<li><a href="<?php echo esc_url( home_url( '/sitemap_index.xml' ) ); ?>" class="hover:text-white transition-colors" style="color:var(--bt-footer-link,#cbd5e1)"><?php esc_html_e( 'Sitemap', 'bigtricks' ); ?></a></li>
 				</ul>
 			</div>
 
@@ -200,12 +200,12 @@
 			<div>
 				<h2 class="text-white font-bold mb-4 uppercase tracking-wider text-sm"><?php esc_html_e( 'Company', 'bigtricks' ); ?></h2>
 				<ul class="space-y-3 font-medium">
-					<li><a href="https://www.bigtricks.in/about/" class="hover:text-primary-400 transition-colors"><?php esc_html_e( 'About Us', 'bigtricks' ); ?></a></li>
-					<li><a href="https://www.bigtricks.in/contact/" class="hover:text-primary-400 transition-colors"><?php esc_html_e( 'Contact Us', 'bigtricks' ); ?></a></li>
-					<li><a href="https://www.bigtricks.in/advertise-us-bigtricks/" class="hover:text-primary-400 transition-colors"><?php esc_html_e( 'Advertise With Us', 'bigtricks' ); ?></a></li>
-					<li><a href="https://www.bigtricks.in/terms/" class="hover:text-primary-400 transition-colors"><?php esc_html_e( 'Terms Of Use', 'bigtricks' ); ?></a></li>
-					<li><a href="https://www.bigtricks.in/privacy" class="hover:text-primary-400 transition-colors"><?php esc_html_e( 'Privacy', 'bigtricks' ); ?></a></li>
-					<li><a href="https://www.bigtricks.in/disclaimer/" class="hover:text-primary-400 transition-colors"><?php esc_html_e( 'Disclaimer', 'bigtricks' ); ?></a></li>
+					<li><a href="https://www.bigtricks.in/about/" class="hover:text-white transition-colors" style="color:var(--bt-footer-link,#cbd5e1)"><?php esc_html_e( 'About Us', 'bigtricks' ); ?></a></li>
+					<li><a href="https://www.bigtricks.in/contact/" class="hover:text-white transition-colors" style="color:var(--bt-footer-link,#cbd5e1)"><?php esc_html_e( 'Contact Us', 'bigtricks' ); ?></a></li>
+					<li><a href="https://www.bigtricks.in/advertise-us-bigtricks/" class="hover:text-white transition-colors" style="color:var(--bt-footer-link,#cbd5e1)"><?php esc_html_e( 'Advertise With Us', 'bigtricks' ); ?></a></li>
+					<li><a href="https://www.bigtricks.in/terms/" class="hover:text-white transition-colors" style="color:var(--bt-footer-link,#cbd5e1)"><?php esc_html_e( 'Terms Of Use', 'bigtricks' ); ?></a></li>
+					<li><a href="https://www.bigtricks.in/privacy" class="hover:text-white transition-colors" style="color:var(--bt-footer-link,#cbd5e1)"><?php esc_html_e( 'Privacy', 'bigtricks' ); ?></a></li>
+					<li><a href="https://www.bigtricks.in/disclaimer/" class="hover:text-white transition-colors" style="color:var(--bt-footer-link,#cbd5e1)"><?php esc_html_e( 'Disclaimer', 'bigtricks' ); ?></a></li>
 				</ul>
 			</div>
 		</div>

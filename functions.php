@@ -160,6 +160,18 @@ add_action( 'wp_head', function () {
         echo '<script>!function(){var s=localStorage.getItem("bt_dark_mode");if(s==="1"||(s===null&&window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark")}}</script>' . "\n";
 }, 5 );
 
+// Output footer color CSS custom properties as tiny inline style — no extra HTTP request.
+add_action( 'wp_head', function () {
+	$bg   = bigtricks_option( 'bt_footer_bg_color', '#020617' );
+	$text = bigtricks_option( 'bt_footer_text_color', '#cbd5e1' );
+	$link = bigtricks_option( 'bt_footer_link_color', '#cbd5e1' );
+	// Validate hex; fall back to defaults if corrupted.
+	if ( ! preg_match( '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/', $bg ) )   $bg   = '#020617';
+	if ( ! preg_match( '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/', $text ) ) $text = '#cbd5e1';
+	if ( ! preg_match( '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/', $link ) ) $link = '#cbd5e1';
+	echo '<style>:root{--bt-footer-bg:' . esc_attr( $bg ) . ';--bt-footer-text:' . esc_attr( $text ) . ';--bt-footer-link:' . esc_attr( $link ) . '}</style>' . "\n";
+}, 10 );
+
 // Preconnect to Google Fonts domains — eliminates DNS lookup latency from critical path.
 // Priority 1 ensures these appear before any stylesheet <link> tags.
 add_action( 'wp_head', function () {
@@ -1309,6 +1321,29 @@ add_action( 'admin_init', function () {
 		);
 	}
 
+	// ── Section: Footer Colors ─────────────────────────────────
+	add_settings_section( 'bt_footer', __( 'Footer Colors', 'bigtricks' ), function () {
+		echo '<p class="description">' . esc_html__( 'Customize footer background and text colors. Ensure sufficient contrast (4.5:1 ratio) for accessibility.', 'bigtricks' ) . '</p>';
+	}, 'bigtricks_theme' );
+
+	$color_fields = [
+		'bt_footer_bg_color'   => [ __( 'Footer Background Color', 'bigtricks' ), '#020617' ],
+		'bt_footer_text_color' => [ __( 'Footer Text Color', 'bigtricks' ), '#cbd5e1' ],
+		'bt_footer_link_color' => [ __( 'Footer Link Color', 'bigtricks' ), '#cbd5e1' ],
+	];
+	foreach ( $color_fields as $key => [ $label, $default ] ) {
+		add_settings_field( $key, $label,
+			function () use ( $key, $default ) {
+				$val = bigtricks_option( $key, $default );
+				?>
+				<input type="color" name="bigtricks_theme_options[<?php echo esc_attr( $key ); ?>]" value="<?php echo esc_attr( $val ); ?>" class="regular-text" style="width:60px;height:36px;padding:2px;cursor:pointer;">
+				<code style="margin-left:8px;"><?php echo esc_html( $val ); ?></code>
+				<?php
+			},
+			'bigtricks_theme', 'bt_footer'
+		);
+	}
+
 } );
 
 /**
@@ -1330,6 +1365,13 @@ function bigtricks_sanitize_theme_options( $input ): array {
 	$toggle_keys = [ 'bt_show_featured_image', 'bt_show_social_share', 'bt_show_comments', 'bt_show_breadcrumbs' ];
 	foreach ( $toggle_keys as $key ) {
 		$clean[ $key ] = isset( $input[ $key ] ) && $input[ $key ] === '1' ? '1' : '0';
+	}
+	// Hex color fields
+	$color_keys = [ 'bt_footer_bg_color', 'bt_footer_text_color', 'bt_footer_link_color' ];
+	foreach ( $color_keys as $key ) {
+		if ( isset( $input[ $key ] ) && preg_match( '/^#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?$/', $input[ $key ] ) ) {
+			$clean[ $key ] = strtolower( $input[ $key ] );
+		}
 	}
 	return $clean;
 }
