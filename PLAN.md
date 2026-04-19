@@ -9,17 +9,17 @@
 
 ## 1. Tech Stack
 
-| Layer | Choice |
-|---|---|
-| Framework | Classic PHP theme (not block/FSE) |
-| CSS utility | Tailwind CSS — Play CDN (`cdn.tailwindcss.com`) |
-| Dark mode | Tailwind `darkMode: 'class'` |
-| Icons | Lucide Icons — unpkg CDN (`lucide.min.js`) |
-| Fonts | Google Fonts: **Plus Jakarta Sans** (headings) + **Inter** (body) |
-| JavaScript | Vanilla JS — `assets/js/main.js` |
-| Custom CSS | `assets/css/bigtricks.css` |
-| Editor styles | `assets/css/editor-style.css` (Gutenberg WYSIWYG) |
-| Carousel data | `carousel-config.json` (static JSON, no DB queries) |
+| Layer         | Choice                                                            |
+| ------------- | ----------------------------------------------------------------- |
+| Framework     | Classic PHP theme (not block/FSE)                                 |
+| CSS utility   | Tailwind CSS — Play CDN (`cdn.tailwindcss.com`)                   |
+| Dark mode     | Tailwind `darkMode: 'class'`                                      |
+| Icons         | Lucide Icons — unpkg CDN (`lucide.min.js`)                        |
+| Fonts         | Google Fonts: **Plus Jakarta Sans** (headings) + **Inter** (body) |
+| JavaScript    | Vanilla JS — `assets/js/main.js`                                  |
+| Custom CSS    | `assets/css/bigtricks.css`                                        |
+| Editor styles | `assets/css/editor-style.css` (Gutenberg WYSIWYG)                 |
+| Carousel data | `carousel-config.json` (static JSON, no DB queries)               |
 
 ---
 
@@ -27,40 +27,40 @@
 
 ### PHP Templates (12 files)
 
-| File | Purpose |
-|---|---|
-| `functions.php` | All theme logic: CPT, meta, AJAX, walkers, helpers |
-| `header.php` | HTML head, sticky header, nav, dark mode, bell drawer |
-| `footer.php` | Footer columns, copyright, back-to-top |
-| `front-page.php` | Homepage: JSON carousel hero + AJAX load-more feed |
-| `single.php` | Single post: deal details, social share, comments |
-| `sidebar.php` | Right sidebar: Download App widget + WP widget area |
-| `category.php` | Category archive: description, tag-image, AJAX load-more |
-| `comments.php` | Chat-style comment template (walker at top of file) |
-| `archive-store.php` | Store CPT archive |
-| `page.php` | Generic page template |
-| `page-login.php` | Login page template |
-| `index.php` | Fallback index |
-| `search.php` | Search results |
-| `404.php` | 404 error page |
+| File                | Purpose                                                  |
+| ------------------- | -------------------------------------------------------- |
+| `functions.php`     | All theme logic: CPT, meta, AJAX, walkers, helpers       |
+| `header.php`        | HTML head, sticky header, nav, dark mode, bell drawer    |
+| `footer.php`        | Footer columns, copyright, back-to-top                   |
+| `front-page.php`    | Homepage: JSON carousel hero + AJAX load-more feed       |
+| `single.php`        | Single post: deal details, social share, comments        |
+| `sidebar.php`       | Right sidebar: Download App widget + WP widget area      |
+| `category.php`      | Category archive: description, tag-image, AJAX load-more |
+| `comments.php`      | Chat-style comment template (walker at top of file)      |
+| `archive-store.php` | Store CPT archive                                        |
+| `page.php`          | Generic page template                                    |
+| `page-login.php`    | Login page template                                      |
+| `index.php`         | Fallback index                                           |
+| `search.php`        | Search results                                           |
+| `404.php`           | 404 error page                                           |
 
 ### Assets
 
-| Path | Purpose |
-|---|---|
-| `assets/css/bigtricks.css` | Theme CSS: dark mode, chat comments, bell drawer, social share, download app, category page |
-| `assets/css/editor-style.css` | Gutenberg block editor styles (mirrors front-end typography) |
-| `assets/js/main.js` | All frontend JS: carousel, dark mode, bell drawer, AJAX load-more, upvotes, copy code, share |
-| `assets/images/placeholder.svg` | Fallback image for posts without thumbnails |
+| Path                            | Purpose                                                                                      |
+| ------------------------------- | -------------------------------------------------------------------------------------------- |
+| `assets/css/bigtricks.css`      | Theme CSS: dark mode, chat comments, bell drawer, social share, download app, category page  |
+| `assets/css/editor-style.css`   | Gutenberg block editor styles (mirrors front-end typography)                                 |
+| `assets/js/main.js`             | All frontend JS: carousel, dark mode, bell drawer, AJAX load-more, upvotes, copy code, share |
+| `assets/images/placeholder.svg` | Fallback image for posts without thumbnails                                                  |
 
 ### Config / Meta
 
-| File | Purpose |
-|---|---|
-| `style.css` | Theme header (name, version, description, tags) |
-| `theme.json` | WP theme.json v3 (global settings, typography scale) |
+| File                   | Purpose                                                                                |
+| ---------------------- | -------------------------------------------------------------------------------------- |
+| `style.css`            | Theme header (name, version, description, tags)                                        |
+| `theme.json`           | WP theme.json v3 (global settings, typography scale)                                   |
 | `carousel-config.json` | 5 static carousel slides (id, title, subtitle, badge, link, color, cta_text, cta_link) |
-| `screenshot.png` | WP Admin theme preview image |
+| `screenshot.png`       | WP Admin theme preview image                                                           |
 
 ---
 
@@ -94,13 +94,13 @@
 
 ## 4. Post Meta Fields
 
-| Meta Key | Type | Description |
-|---|---|---|
-| `_deal_type` | string | `deal` \| `blog` \| `referral` \| `credit_card` |
-| `_deal_link` | string (URL) | Outbound affiliate / deal link |
-| `_deal_temperature` | integer | Heat score (displays as `°` or 🔥 on badges) |
-| `_deal_upvotes` | integer | Community upvote count |
-| `_referral_code` | string | Referral / coupon code (shown on copy button) |
+| Meta Key            | Type         | Description                                     |
+| ------------------- | ------------ | ----------------------------------------------- |
+| `_deal_type`        | string       | `deal` \| `blog` \| `referral` \| `credit_card` |
+| `_deal_link`        | string (URL) | Outbound affiliate / deal link                  |
+| `_deal_temperature` | integer      | Heat score (displays as `°` or 🔥 on badges)    |
+| `_deal_upvotes`     | integer      | Community upvote count                          |
+| `_referral_code`    | string       | Referral / coupon code (shown on copy button)   |
 
 All fields are `show_in_rest: true` and registered via `register_post_meta()`.
 
@@ -109,6 +109,7 @@ All fields are `show_in_rest: true` and registered via `register_post_meta()`.
 ## 5. Nav Menus
 
 **Registered locations:**
+
 - `primary` → Primary Navigation (header)
 - `footer` → Footer Navigation
 
@@ -132,6 +133,7 @@ Examples:
 **Source file:** `carousel-config.json` — 5 slide objects.
 
 **Schema per slide:**
+
 ```json
 {
   "id": 1,
@@ -149,6 +151,7 @@ Examples:
 **Passed to JS via:** `bigtricksData.carouselData` (PHP reads and JSON-decodes the file, passes array via `wp_localize_script`).
 
 **Used by:**
+
 1. `front-page.php` — hero carousel HTML (rendered server-side from JSON)
 2. Bell notification drawer in `header.php` — JS renders from `bigtricksData.carouselData`
 
@@ -156,9 +159,9 @@ Examples:
 
 ## 7. AJAX Endpoints
 
-| Action | Handler | Auth | Params |
-|---|---|---|---|
-| `bigtricks_upvote` | `bigtricks_ajax_upvote()` | Nonce `bigtricks_nonce` | `post_id`, `nonce` |
+| Action                | Handler                      | Auth                        | Params                         |
+| --------------------- | ---------------------------- | --------------------------- | ------------------------------ |
+| `bigtricks_upvote`    | `bigtricks_ajax_upvote()`    | Nonce `bigtricks_nonce`     | `post_id`, `nonce`             |
 | `bigtricks_load_more` | `bigtricks_ajax_load_more()` | Nonce `bigtricks_load_more` | `page`, `cat`, `type`, `nonce` |
 
 Load-more returns `{ html: "...", has_more: true|false }`.
@@ -199,6 +202,7 @@ Load-more returns `{ html: "...", has_more: true|false }`.
 ## 11. Single Post (`single.php`)
 
 **Features:**
+
 - Featured image hero
 - Deal type badge + category breadcrumb
 - Social share bar **below title** with fake share count (`mt_rand(100, 999)`)
@@ -219,6 +223,7 @@ Load-more returns `{ html: "...", has_more: true|false }`.
 **Important:** `Bigtricks_Chat_Comment_Walker` class is defined at the **top of the file** (before any output) to avoid "Class not found" fatal errors.
 
 **Features:**
+
 - Chat-bubble style layout (avatar left, bubble right)
 - No website/URL field in comment form
 - Comment form fields: name + email only
@@ -236,25 +241,24 @@ Load-more returns `{ html: "...", has_more: true|false }`.
    - Dark gradient card with smartphone icon
    - Google Play badge SVG
 
-
 2. **WP Dynamic Sidebar** (`sidebar-1`) — standard widget area
 
 ---
 
 ## 14. JavaScript (`assets/js/main.js`) — Function Map
 
-| Function | Purpose |
-|---|---|
-| `initDarkMode()` | Dark/light toggle, localStorage persistence, sun/moon icon swap |
-| `initBellDrawer()` | Bell open/close, renders carousel data as notifications, overlay + Escape |
-| `initLoadMore()` | AJAX load-more; increments `data-page`, appends HTML, hides button when `has_more=false`, re-runs `lucide.createIcons()` |
-| `initShareButtons()` | `.bt-share-copy` click → clipboard copy of URL → "Copied!" toast |
-| `initCarousel()` | Hero carousel auto-advance, dot pagination, swipe |
-| `initViewToggle()` | Grid/list view switch on feed |
-| `initMobileMenu()` | Mobile hamburger menu open/close |
-| `initUpvotes()` | `.bt-upvote-btn` click → AJAX upvote with optimistic UI |
-| `initCopyCode()` | `.bt-copy-code` click → clipboard copy of referral code → toast |
-| `initCountUp()` | Animated counter for stats (intersectionObserver) |
+| Function             | Purpose                                                                                                                  |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `initDarkMode()`     | Dark/light toggle, localStorage persistence, sun/moon icon swap                                                          |
+| `initBellDrawer()`   | Bell open/close, renders carousel data as notifications, overlay + Escape                                                |
+| `initLoadMore()`     | AJAX load-more; increments `data-page`, appends HTML, hides button when `has_more=false`, re-runs `lucide.createIcons()` |
+| `initShareButtons()` | `.bt-share-copy` click → clipboard copy of URL → "Copied!" toast                                                         |
+| `initCarousel()`     | Hero carousel auto-advance, dot pagination, swipe                                                                        |
+| `initViewToggle()`   | Grid/list view switch on feed                                                                                            |
+| `initMobileMenu()`   | Mobile hamburger menu open/close                                                                                         |
+| `initUpvotes()`      | `.bt-upvote-btn` click → AJAX upvote with optimistic UI                                                                  |
+| `initCopyCode()`     | `.bt-copy-code` click → clipboard copy of referral code → toast                                                          |
+| `initCountUp()`      | Animated counter for stats (intersectionObserver)                                                                        |
 
 ---
 
@@ -272,9 +276,9 @@ After activating the theme in **WP Admin → Appearance → Themes**:
 
 ## 16. Known Bugs Fixed
 
-| Bug | Fix |
-|---|---|
-| `Class "Bigtricks_Chat_Comment_Walker" not found` (Fatal) | Moved class definition to top of `comments.php` before any template output |
+| Bug                                                           | Fix                                                                                     |
+| ------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `Class "Bigtricks_Chat_Comment_Walker" not found` (Fatal)     | Moved class definition to top of `comments.php` before any template output              |
 | `Warning: Attempt to read property "comment_content" on null` | Changed `comment_text()` → `comment_text( $comment )` to pass comment object explicitly |
 
 ---

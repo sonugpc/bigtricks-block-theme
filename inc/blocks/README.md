@@ -9,12 +9,14 @@ This directory contains custom Gutenberg blocks for the Bigtricks theme.
 A customizable contact form that sends email to the WordPress admin email.
 
 **Fields:**
+
 - Name (required)
 - Email (required)
 - WhatsApp Number (optional)
 - Message (required)
 
 **Usage in Block Editor:**
+
 1. Click the (+) button to add a block
 2. Search for "Contact Form"
 3. Configure settings in the right sidebar:
@@ -22,6 +24,7 @@ A customizable contact form that sends email to the WordPress admin email.
    - Customize form title, description, button text, and success message
 
 **Shortcode Usage:**
+
 ```
 [bigtricks_contact_form]
 
@@ -30,6 +33,7 @@ A customizable contact form that sends email to the WordPress admin email.
 ```
 
 **Block Customization:**
+
 - Supports spacing (margin/padding)
 - Supports color (background, text, gradients)
 - Supports typography (font size, line height)
@@ -42,6 +46,7 @@ A customizable contact form that sends email to the WordPress admin email.
 An advertising inquiry form for potential sponsors and partners.
 
 **Fields:**
+
 - **Contact Information:**
   - Name (required)
   - Email (required)
@@ -59,11 +64,13 @@ An advertising inquiry form for potential sponsors and partners.
   - Additional Details (required)
 
 **Usage in Block Editor:**
+
 1. Click the (+) button to add a block
 2. Search for "Advertise Form"
 3. Configure settings in the right sidebar
 
 **Shortcode Usage:**
+
 ```
 [bigtricks_advertise_form]
 
@@ -72,6 +79,7 @@ An advertising inquiry form for potential sponsors and partners.
 ```
 
 **Block Customization:**
+
 - Same customization options as Contact Form
 
 ---
@@ -81,6 +89,7 @@ An advertising inquiry form for potential sponsors and partners.
 ### File Structure
 
 Each block follows this structure:
+
 ```
 inc/blocks/{block-name}/
 ├── block.json          # Block metadata and configuration
@@ -93,12 +102,14 @@ inc/blocks/{block-name}/
 Both forms use WordPress `wp_mail()` function to send emails to the admin email address set in **Settings → General**.
 
 **Email Format:**
+
 - **Subject:** `[Site Name] New {Form Type} from {Name/Company}`
 - **From:** Site admin email
 - **Reply-To:** User's submitted email
 - **Content:** Plain text with all submitted fields
 
 **Testing Email:**
+
 - Install an SMTP plugin like WP Mail SMTP for reliable delivery
 - Check spam folder if emails aren't arriving
 - Verify admin email in WordPress settings
@@ -106,9 +117,11 @@ Both forms use WordPress `wp_mail()` function to send emails to the admin email 
 ### AJAX Submission
 
 Forms submit via AJAX to `/wp-admin/admin-ajax.php` with the following actions:
+
 - `bigtricks_submit_form` (both logged-in and guest users)
 
 **Security:**
+
 - Nonce verification on all submissions
 - Input sanitization (sanitize_text_field, sanitize_email, sanitize_textarea_field, esc_url_raw)
 - Output escaping in templates
@@ -116,11 +129,13 @@ Forms submit via AJAX to `/wp-admin/admin-ajax.php` with the following actions:
 ### Form Validation
 
 **Client-side:**
+
 - HTML5 required attributes
 - Email validation (`type="email"`)
 - Phone pattern validation (`pattern="[0-9+\-\s]+"`)
 
 **Server-side:**
+
 - Required field checks
 - Email format validation (`is_email()`)
 - Form type validation (whitelist)
@@ -129,6 +144,7 @@ Forms submit via AJAX to `/wp-admin/admin-ajax.php` with the following actions:
 ### Styling
 
 Forms use Tailwind CSS classes with dark mode support:
+
 - Light mode: `bg-white`, `text-gray-900`, `border-gray-200`
 - Dark mode: `dark:bg-gray-800`, `dark:text-white`, `dark:border-gray-700`
 
@@ -137,6 +153,7 @@ Icons powered by Lucide Icons (loaded via CDN).
 ### Frontend JavaScript
 
 Form handling is in `assets/js/forms.js`:
+
 - AJAX submission with Fetch API
 - Loading state management
 - Success/error message display
@@ -146,6 +163,7 @@ Form handling is in `assets/js/forms.js`:
 ### Dependencies
 
 **Required:**
+
 - WordPress 6.0+
 - PHP 8.0+
 - Tailwind CSS (loaded in theme)
@@ -184,11 +202,13 @@ $headers = [
 ### Add Custom Fields
 
 1. **Update block render file** (`render.php`):
+
    ```php
    <input type="text" name="custom_field" class="..." placeholder="Custom Field">
    ```
 
 2. **Update AJAX handler** in `functions.php`:
+
    ```php
    $custom_field = isset( $_POST['custom_field'] ) ? sanitize_text_field( wp_unslash( $_POST['custom_field'] ) ) : '';
    $email_body .= "Custom Field: {$custom_field}\n";
@@ -241,6 +261,7 @@ $email_body .= '</body></html>';
 ### Dark Mode Issues
 
 Forms should automatically adapt to dark mode. If not:
+
 1. Verify `dark:` classes are in templates
 2. Check Tailwind dark mode config in `functions.php`
 3. Ensure `<html>` has class `dark` when dark mode is active
@@ -260,6 +281,7 @@ Forms should automatically adapt to dark mode. If not:
 ## Security Best Practices
 
 ✅ **Implemented:**
+
 - Nonce verification on all submissions
 - Input sanitization on server-side
 - Output escaping in templates
@@ -268,6 +290,7 @@ Forms should automatically adapt to dark mode. If not:
 - Rate limiting via WordPress (future: add custom rate limiting)
 
 ⚠️ **Recommended Additions:**
+
 - Install a spam protection plugin (Akismet, reCAPTCHA)
 - Add honeypot fields for bot detection
 - Implement rate limiting (max X submissions per IP per hour)
@@ -278,6 +301,7 @@ Forms should automatically adapt to dark mode. If not:
 ## Future Enhancements
 
 Potential improvements:
+
 - [ ] Add reCAPTCHA integration
 - [ ] Store submissions in database (optional)
 - [ ] Add export to CSV functionality

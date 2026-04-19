@@ -951,7 +951,9 @@ html.dark .prose strong {
   color: #94a3b8; /* slate-400 */
   text-decoration: underline;
   text-decoration-color: rgba(148, 163, 184, 0.3);
-  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+  transition:
+    color 0.2s ease,
+    text-decoration-color 0.2s ease;
 }
 
 .footer-popular-links a:hover {

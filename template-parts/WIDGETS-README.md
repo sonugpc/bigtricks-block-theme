@@ -26,10 +26,10 @@ All widget components use [Lucide Icons](https://lucide.dev/icons/) via `data-lu
 
 ### Dev vs Production
 
-| Mode | Loaded from | Icons available |
-|------|-------------|-----------------|
-| **Dev** (`SCRIPT_DEBUG=true`) | unpkg CDN | All 1500+ icons |
-| **Prod** (default) | `assets/js/lucide-custom.js` | ~78 used icons, ~16 KB |
+| Mode                          | Loaded from                  | Icons available        |
+| ----------------------------- | ---------------------------- | ---------------------- |
+| **Dev** (`SCRIPT_DEBUG=true`) | unpkg CDN                    | All 1500+ icons        |
+| **Prod** (default)            | `assets/js/lucide-custom.js` | ~78 used icons, ~16 KB |
 
 ### Using icons in templates
 
@@ -205,6 +205,7 @@ Compact social media follow buttons with dynamic URLs from theme settings.
 - ✅ Conditionally shows each platform based on URL presence
 
 **Social Platforms:**
+
 - Telegram (blue)
 - WhatsApp (green)
 - Twitter (black/gray)
@@ -212,6 +213,7 @@ Compact social media follow buttons with dynamic URLs from theme settings.
 
 **Configuration:**
 Go to **Appearance → Theme Settings → Social & Community Links** and set:
+
 - `bt_telegram_url` - Telegram Channel URL
 - `bt_whatsapp_url` - WhatsApp Group URL
 - `bt_twitter_url` - Twitter/X Profile URL
@@ -309,10 +311,10 @@ Displays top categories by post count.
 **Usage:**
 
 ```php
-<?php 
-get_template_part( 'template-parts/widget-trending-categories', null, [ 
-	'count' => 8 
-] ); 
+<?php
+get_template_part( 'template-parts/widget-trending-categories', null, [
+	'count' => 8
+] );
 ?>
 ```
 
@@ -353,6 +355,7 @@ App download promotional widget with Play Store link.
 - ✅ Fully responsive
 
 **App Features Listed:**
+
 - 🔔 Real-time loot alerts
 - 🏷️ Exclusive app-only coupons
 - ⚡ Price drop notifications
@@ -365,6 +368,7 @@ App download promotional widget with Play Store link.
 ### Sidebar Usage (Current Implementation)
 
 **Standard Sidebar (`sidebar.php`):**
+
 ```php
 <aside class="w-full lg:w-[380px] shrink-0 space-y-8 hidden lg:block">
     <?php
@@ -372,17 +376,18 @@ App download promotional widget with Play Store link.
     get_template_part( 'template-parts/widget-trending-categories', null, [ 'count' => 8 ] );
     get_template_part( 'template-parts/widget-newsletter' );
     get_template_part( 'template-parts/widget-whatsapp-cta' );
-    
+
     if ( is_active_sidebar( 'sidebar-1' ) ) :
         dynamic_sidebar( 'sidebar-1' );
     endif;
-    
+
     get_template_part( 'template-parts/widget-download-app' );
     ?>
 </aside>
 ```
 
 **Single Deal Sidebar:**
+
 ```php
 <aside class="lg:w-80 shrink-0 space-y-6">
     <?php
@@ -394,6 +399,7 @@ App download promotional widget with Play Store link.
 ```
 
 **Single Credit Card Sidebar:**
+
 ```php
 <aside class="lg:w-[340px] shrink-0 space-y-8">
     <?php
@@ -405,6 +411,7 @@ App download promotional widget with Play Store link.
 ```
 
 **Single Referral Code Sidebar:**
+
 ```php
 <aside class="w-full lg:w-80 xl:w-[320px] shrink-0 space-y-6">
     <?php
@@ -504,11 +511,11 @@ Several widgets now use **dynamic URLs from Theme Settings** instead of hardcode
 
 ### Widgets Using Dynamic Settings
 
-| Widget | Setting Keys Used | Behavior if Empty |
-|--------|------------------|-------------------|
-| **Follow Us** | `bt_telegram_url`, `bt_whatsapp_url`, `bt_twitter_url`, `bt_instagram_url` | Hides widget if all URLs empty; shows only configured platforms |
-| **Telegram CTA** | `bt_telegram_url` | Widget hidden if URL not set |
-| **WhatsApp CTA** | `bt_whatsapp_url` | Widget hidden if URL not set |
+| Widget           | Setting Keys Used                                                          | Behavior if Empty                                               |
+| ---------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| **Follow Us**    | `bt_telegram_url`, `bt_whatsapp_url`, `bt_twitter_url`, `bt_instagram_url` | Hides widget if all URLs empty; shows only configured platforms |
+| **Telegram CTA** | `bt_telegram_url`                                                          | Widget hidden if URL not set                                    |
+| **WhatsApp CTA** | `bt_whatsapp_url`                                                          | Widget hidden if URL not set                                    |
 
 ### Helper Function
 
@@ -519,6 +526,7 @@ $telegram_url = bigtricks_option( 'bt_telegram_url', 'https://t.me/default' );
 ```
 
 **Parameters:**
+
 - `$key` (string) - Setting key name
 - `$default` (string) - Fallback value if setting is empty (optional)
 
@@ -566,18 +574,18 @@ All hover states, icons, and badges also support dark mode.
 
 ## Widget Inventory
 
-| Widget Name | File | Dynamic URLs | Dark Mode | Responsive |
-|-------------|------|--------------|-----------|------------|
-| Latest Deals | `widget-latest-deals.php` | No | ✅ | ✅ |
-| Top Stores | `widget-top-stores.php` | No | ✅ | ✅ |
-| More Referral Codes | `widget-more-referral-codes.php` | No | ✅ | ✅ |
-| Related Posts | `related-posts.php` | No | ✅ | ✅ |
-| Follow Us | `widget-follow-us.php` | ✅ | ✅ | ✅ |
-| Telegram CTA | `widget-telegram-cta.php` | ✅ | ✅ | ✅ |
-| WhatsApp CTA | `widget-whatsapp-cta.php` | ✅ | ✅ | ✅ |
-| Newsletter | `widget-newsletter.php` | No | ✅ | ✅ |
-| Trending Categories | `widget-trending-categories.php` | No | ✅ | ✅ |
-| Download App | `widget-download-app.php` | No | ✅ | ✅ |
+| Widget Name         | File                             | Dynamic URLs | Dark Mode | Responsive |
+| ------------------- | -------------------------------- | ------------ | --------- | ---------- |
+| Latest Deals        | `widget-latest-deals.php`        | No           | ✅        | ✅         |
+| Top Stores          | `widget-top-stores.php`          | No           | ✅        | ✅         |
+| More Referral Codes | `widget-more-referral-codes.php` | No           | ✅        | ✅         |
+| Related Posts       | `related-posts.php`              | No           | ✅        | ✅         |
+| Follow Us           | `widget-follow-us.php`           | ✅           | ✅        | ✅         |
+| Telegram CTA        | `widget-telegram-cta.php`        | ✅           | ✅        | ✅         |
+| WhatsApp CTA        | `widget-whatsapp-cta.php`        | ✅           | ✅        | ✅         |
+| Newsletter          | `widget-newsletter.php`          | No           | ✅        | ✅         |
+| Trending Categories | `widget-trending-categories.php` | No           | ✅        | ✅         |
+| Download App        | `widget-download-app.php`        | No           | ✅        | ✅         |
 
 ---
 
@@ -600,6 +608,7 @@ All hover states, icons, and badges also support dark mode.
 ### Most Common Use Cases
 
 **Want to add sidebar to a single template?**
+
 ```php
 <aside class="lg:w-80 shrink-0 space-y-6">
     <?php
@@ -610,22 +619,25 @@ All hover states, icons, and badges also support dark mode.
 ```
 
 **Want to promote Telegram/WhatsApp?**
+
 ```php
-<?php 
-get_template_part( 'template-parts/widget-telegram-cta' ); 
+<?php
+get_template_part( 'template-parts/widget-telegram-cta' );
 get_template_part( 'template-parts/widget-whatsapp-cta' );
 ?>
 ```
 
 **Want to show trending content?**
+
 ```php
-<?php 
+<?php
 get_template_part( 'template-parts/widget-trending-categories', null, [ 'count' => 10 ] );
 get_template_part( 'template-parts/widget-latest-deals' );
 ?>
 ```
 
 **Want social links without large CTAs?**
+
 ```php
 <?php get_template_part( 'template-parts/widget-follow-us' ); ?>
 ```
@@ -635,6 +647,7 @@ get_template_part( 'template-parts/widget-latest-deals' );
 ## Changelog
 
 **April 2026:**
+
 - ✅ Created 6 new sidebar widgets (Telegram CTA, WhatsApp CTA, Follow Us, Newsletter, Trending Categories, Download App)
 - ✅ Implemented dynamic social URLs via Theme Settings
 - ✅ Updated `sidebar.php` to use new widget system
@@ -647,6 +660,7 @@ get_template_part( 'template-parts/widget-latest-deals' );
 ## Support
 
 For issues or questions about widgets:
+
 1. Check this documentation first
 2. Verify Theme Settings are configured (**Appearance → Theme Settings**)
 3. Ensure all URLs are valid and properly formatted

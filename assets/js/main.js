@@ -175,17 +175,21 @@
         // Close all other open submenus at same level
         const parentList = li.parentElement;
         if (parentList) {
-          parentList.querySelectorAll(".bt-mobile-submenu").forEach(function (s) {
-            if (s !== submenu) {
-              s.classList.add("hidden");
-              const siblingBtn = s.closest("li")?.querySelector(".bt-submenu-toggle");
-              if (siblingBtn) {
-                siblingBtn.setAttribute("aria-expanded", "false");
-                const chevron = siblingBtn.querySelector("[data-lucide]");
-                if (chevron) chevron.style.transform = "";
+          parentList
+            .querySelectorAll(".bt-mobile-submenu")
+            .forEach(function (s) {
+              if (s !== submenu) {
+                s.classList.add("hidden");
+                const siblingBtn = s
+                  .closest("li")
+                  ?.querySelector(".bt-submenu-toggle");
+                if (siblingBtn) {
+                  siblingBtn.setAttribute("aria-expanded", "false");
+                  const chevron = siblingBtn.querySelector("[data-lucide]");
+                  if (chevron) chevron.style.transform = "";
+                }
               }
-            }
-          });
+            });
         }
 
         submenu.classList.toggle("hidden", isOpen);
@@ -316,7 +320,8 @@
           }
 
           // Re-init Lucide for only the new elements (scoped = faster)
-          if (typeof lucide !== "undefined") lucide.createIcons({ nodes: [container] });
+          if (typeof lucide !== "undefined")
+            lucide.createIcons({ nodes: [container] });
           document.dispatchEvent(new CustomEvent("bigtricks:contentLoaded"));
 
           btn.dataset.page = nextPage;
@@ -387,11 +392,20 @@
       var badge = document.getElementById("bt-notif-badge");
       if (!badge) return;
       var cachedIds = [];
-      try { cachedIds = JSON.parse(localStorage.getItem("bt_notif_ids") || "[]"); } catch(e) {}
-      if (!cachedIds.length) { badge.style.display = "none"; return; }
+      try {
+        cachedIds = JSON.parse(localStorage.getItem("bt_notif_ids") || "[]");
+      } catch (e) {}
+      if (!cachedIds.length) {
+        badge.style.display = "none";
+        return;
+      }
       var seen = [];
-      try { seen = JSON.parse(localStorage.getItem("bt_notif_seen") || "[]"); } catch(e) {}
-      var hasUnseen = cachedIds.some(function (id) { return seen.indexOf(id) === -1; });
+      try {
+        seen = JSON.parse(localStorage.getItem("bt_notif_seen") || "[]");
+      } catch (e) {}
+      var hasUnseen = cachedIds.some(function (id) {
+        return seen.indexOf(id) === -1;
+      });
       badge.style.display = hasUnseen ? "" : "none";
     })();
 
@@ -431,12 +445,14 @@
         inner.className = "flex-1 min-w-0";
 
         const badgeEl = document.createElement("span");
-        badgeEl.className = "text-xs font-black px-2 py-0.5 rounded-full " + badgeCls;
+        badgeEl.className =
+          "text-xs font-black px-2 py-0.5 rounded-full " + badgeCls;
         badgeEl.textContent = item.badge || "";
         inner.appendChild(badgeEl);
 
         const titleEl = document.createElement("p");
-        titleEl.className = "text-sm font-bold text-slate-900 dark:text-white mt-1 line-clamp-2 leading-snug";
+        titleEl.className =
+          "text-sm font-bold text-slate-900 dark:text-white mt-1 line-clamp-2 leading-snug";
         titleEl.textContent = item.title || "";
         inner.appendChild(titleEl);
 
@@ -460,7 +476,8 @@
 
       const restUrl =
         typeof bigtricksData !== "undefined" && bigtricksData.restUrl
-          ? bigtricksData.restUrl.replace(/\/$/, "") + "/bigtricks/v1/notifications"
+          ? bigtricksData.restUrl.replace(/\/$/, "") +
+            "/bigtricks/v1/notifications"
           : null;
 
       if (!restUrl) {
@@ -470,7 +487,9 @@
       }
 
       fetch(restUrl)
-        .then(function (r) { return r.json(); })
+        .then(function (r) {
+          return r.json();
+        })
         .then(function (items) {
           if (!Array.isArray(items) || !items.length) {
             listEl.innerHTML =
@@ -481,9 +500,13 @@
           try {
             localStorage.setItem(
               "bt_notif_ids",
-              JSON.stringify(items.map(function (n) { return n.id; }))
+              JSON.stringify(
+                items.map(function (n) {
+                  return n.id;
+                }),
+              ),
             );
-          } catch(e) {}
+          } catch (e) {}
           renderItems(items);
         })
         .catch(function () {
@@ -503,8 +526,12 @@
         // populateDrawer() will also update the cache after the REST fetch.
         const badge = document.getElementById("bt-notif-badge");
         var cachedIds = [];
-        try { cachedIds = JSON.parse(localStorage.getItem("bt_notif_ids") || "[]"); } catch(e) {}
-        try { localStorage.setItem("bt_notif_seen", JSON.stringify(cachedIds)); } catch(e) {}
+        try {
+          cachedIds = JSON.parse(localStorage.getItem("bt_notif_ids") || "[]");
+        } catch (e) {}
+        try {
+          localStorage.setItem("bt_notif_seen", JSON.stringify(cachedIds));
+        } catch (e) {}
         if (badge) badge.style.display = "none";
       } else {
         drawer.classList.remove("open");
@@ -576,7 +603,7 @@
   /* ── 11. AJAX Search (autocomplete) ─────────────────── */
   function initAjaxSearch() {
     const searchInputs = document.querySelectorAll(
-      "#bt-search, #bt-mobile-search-bar, #bt-mobile-search"
+      "#bt-search, #bt-mobile-search-bar, #bt-mobile-search",
     );
     if (!searchInputs.length) return;
 
@@ -629,7 +656,8 @@
           "</div>";
         dropdown.style.display = "block";
         currentDropdown = dropdown;
-        if (typeof lucide !== "undefined") lucide.createIcons({ nodes: [dropdown] });
+        if (typeof lucide !== "undefined")
+          lucide.createIcons({ nodes: [dropdown] });
         return;
       }
 
@@ -681,7 +709,8 @@
 
       dropdown.style.display = "block";
       currentDropdown = dropdown;
-      if (typeof lucide !== "undefined") lucide.createIcons({ nodes: [dropdown] });
+      if (typeof lucide !== "undefined")
+        lucide.createIcons({ nodes: [dropdown] });
     }
 
     function hideDropdown() {
@@ -714,7 +743,7 @@
               inputEl,
               data.data.results,
               data.data.count,
-              data.data.query
+              data.data.query,
             );
           } else {
             hideDropdown();
