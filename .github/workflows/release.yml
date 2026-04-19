@@ -1,0 +1,94 @@
+name: Release Theme
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      # ── 1. Checkout into a folder named after the theme slug ──────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: bigtricks-block
+
+      # ── 2. Read the Version from style.css ────────────────────────────────
+      - name: Read theme version
+        id: version
+        run: |
+          VERSION=$(grep -oP "(?<=Version: )\S+" bigtricks-block/style.css)
+          if [ -z "$VERSION" ]; then
+            echo "ERROR: Could not read Version from style.css" >&2
+            exit 1
+          fi
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tag=v${VERSION}"    >> "$GITHUB_OUTPUT"
+          echo "Theme version: ${VERSION}"
+
+      # ── 3. Skip if this version was already released ──────────────────────
+      - name: Check if release already exists
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh release view "v${{ steps.version.outputs.version }}" \
+               --repo "${{ github.repository }}" &>/dev/null; then
+            echo "exists=true"  >> "$GITHUB_OUTPUT"
+            echo "Release v${{ steps.version.outputs.version }} already exists – skipping."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "New version detected: v${{ steps.version.outputs.version }}"
+          fi
+
+      # ── 4. Build CSS + icon bundle ────────────────────────────────────────
+      - name: Setup Node.js
+        if: steps.check.outputs.exists == 'false'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: bigtricks-block/package-lock.json
+
+      - name: Install dependencies & build
+        if: steps.check.outputs.exists == 'false'
+        working-directory: bigtricks-block
+        run: |
+          npm ci
+          npm run build
+
+      # ── 5. Package the theme ZIP (no dev artifacts) ───────────────────────
+      - name: Create theme ZIP
+        if: steps.check.outputs.exists == 'false'
+        run: |
+          zip -r "bigtricks-block-${{ steps.version.outputs.version }}.zip" bigtricks-block \
+            --exclude "bigtricks-block/.git/*"              \
+            --exclude "bigtricks-block/.github/*"           \
+            --exclude "bigtricks-block/node_modules/*"      \
+            --exclude "bigtricks-block/assets/css/src/*"    \
+            --exclude "bigtricks-block/package.json"        \
+            --exclude "bigtricks-block/package-lock.json"   \
+            --exclude "bigtricks-block/tailwind.config.js"  \
+            --exclude "bigtricks-block/generate-lucide-bundle.js" \
+            --exclude "bigtricks-block/PLAN.md"             \
+            --exclude "bigtricks-block/CC.md"
+          echo "ZIP created:"
+          ls -lh "bigtricks-block-${{ steps.version.outputs.version }}.zip"
+
+      # ── 6. Publish GitHub Release ─────────────────────────────────────────
+      - name: Create GitHub Release
+        if: steps.check.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ steps.version.outputs.tag }}" \
+            "bigtricks-block-${{ steps.version.outputs.version }}.zip" \
+            --repo "${{ github.repository }}" \
+            --title "Bigtricks Theme ${{ steps.version.outputs.tag }}" \
+            --generate-notes
+          echo "✓ Released ${{ steps.version.outputs.tag }}"

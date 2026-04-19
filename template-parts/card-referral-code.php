@@ -43,6 +43,11 @@ $dest_url = $referral_link ?: $permalink;
 $cat_obj  = get_the_category();
 $cat_name = ! empty( $cat_obj ) ? esc_html( $cat_obj[0]->name ) : '';
 $cat_link = ! empty( $cat_obj ) ? esc_url( get_category_link( $cat_obj[0]->term_id ) ) : '';
+
+// Store taxonomy
+$store_terms = get_the_terms( $post_id, 'store' );
+$store_name  = ! empty( $store_terms ) && ! is_wp_error( $store_terms ) ? $store_terms[0]->name : '';
+$store_link  = ! empty( $store_terms ) && ! is_wp_error( $store_terms ) ? esc_url( get_term_link( $store_terms[0] ) ) : '';
 ?>
 <article
 	class="bt-deal-card bg-white rounded-3xl shadow-sm border border-slate-200/60 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full w-full"
@@ -54,14 +59,14 @@ $cat_link = ! empty( $cat_obj ) ? esc_url( get_category_link( $cat_obj[0]->term_
 		<!-- App Logo / Thumbnail -->
 		<a
 			href="<?php echo $permalink; ?>"
-			class="bt-card-thumb sm:w-[200px] shrink-0 bg-gradient-to-br from-emerald-50 to-teal-50 p-6 flex items-center justify-center sm:border-r sm:border-b-0 border-b border-slate-100 relative overflow-hidden"
+			class="bt-card-thumb sm:w-[200px] shrink-0 bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center sm:border-r sm:border-b-0 border-b border-slate-100 relative overflow-hidden"
 			tabindex="-1"
 			aria-hidden="true"
 		>
 			<img
 				src="<?php echo esc_url( $thumb_url ); ?>"
 				alt="<?php echo esc_attr( $display_name ); ?> Logo"
-				class="w-24 h-24 object-contain rounded-2xl shadow-sm transition-transform duration-500 group-hover:scale-105"
+				class="w-20 h-20 object-contain rounded-2xl shadow-sm transition-transform duration-500 group-hover:scale-125"
 				loading="lazy"
 				decoding="async"
 				width="96"
@@ -78,17 +83,29 @@ $cat_link = ! empty( $cat_obj ) ? esc_url( get_category_link( $cat_obj[0]->term_
 		<!-- Content -->
 		<div class="p-5 sm:p-6 flex-1 flex flex-col justify-between bg-white relative min-w-0">
 			<div>
-				<!-- Category -->
-				<?php if ( $cat_name ) : ?>
-				<div class="mb-2 flex items-center gap-1.5 text-xs font-bold text-primary-600 uppercase tracking-wider">
-					<i data-lucide="tag" class="w-3 h-3"></i>
-					<?php if ( $cat_link ) : ?>
-					<a href="<?php echo $cat_link; ?>" class="hover:underline"><?php echo $cat_name; ?></a>
+				<!-- Store & Category breadcrumb -->
+				<div class="mb-2 flex items-center gap-2 flex-wrap">
+					<?php if ( $store_name ) : ?>
+					<div class="flex items-center gap-1.5 text-xs font-bold text-slate-500 uppercase tracking-wider">
+						<i data-lucide="shopping-bag" class="w-3 h-3"></i>
+					<?php if ( $store_link ) : ?>
+					<a href="<?php echo $store_link; ?>" class="hover:text-primary-600 transition-colors hover:underline"><?php echo esc_html( $store_name ); ?></a>
 					<?php else : ?>
-					<?php echo $cat_name; ?>
+					<span><?php echo esc_html( $store_name ); ?></span>
 					<?php endif; ?>
 				</div>
 				<?php endif; ?>
+				<?php if ( $cat_name ) : ?>
+				<div class="flex items-center gap-1.5 text-xs font-bold text-primary-600 uppercase tracking-wider">
+					<i data-lucide="tag" class="w-3 h-3"></i>
+					<?php if ( $cat_link ) : ?>
+					<a href="<?php echo $cat_link; ?>" class="hover:underline"><?php echo esc_html( $cat_name ); ?></a>
+					<?php else : ?>
+					<?php echo esc_html( $cat_name ); ?>
+						<?php endif; ?>
+					</div>
+					<?php endif; ?>
+				</div>
 
 				<h2 class="font-black text-slate-900 group-hover:text-primary-600 leading-snug mb-2 transition-colors break-words text-lg sm:text-xl line-clamp-2">
 					<a href="<?php echo $permalink; ?>" class="focus:outline-none focus:underline">
@@ -135,7 +152,7 @@ $cat_link = ! empty( $cat_obj ) ? esc_url( get_category_link( $cat_obj[0]->term_
 						href="<?php echo $dest_url; ?>"
 						target="<?php echo $referral_link ? '_blank' : '_self'; ?>"
 						rel="<?php echo $referral_link ? 'noopener noreferrer nofollow' : ''; ?>"
-						class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black bg-primary-600 hover:bg-primary-700 text-white shadow-md shadow-primary-200 transition-all active:scale-95"
+						class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black bg-primary-600 hover:bg-primary-700 text-white shadow-md shadow-primary-200 dark:shadow-none transition-all active:scale-95"
 					>
 						<?php echo $referral_link ? esc_html__( 'Get Referral', 'bigtricks' ) : esc_html__( 'View Details', 'bigtricks' ); ?>
 						<i data-lucide="external-link" class="w-4 h-4 shrink-0"></i>

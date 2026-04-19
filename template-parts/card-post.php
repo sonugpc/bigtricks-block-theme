@@ -31,14 +31,14 @@ $comments  = (int) get_comments_number();
 		<!-- Thumbnail -->
 		<a
 			href="<?php echo $permalink; ?>"
-			class="bt-card-thumb sm:w-[220px] shrink-0 bg-slate-50 p-5 flex items-center justify-center sm:border-r sm:border-b-0 border-b border-slate-100 relative overflow-hidden"
+			class="bt-card-thumb sm:w-[220px] shrink-0 bg-slate-50 flex items-center justify-center sm:border-r sm:border-b-0 border-b border-slate-100 relative overflow-hidden"
 			tabindex="-1"
 			aria-hidden="true"
 		>
 			<img
 				src="<?php echo esc_url( $thumb_url ); ?>"
 				alt="<?php the_title_attribute(); ?>"
-				class="max-h-[180px] max-w-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
+				class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
 				loading="lazy"
 				decoding="async"
 				width="220"
@@ -96,7 +96,7 @@ $comments  = (int) get_comments_number();
 				<div class="w-full sm:w-auto relative z-10">
 					<a
 						href="<?php echo $permalink; ?>"
-						class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black bg-primary-600 hover:bg-primary-700 text-white shadow-md shadow-primary-200 transition-all active:scale-95"
+						class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black bg-primary-600 hover:bg-primary-700 text-white shadow-md shadow-primary-200 dark:shadow-none transition-all active:scale-95"
 					>
 						Read Article <i data-lucide="chevron-right" class="w-4 h-4 shrink-0"></i>
 					</a>

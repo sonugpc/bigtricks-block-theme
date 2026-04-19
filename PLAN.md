@@ -329,6 +329,7 @@ bigtricksData = {
 
 ## 20. Future / Pending Work
 
+- [ ] **WordPress editor group block missing padding** — The editor's group block does not apply padding in the block editor; add padding support via `theme.json` (`settings.spacing.padding`) or target `.wp-block-group` in `editor-style.css`
 - [ ] Add real images to `carousel-config.json` slides (currently `"image": ""`)
 - [ ] Replace Tailwind Play CDN with a compiled production build for performance
 - [ ] Add OG / Open Graph meta tags in `header.php`

@@ -1,0 +1,56 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "bigtricks/advertise-form",
+	"version": "1.0.0",
+	"title": "Advertise Form",
+	"category": "widgets",
+	"icon": "megaphone",
+	"description": "Advertising inquiry form for potential partners and sponsors",
+	"keywords": ["advertise", "sponsor", "form", "business"],
+	"textdomain": "bigtricks",
+	"supports": {
+		"html": false,
+		"align": ["wide", "full"],
+		"spacing": {
+			"margin": true,
+			"padding": true
+		},
+		"color": {
+			"background": true,
+			"text": true,
+			"gradients": true
+		},
+		"typography": {
+			"fontSize": true,
+			"lineHeight": true
+		}
+	},
+	"attributes": {
+		"formTitle": {
+			"type": "string",
+			"default": "Advertise With Us"
+		},
+		"formDescription": {
+			"type": "string",
+			"default": "Partner with us to reach thousands of engaged users. Fill out the form below and we'll get back to you within 24 hours."
+		},
+		"submitButtonText": {
+			"type": "string",
+			"default": "Submit Inquiry"
+		},
+		"successMessage": {
+			"type": "string",
+			"default": "Thank you for your interest! We'll review your inquiry and get back to you soon."
+		},
+		"showTitle": {
+			"type": "boolean",
+			"default": true
+		},
+		"showDescription": {
+			"type": "boolean",
+			"default": true
+		}
+	},
+	"render": "file:./render.php"
+}

@@ -67,9 +67,9 @@ $color_class = $cat_id ? $pastel_colors[ $cat_id % count( $pastel_colors ) ] : $
 	<div class="flex-1 min-w-0 w-full overflow-hidden">
 
 		<!-- ═══ CATEGORY HERO ═══ -->
-		<div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-6 overflow-hidden relative">
+		<div class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 sm:p-8 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-6 overflow-hidden relative">
 			<!-- Decorative bg -->
-			<div class="absolute inset-0 bg-gradient-to-br from-primary-50/60 via-white to-purple-50/30 pointer-events-none"></div>
+			<div class="absolute inset-0 bg-gradient-to-br from-primary-50/60 via-white to-purple-50/30 dark:from-slate-800 dark:via-slate-800 dark:to-slate-800 pointer-events-none"></div>
 
 			<!-- Category Icon / Image -->
 			<div class="relative z-10 shrink-0">
@@ -110,9 +110,9 @@ $color_class = $cat_id ? $pastel_colors[ $cat_id % count( $pastel_colors ) ] : $
 				</h1>
 
 				<?php if ( $cat_desc ) : ?>
-				<p class="text-slate-500 text-sm sm:text-base leading-relaxed max-w-2xl">
+				<div class="prose prose-slate max-w-none prose-img:rounded-2xl prose-img:shadow-md prose-a:text-primary-600 hover:prose-a:text-primary-800 prose-headings:font-black prose-p:leading-relaxed prose-p:text-slate-600 dark:prose-invert break-words">
 					<?php echo wp_kses_post( wpautop( $cat_desc ) ); ?>
-				</p>
+				</div>
 				<?php endif; ?>
 			</div>
 		</div>
@@ -128,7 +128,7 @@ $color_class = $cat_id ? $pastel_colors[ $cat_id % count( $pastel_colors ) ] : $
 					?>
 				<a
 					href="<?php echo esc_url( $filter_url ); ?>"
-					class="whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-bold transition-all <?php echo $is_active ? 'bg-primary-600 text-white shadow-md shadow-primary-200' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300'; ?>"
+					class="whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-bold transition-all <?php echo $is_active ? 'bg-primary-600 text-white shadow-md shadow-primary-200 dark:shadow-none' : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-300'; ?>"
 					aria-current="<?php echo $is_active ? 'true' : 'false'; ?>"
 				>
 					<?php echo esc_html( $type_label ); ?>
@@ -192,7 +192,7 @@ $color_class = $cat_id ? $pastel_colors[ $cat_id % count( $pastel_colors ) ] : $
 		<div class="mt-8 flex justify-center" id="bt-load-more-wrap">
 			<button
 				id="bt-load-more"
-				class="flex items-center gap-3 bg-white border-2 border-slate-200 hover:border-primary-400 text-slate-700 hover:text-primary-600 font-black px-8 py-4 rounded-2xl shadow-sm hover:shadow-md transition-all active:scale-95"
+					class="flex items-center gap-3 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 hover:border-primary-400 text-slate-700 dark:text-slate-300 hover:text-primary-600 font-black px-8 py-4 rounded-2xl shadow-sm hover:shadow-md dark:shadow-slate-900/20 dark:hover:shadow-slate-900/40 transition-all active:scale-95"
 				data-page="1"
 				data-max-pages="<?php echo esc_attr( $max_pages ); ?>"
 				data-cat="<?php echo esc_attr( $cat_id ); ?>"

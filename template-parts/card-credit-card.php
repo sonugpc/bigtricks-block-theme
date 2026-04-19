@@ -72,7 +72,7 @@ $star_empty   = 5 - $star_filled - $star_half;
 		<!-- Card Visual -->
 		<a
 			href="<?php echo $permalink; ?>"
-			class="bt-card-thumb sm:w-[220px] shrink-0 bg-gradient-to-br <?php echo esc_attr( $card_gradient ); ?> p-6 flex flex-col items-center justify-center sm:border-r sm:border-b-0 border-b border-slate-100 relative overflow-hidden"
+			class="bt-card-thumb sm:w-[220px] shrink-0 bg-gradient-to-br <?php echo esc_attr( $card_gradient ); ?> flex flex-col items-center justify-center sm:border-r sm:border-b-0 border-b border-slate-100 relative overflow-hidden"
 			tabindex="-1"
 			aria-hidden="true"
 		>
@@ -80,7 +80,7 @@ $star_empty   = 5 - $star_filled - $star_half;
 			<img
 				src="<?php echo esc_url( $thumb_url ); ?>"
 				alt="<?php the_title_attribute(); ?>"
-				class="w-full max-h-[130px] object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-105 group-hover:-rotate-2"
+				class="w-full h-full object-cover drop-shadow-2xl transition-transform duration-500 group-hover:scale-125 group-hover:rotate-2"
 				loading="lazy"
 				decoding="async"
 				width="220"
@@ -124,23 +124,36 @@ $star_empty   = 5 - $star_filled - $star_half;
 					<?php if ( $bank_name ) : ?>
 					<div class="flex items-center gap-1.5 text-xs font-bold text-slate-500 uppercase tracking-wider">
 						<i data-lucide="building-2" class="w-3 h-3"></i>
-						<span><?php echo esc_html( $bank_name ); ?></span>
-					</div>
-					<?php endif; ?>
-					<?php if ( $card_cat_name ) : ?>
-					<div class="flex items-center gap-1 text-xs font-bold text-purple-600 uppercase tracking-wider">
-						<i data-lucide="tag" class="w-3 h-3"></i>
-						<span><?php echo esc_html( $card_cat_name ); ?></span>
-					</div>
+					<?php
+					$bank_link = ! empty( $bank_terms ) && ! is_wp_error( $bank_terms ) ? esc_url( get_term_link( $bank_terms[0], 'store' ) ) : '';
+					if ( $bank_link ) : ?>
+					<a href="<?php echo $bank_link; ?>" class="hover:text-primary-600 transition-colors hover:underline"><?php echo esc_html( $bank_name ); ?></a>
+					<?php else : ?>
+					<span><?php echo esc_html( $bank_name ); ?></span>
 					<?php endif; ?>
 				</div>
+				<?php endif; ?>
+				<?php if ( $card_cat_name ) : ?>
+				<div class="flex items-center gap-1 text-xs font-bold text-purple-600 uppercase tracking-wider">
+					<i data-lucide="tag" class="w-3 h-3"></i>
+					<?php
+					$cat_link = ! empty( $cat_terms ) && ! is_wp_error( $cat_terms ) ? esc_url( get_term_link( $cat_terms[0], 'card-category' ) ) : '';
+					if ( $cat_link ) : ?>
+					<a href="<?php echo $cat_link; ?>" class="hover:underline"><?php echo esc_html( $card_cat_name ); ?></a>
+					<?php else : ?>
+					<span><?php echo esc_html( $card_cat_name ); ?></span>
+					<?php endif; ?>
+				</div>
+				<?php endif; ?>
+			</div>
 
-				<h2 class="font-black text-slate-900 group-hover:text-purple-600 leading-snug mb-2 transition-colors break-words text-lg sm:text-xl line-clamp-2">
-					<a href="<?php echo $permalink; ?>" class="focus:outline-none focus:underline">
-						<span class="absolute inset-0 z-0" aria-hidden="true"></span>
-						<?php the_title(); ?>
-					</a>
-				</h2>
+			<!-- Title -->
+			<h2 class="text-xl lg:text-2xl font-black text-slate-900 mb-1 leading-tight relative">
+				<a href="<?php echo $permalink; ?>" class="focus:outline-none focus:underline">
+					<span class="absolute inset-0 z-0" aria-hidden="true"></span>
+					<?php the_title(); ?>
+				</a>
+			</h2>
 
 				<!-- Rating -->
 				<?php if ( $has_rating ) : ?>

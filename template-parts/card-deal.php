@@ -73,14 +73,14 @@ $dest_url = $offer_url ?: $permalink;
 		<a
 			href="<?php echo $is_expired ? $permalink : $dest_url; ?>"
 			<?php echo ! $is_expired && $offer_url ? 'target="_blank" rel="noopener noreferrer nofollow"' : ''; ?>
-			class="bt-card-thumb sm:w-[220px] shrink-0 bg-slate-50 p-5 flex items-center justify-center sm:border-r sm:border-b-0 border-b border-slate-100 relative overflow-hidden"
+			class="bt-card-thumb sm:w-[220px] shrink-0 bg-slate-50 flex items-center justify-center sm:border-r sm:border-b-0 border-b border-slate-100 relative overflow-hidden"
 			tabindex="-1"
 			aria-hidden="true"
 		>
 			<img
 				src="<?php echo esc_url( $thumb_url ); ?>"
 				alt="<?php the_title_attribute(); ?>"
-				class="max-h-[180px] max-w-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
+				class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
 				loading="lazy"
 				decoding="async"
 				width="220"
@@ -108,20 +108,20 @@ $dest_url = $offer_url ?: $permalink;
 					<?php if ( $store_name ) : ?>
 					<div class="flex items-center gap-1.5 text-xs font-bold text-slate-500 uppercase tracking-wider">
 						<i data-lucide="shopping-bag" class="w-3 h-3"></i>
-						<?php if ( $store_link && ! is_wp_error( get_term_by( 'link', $store_link, 'store' ) ) ) : ?>
-						<a href="<?php echo $store_link; ?>" class="hover:text-primary-600 transition-colors hover:underline"><?php echo esc_html( $store_name ); ?></a>
-						<?php else : ?>
-						<span><?php echo esc_html( $store_name ); ?></span>
-						<?php endif; ?>
-					</div>
+					<?php if ( $store_link ) : ?>
+					<a href="<?php echo $store_link; ?>" class="hover:text-primary-600 transition-colors hover:underline"><?php echo esc_html( $store_name ); ?></a>
+					<?php else : ?>
+					<span><?php echo esc_html( $store_name ); ?></span>
 					<?php endif; ?>
-					<?php if ( $cat_name ) : ?>
-					<div class="flex items-center gap-1 text-xs font-bold text-primary-600 uppercase tracking-wider">
-						<i data-lucide="tag" class="w-3 h-3"></i>
-						<?php if ( $cat_link ) : ?>
-						<a href="<?php echo $cat_link; ?>" class="hover:underline"><?php echo $cat_name; ?></a>
-						<?php else : ?>
-						<?php echo $cat_name; ?>
+				</div>
+				<?php endif; ?>
+				<?php if ( $cat_name ) : ?>
+				<div class="flex items-center gap-1 text-xs font-bold text-primary-600 uppercase tracking-wider">
+					<i data-lucide="tag" class="w-3 h-3"></i>
+					<?php if ( $cat_link ) : ?>
+					<a href="<?php echo $cat_link; ?>" class="hover:underline"><?php echo esc_html( $cat_name ); ?></a>
+					<?php else : ?>
+					<?php echo esc_html( $cat_name ); ?>
 						<?php endif; ?>
 					</div>
 					<?php endif; ?>
@@ -154,7 +154,7 @@ $dest_url = $offer_url ?: $permalink;
 			<div class="flex flex-col sm:flex-row flex-wrap sm:items-center justify-between gap-3 mt-auto pt-4 border-t border-slate-100 relative z-10">
 				<div class="flex items-center gap-3 text-sm font-bold text-slate-500 flex-wrap">
 					<!-- Coupon code display -->
-					<?php if ( $coupon && ! $is_expired ) : ?>
+				<?php if ( $coupon ) : ?>
 					<button
 						class="bt-copy-code flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-dashed border-emerald-300 px-3 py-1.5 rounded-lg text-xs font-black transition-colors"
 						data-code="<?php echo esc_attr( $coupon ); ?>"
@@ -172,20 +172,14 @@ $dest_url = $offer_url ?: $permalink;
 					<?php endif; ?>
 				</div>
 				<div class="w-full sm:w-auto relative z-10">
-					<?php if ( $is_expired ) : ?>
-					<span class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black bg-slate-200 text-slate-500 cursor-not-allowed">
-						Deal Expired
-					</span>
-					<?php else : ?>
 					<a
 						href="<?php echo $dest_url; ?>"
 						target="<?php echo $offer_url ? '_blank' : '_self'; ?>"
 						rel="<?php echo $offer_url ? 'noopener noreferrer nofollow' : ''; ?>"
-						class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black bg-primary-600 hover:bg-primary-700 text-white shadow-md shadow-primary-200 transition-all active:scale-95"
+						class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black bg-primary-600 hover:bg-primary-700 text-white shadow-md shadow-primary-200 dark:shadow-none transition-all active:scale-95"
 					>
 						<?php echo esc_html( $btn_text ); ?> <i data-lucide="external-link" class="w-4 h-4 shrink-0"></i>
 					</a>
-					<?php endif; ?>
 				</div>
 			</div>
 		</div>

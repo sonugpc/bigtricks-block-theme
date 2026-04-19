@@ -48,18 +48,8 @@ $feed_query  = new WP_Query( $query_args );
 $total_posts = $feed_query->found_posts;
 $max_pages   = $feed_query->max_num_pages;
 
-// ── Carousel: load from JSON config ──────────────────────
-$carousel_posts = [];
-$carousel_json  = BIGTRICKS_DIR . '/carousel-config.json';
-if ( file_exists( $carousel_json ) ) {
-	$raw = file_get_contents( $carousel_json ); // phpcs:ignore WordPress.WP.AlternativeFunctions
-	if ( $raw ) {
-		$parsed = json_decode( $raw, true );
-		if ( is_array( $parsed ) ) {
-			$carousel_posts = array_slice( $parsed, 0, 5 ); // max 5 slides
-		}
-	}
-}
+// ── Carousel: load from DB (Settings → Banners & Alerts → Hero Carousel) ──
+$carousel_posts = bt_get_carousel_slides();
 
 $type_labels = [
 	'all'            => __( 'All', 'bigtricks' ),
@@ -69,8 +59,9 @@ $type_labels = [
 	'credit-card'    => __( 'Credit Cards', 'bigtricks' ),
 ];
 ?>
+<main>
 
-<main class="max-w-[1400px] mx-auto px-4 py-6 md:py-8 flex flex-col lg:flex-row gap-8 flex-1 w-full box-border" id="main-content">
+<div class="max-w-[1400px] mx-auto px-4 py-6 md:py-8 flex flex-col lg:flex-row gap-8 flex-1 w-full box-border" id="main-content">
 
 	<!-- Left Column: Feed -->
 	<div class="flex-1 min-w-0 w-full overflow-hidden">
@@ -85,10 +76,12 @@ $type_labels = [
 			'orange' => 'bg-orange-500 text-white',
 		];
 		?>
-		<?php if ( ! empty( $carousel_posts ) && ! $active_cat ) : ?>
+		<?php if ( ! empty( $carousel_posts ) && ! $active_cat ) :
+			$slide_count = count( $carousel_posts );
+		?>
 		<div
 			class="mb-8 relative rounded-3xl overflow-hidden bg-slate-900 h-[300px] sm:h-[380px] shadow-xl bt-carousel"
-			data-total="<?php echo count( $carousel_posts ); ?>"
+			data-total="<?php echo $slide_count; ?>"
 			aria-roledescription="carousel"
 			aria-label="<?php esc_attr_e( 'Featured Deals', 'bigtricks' ); ?>"
 		>
@@ -99,7 +92,7 @@ $type_labels = [
 				class="absolute inset-0 transition-opacity duration-700 bt-carousel-slide <?php echo $ci === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'; ?>"
 				role="group"
 				aria-roledescription="slide"
-				aria-label="<?php echo esc_attr( $ci + 1 ); ?> of <?php echo esc_attr( count( $carousel_posts ) ); ?>"
+				aria-label="<?php echo esc_attr( $ci + 1 ); ?> of <?php echo esc_attr( $slide_count ); ?>"
 				aria-hidden="<?php echo $ci === 0 ? 'false' : 'true'; ?>"
 			>
 				<!-- Background image -->
@@ -110,7 +103,8 @@ $type_labels = [
 						aria-hidden="true"
 						class="w-full h-full object-cover"
 						loading="<?php echo $ci === 0 ? 'eager' : 'lazy'; ?>"
-						decoding="async"
+						<?php if ( $ci === 0 ) echo 'fetchpriority="high"'; ?>
+						decoding="<?php echo $ci === 0 ? 'sync' : 'async'; ?>"
 					>
 					<div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/70 to-slate-900/30"></div>
 				</div>
@@ -143,8 +137,8 @@ $type_labels = [
 
 					<!-- CTA -->
 					<div class="flex">
-						<a href="<?php echo esc_url( $cp['link'] ?? '#' ); ?>" class="bg-white text-slate-900 px-7 py-3 rounded-xl font-black text-sm flex items-center gap-2 hover:bg-primary-50 transition-all shadow-lg active:scale-95">
-							<?php esc_html_e( 'See Deal', 'bigtricks' ); ?> <i data-lucide="arrow-right" class="w-4 h-4"></i>
+							<a href="<?php echo esc_url( $cp['link'] ?? '#' ); ?>" class="bg-white text-slate-900 px-7 py-3 rounded-xl font-black text-sm flex items-center gap-2 hover:bg-primary-50 transition-all shadow-lg dark:shadow-slate-900/30 active:scale-95">
+						<?php echo esc_html( ! empty( $cp['button_text'] ) ? $cp['button_text'] : __( 'See Deal', 'bigtricks' ) ); ?> <i data-lucide="arrow-right" class="w-4 h-4"></i>
 						</a>
 					</div>
 				</div>
@@ -165,13 +159,13 @@ $type_labels = [
 
 			<!-- Dot Indicators -->
 			<div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-1.5 bt-carousel-dots">
-				<?php foreach ( $carousel_posts as $ci => $_ ) : ?>
+				<?php for ( $ci = 0; $ci < $slide_count; $ci++ ) : ?>
 				<button
 					class="bt-carousel-dot h-2 rounded-full transition-all duration-300 <?php echo $ci === 0 ? 'bg-white w-6' : 'bg-white/40 w-2'; ?>"
 					data-index="<?php echo esc_attr( $ci ); ?>"
 					aria-label="<?php echo esc_attr( sprintf( __( 'Go to slide %d', 'bigtricks' ), $ci + 1 ) ); ?>"
 				></button>
-				<?php endforeach; ?>
+				<?php endfor; ?>
 			</div>
 		</div>
 		<?php endif; ?>
@@ -197,7 +191,7 @@ $type_labels = [
 						?>
 					<a
 						href="<?php echo esc_url( $filter_url ); ?>"
-						class="whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-bold transition-all <?php echo $is_active ? 'bg-primary-600 text-white shadow-md shadow-primary-200' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300'; ?>"
+						class="whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-bold transition-all <?php echo $is_active ? 'bg-primary-600 text-white shadow-md shadow-primary-200 dark:shadow-none' : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-300'; ?>"
 						aria-current="<?php echo $is_active ? 'true' : 'false'; ?>"
 					>
 						<?php echo esc_html( $type_label ); ?>
@@ -269,32 +263,39 @@ $type_labels = [
 			$current_type = get_post_type();
 			$tpl_slug     = $card_template_map[ $current_type ] ?? 'card-post';
 			?>
-			<?php if ( $post_index === 3 ) : // In-feed CTA after 3rd post ?>
-			<div class="bg-gradient-to-r from-primary-600 via-blue-600 to-cyan-500 rounded-3xl p-6 sm:p-10 text-white shadow-xl shadow-primary-200/50 relative overflow-hidden group">
-				<div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
-				<div class="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-8">
-					<div class="text-center lg:text-left">
-						<h3 class="text-2xl sm:text-3xl font-black mb-3"><?php esc_html_e( 'Never Miss a Loot! 🚀', 'bigtricks' ); ?></h3>
-						<p class="text-primary-100 text-base sm:text-lg font-medium max-w-xl">
-							<?php esc_html_e( 'Join our community of over 100,000 smart shoppers. Get instant push notifications for price drops and secret coupons.', 'bigtricks' ); ?>
-						</p>
-					</div>
-					<div class="flex flex-col sm:flex-row gap-4 w-full lg:w-auto shrink-0">
-						<a href="https://t.me/bigtricks" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto bg-white text-primary-600 font-black py-3.5 px-6 sm:px-8 rounded-2xl shadow-lg hover:scale-105 hover:shadow-xl transition-all flex items-center justify-center gap-3">
-							<i data-lucide="send" class="w-5 h-5 text-blue-500"></i>
-							<?php esc_html_e( 'Join Telegram', 'bigtricks' ); ?>
-						</a>
-						<a href="https://wa.me/bigtricks" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto bg-[#25D366] text-white font-black py-3.5 px-6 sm:px-8 rounded-2xl shadow-lg hover:scale-105 hover:shadow-xl transition-all flex items-center justify-center gap-3">
-							<i data-lucide="message-circle" class="w-5 h-5"></i>
-							<?php esc_html_e( 'WhatsApp', 'bigtricks' ); ?>
-						</a>
-					</div>
+			<?php if ( $post_index === 3 ) : // In-feed CTA after 3rd post
+			$bt_telegram  = bigtricks_option( 'bt_telegram_url' );
+			$bt_whatsapp  = bigtricks_option( 'bt_whatsapp_url' );
+		?>
+		<div class="bg-gradient-to-r from-primary-600 via-blue-600 to-cyan-500 rounded-3xl p-6 sm:p-10 text-white shadow-xl shadow-primary-200/50 dark:shadow-slate-900/50 relative overflow-hidden group">
+			<div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+			<div class="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-8">
+				<div class="text-center lg:text-left">
+					<h3 class="text-2xl text-white sm:text-3xl font-black mb-3"><?php esc_html_e( 'Never Miss a Loot! 🚀', 'bigtricks' ); ?></h3>
+					<p class="text-primary-100 text-base sm:text-lg font-medium max-w-xl">
+						<?php esc_html_e( 'Join our community of over 100,000 smart shoppers. Get instant push notifications for price drops and secret coupons.', 'bigtricks' ); ?>
+					</p>
+				</div>
+				<div class="flex flex-col sm:flex-row gap-4 w-full lg:w-auto shrink-0">
+					<?php if ( $bt_telegram ) : ?>
+					<a href="<?php echo esc_url( $bt_telegram ); ?>" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto bg-white text-primary-600 font-black py-3.5 px-6 sm:px-8 rounded-2xl shadow-lg hover:scale-105 hover:shadow-xl dark:shadow-slate-900/30 dark:hover:shadow-slate-900/50 transition-all flex items-center justify-center gap-3">
+						<i data-lucide="send" class="w-5 h-5 text-blue-500"></i>
+						<?php esc_html_e( 'Join Telegram', 'bigtricks' ); ?>
+					</a>
+					<?php endif; ?>
+					<?php if ( $bt_whatsapp ) : ?>
+					<a href="<?php echo esc_url( $bt_whatsapp ); ?>" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto bg-[#25D366] text-white font-black py-3.5 px-6 sm:px-8 rounded-2xl shadow-lg hover:scale-105 hover:shadow-xl transition-all flex items-center justify-center gap-3">
+						<i data-lucide="message-circle" class="w-5 h-5"></i>
+						<?php esc_html_e( 'WhatsApp', 'bigtricks' ); ?>
+					</a>
+					<?php endif; ?>
 				</div>
 			</div>
-			<?php endif; ?>
+		</div>
+		<?php endif; ?>
 
-			<?php get_template_part( 'template-parts/' . $tpl_slug, null, [ 'post_id' => $post_id ] ); ?>
-			<?php $post_index++; endwhile; wp_reset_postdata(); ?>
+		<?php get_template_part( 'template-parts/' . $tpl_slug, null, [ 'post_id' => $post_id ] ); ?>
+		<?php $post_index++; endwhile; wp_reset_postdata(); ?>
 
 		</div><!-- /#bt-feed-container -->
 
@@ -303,7 +304,7 @@ $type_labels = [
 		<div class="mt-8 flex justify-center" id="bt-load-more-wrap">
 			<button
 				id="bt-load-more"
-				class="flex items-center gap-3 bg-white border-2 border-slate-200 hover:border-primary-400 text-slate-700 hover:text-primary-600 font-black px-8 py-4 rounded-2xl shadow-sm hover:shadow-md transition-all active:scale-95 group"
+				class="flex items-center gap-3 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 hover:border-primary-400 text-slate-700 dark:text-slate-300 hover:text-primary-600 font-black px-8 py-4 rounded-2xl shadow-sm hover:shadow-md dark:shadow-slate-900/20 dark:hover:shadow-slate-900/40 transition-all active:scale-95 group"
 				data-page="1"
 				data-max-pages="<?php echo esc_attr( $max_pages ); ?>"
 				data-cat="<?php echo esc_attr( $active_cat ); ?>"
@@ -326,6 +327,174 @@ $type_labels = [
 	</div><!-- /Left Column -->
 
 	<?php get_sidebar(); ?>
+
+</div><!-- /max-w-[1400px] container -->
+
+<!-- ══════════════════════ ABOUT BIGTRICKS SECTION ══════════════════════ -->
+<section class="bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 py-16 md:py-24 w-full" aria-label="<?php esc_attr_e( 'About Bigtricks', 'bigtricks' ); ?>">
+	<div class="max-w-[1400px] mx-auto px-4">
+		
+		<!-- Section Header -->
+		<div class="text-center mb-12 md:mb-16">
+			<div class="inline-flex items-center justify-center gap-3 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 px-6 py-3 rounded-full mb-6 shadow-sm dark:shadow-slate-900/20">
+				<i data-lucide="info" class="w-5 h-5"></i>
+				<span class="font-black text-sm uppercase tracking-wider"><?php esc_html_e( 'About Us', 'bigtricks' ); ?></span>
+			</div>
+			<h2 class="text-3xl md:text-5xl font-black text-slate-900 dark:text-white mb-4">
+			<?php esc_html_e( 'About Bigtricks – Free Recharge Tricks & Cashback Offers', 'bigtricks' ); ?>
+			</h2>
+			<p class="text-lg md:text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto font-medium">
+				<?php esc_html_e( 'Your trusted source for verified deals, cashback offers, and money-saving tricks since 2015', 'bigtricks' ); ?>
+			</p>
+		</div>
+
+		<!-- About Content Grid -->
+		<div class="grid md:grid-cols-2 gap-6 md:gap-8 mb-12">
+			
+			<!-- Why Bigtricks.in -->
+			<div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-lg border border-slate-200 dark:border-slate-700 hover:shadow-xl transition-shadow">
+				<div class="flex items-start gap-4 mb-6">
+					<div class="bg-primary-100 dark:bg-primary-900/30 p-3 rounded-2xl shrink-0">
+						<i data-lucide="help-circle" class="w-7 h-7 text-primary-600 dark:text-primary-400"></i>
+					</div>
+					<h3 class="text-2xl font-black text-slate-900 dark:text-white leading-tight"><?php esc_html_e( 'Why Bigtricks.in', 'bigtricks' ); ?></h3>
+				</div>
+				<div class="text-slate-600 dark:text-slate-300 leading-relaxed space-y-4">
+					<p>
+						<?php
+						printf(
+							/* translators: 1: Opening link tag for Telegram, 2: Closing link tag, 3: Opening link tag for deals, 4: Closing link tag, 5: Opening link tag for loot deals, 6: Closing link tag */
+							esc_html__( 'If you want to recharge your mobile or shop for something, you must check our website or get connected with us on %1$sTelegram channel%2$s or Email subscription. Every time there is any new Recharge %3$sloot offer%4$s or Shopping %5$sLoot offer%6$s we will notify you.', 'bigtricks' ),
+							'<a href="' . esc_url( home_url( '/best-loot-deals-telegram-channel/' ) ) . '" class="text-primary-600 dark:text-primary-400 font-bold hover:underline">',
+							'</a>',
+							'<a href="' . esc_url( home_url( '/deals' ) ) . '" class="text-primary-600 dark:text-primary-400 font-bold hover:underline">',
+							'</a>',
+							'<a href="' . esc_url( home_url( '/loot-deals' ) ) . '" class="text-primary-600 dark:text-primary-400 font-bold hover:underline">',
+							'</a>'
+						);
+						?>
+					</p>
+					<p class="font-semibold text-slate-900 dark:text-white">
+						<?php
+						printf(
+							/* translators: %1$s: Opening link tag, %2$s: Closing link tag */
+							esc_html__( 'You just have to be quick and grab the offer! Get connected with us now on %1$stelegram channel%2$s – Fastest way', 'bigtricks' ),
+							'<a href="' . esc_url( home_url( '/best-loot-deals-telegram-channel/' ) ) . '" class="text-primary-600 dark:text-primary-400 hover:underline">',
+							'</a>'
+						);
+						?>
+					</p>
+				</div>
+			</div>
+
+			<!-- About Bigtricks -->
+			<div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-lg border border-slate-200 dark:border-slate-700 hover:shadow-xl transition-shadow">
+				<div class="flex items-start gap-4 mb-6">
+					<div class="bg-emerald-100 dark:bg-emerald-900/30 p-3 rounded-2xl shrink-0">
+						<i data-lucide="chevron-right" class="w-7 h-7 text-emerald-600 dark:text-emerald-400"></i>
+					</div>
+					<h3 class="text-2xl font-black text-slate-900 dark:text-white leading-tight"><?php esc_html_e( 'About Bigtricks – Free Recharge Tricks & Cashback Offers', 'bigtricks' ); ?></h3>
+				</div>
+				<div class="text-slate-600 dark:text-slate-300 leading-relaxed">
+					<p>
+						<?php
+						printf(
+							/* translators: 1-12: Opening/closing link tags for various pages */
+							esc_html__( 'Bigtricks.in is known for all types of %1$sFree Recharge Tricks%2$s, %3$sPayTM cash tricks%4$s, Online Shopping Discounts & Tricks, Latest %5$srefer and earn%6$s offers to earn money online. With Bigtricks you can get latest %7$sloot deals%8$s as well as instant notifications. Our users save up to Rs.10,000 per month by just using our simple tips & tricks. Our mission is to help online shoppers save their hard-earned money. People here even get free shopping with apps like %9$sAmazon%10$s, %11$sPhonePe%12$s & newly launched apps.', 'bigtricks' ),
+							'<a href="' . esc_url( home_url( '/free-recharge-tricks' ) ) . '" class="text-primary-600 dark:text-primary-400 font-bold hover:underline">',
+							'</a>',
+							'<a href="' . esc_url( home_url( '/instant-free-paytm-cash-apps/' ) ) . '" class="text-primary-600 dark:text-primary-400 font-bold hover:underline">',
+							'</a>',
+							'<a href="' . esc_url( home_url( '/referral-codes' ) ) . '" class="text-primary-600 dark:text-primary-400 font-bold hover:underline">',
+							'</a>',
+							'<a href="' . esc_url( home_url( '/loot-deals' ) ) . '" class="text-primary-600 dark:text-primary-400 font-bold hover:underline">',
+							'</a>',
+							'<a href="' . esc_url( home_url( '/amazon-pay-upi-activation-offers/' ) ) . '" class="text-primary-600 dark:text-primary-400 font-bold hover:underline">',
+							'</a>',
+							'<a href="' . esc_url( home_url( '/store/phonepe' ) ) . '" class="text-primary-600 dark:text-primary-400 font-bold hover:underline">',
+							'</a>'
+						);
+						?>
+					</p>
+				</div>
+			</div>
+
+			<!-- Only Verified Tricks -->
+			<div class="bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-lg border border-slate-200 dark:border-slate-700 hover:shadow-xl transition-shadow">
+				<div class="flex items-start gap-4 mb-6">
+					<div class="bg-orange-100 dark:bg-orange-900/30 p-3 rounded-2xl shrink-0">
+						<i data-lucide="shield-check" class="w-7 h-7 text-orange-600 dark:text-orange-400"></i>
+					</div>
+					<h3 class="text-2xl font-black text-slate-900 dark:text-white leading-tight"><?php esc_html_e( 'Only Verified Tricks', 'bigtricks' ); ?></h3>
+				</div>
+				<div class="text-slate-600 dark:text-slate-300 leading-relaxed">
+					<p><?php esc_html_e( 'We do not want our followers to waste time on apps that claim false offers. We first verify the post completely and then share it with all. If there is some loot going on currently and we don\'t have proof, we will simply add a tag #unverified so you can try at least and if it worked, it\'s yours.', 'bigtricks' ); ?></p>
+				</div>
+			</div>
+
+			<!-- Telegram Channel -->
+			<div class="bg-gradient-to-br from-blue-500 to-cyan-600 dark:from-blue-600 dark:to-cyan-700 rounded-3xl p-8 shadow-lg text-white hover:shadow-xl transition-shadow">
+				<div class="flex items-start gap-4 mb-6">
+					<div class="bg-white/20 backdrop-blur-sm p-3 rounded-2xl shrink-0">
+						<i data-lucide="send" class="w-7 h-7 text-white"></i>
+					</div>
+					<h3 class="text-2xl font-black leading-tight"><?php esc_html_e( 'Best Loot Deals & Offers Telegram Channels', 'bigtricks' ); ?></h3>
+				</div>
+				<div class="text-blue-50 leading-relaxed mb-6">
+					<p><?php esc_html_e( 'Our Telegram Channel provides you with 24×7×365 Loot Deals and Instant Offers Update. Join our Best Loot Deals Telegram Channel and never miss any Loot Deal, Free Recharge Trick, and Hidden Deals again.', 'bigtricks' ); ?></p>
+				</div>
+				<a href="https://t.me/bigtricksin" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 bg-white text-blue-600 font-black px-6 py-3 rounded-xl shadow-lg hover:scale-105 transition-transform">
+					<i data-lucide="send" class="w-5 h-5"></i>
+					<?php esc_html_e( 'Join Telegram Now', 'bigtricks' ); ?>
+				</a>
+			</div>
+
+		</div><!-- /grid -->
+
+
+	</div><!-- /max-w-[1400px] -->
+</section>
+<!-- ════════════════════ END ABOUT BIGTRICKS SECTION ════════════════════ -->
+
+<div class=" mx-auto">
+				<!-- ──────────────────── OUR IMPACT SECTION ──────────────────── -->
+<section class="bg-slate-900 text-white py-16 mt-8 relative overflow-hidden w-full" aria-label="<?php esc_attr_e( 'Community Impact Stats', 'bigtricks' ); ?>">
+	<div class="absolute inset-0 pointer-events-none overflow-hidden">
+		<div class="absolute top-1/2 left-0 w-96 h-96 bg-primary-600/20 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2"></div>
+		<div class="absolute top-1/2 right-0 w-96 h-96 bg-cyan-600/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+	</div>
+	<div class="max-w-[1400px] mx-auto relative z-10">
+		<div class="text-center mb-12">
+			<h2 class="text-3xl md:text-4xl font-black mb-4"><?php esc_html_e( 'The Community Impact', 'bigtricks' ); ?></h2>
+			<p class="text-slate-400 font-medium max-w-2xl mx-auto"><?php esc_html_e( 'Join millions of smart shoppers who trust Bigtricks to find the absolute lowest prices on the internet.', 'bigtricks' ); ?></p>
+		</div>
+		<div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12 text-center">
+			<div class="bg-white/5 backdrop-blur-sm p-6 rounded-3xl border border-white/10 hover:bg-white/10 transition-colors">
+				<p class="text-2xl sm:text-3xl md:text-5xl font-black text-primary-400 mb-2">₹3,920+</p>
+				<p class="font-bold text-sm sm:text-lg mb-1"><?php esc_html_e( 'Monthly Savings', 'bigtricks' ); ?></p>
+				<p class="text-slate-400 text-xs sm:text-sm font-medium"><?php esc_html_e( 'Per User Average', 'bigtricks' ); ?></p>
+			</div>
+			<div class="bg-white/5 backdrop-blur-sm p-6 rounded-3xl border border-white/10 hover:bg-white/10 transition-colors">
+				<p class="text-2xl sm:text-3xl md:text-5xl font-black text-cyan-400 mb-2">10+</p>
+				<p class="font-bold text-sm sm:text-lg mb-1"><?php esc_html_e( 'Years Strong', 'bigtricks' ); ?></p>
+				<p class="text-slate-400 text-xs sm:text-sm font-medium"><?php esc_html_e( 'Serving Since 2015', 'bigtricks' ); ?></p>
+			</div>
+			<div class="bg-white/5 backdrop-blur-sm p-6 rounded-3xl border border-white/10 hover:bg-white/10 transition-colors">
+				<p class="text-2xl sm:text-3xl md:text-5xl font-black text-emerald-400 mb-2 flex items-center justify-center gap-2">
+					<i data-lucide="shield-check" class="w-8 h-8 hidden sm:block"></i>100%
+				</p>
+				<p class="font-bold text-sm sm:text-lg mb-1"><?php esc_html_e( 'Verified Deals', 'bigtricks' ); ?></p>
+				<p class="text-slate-400 text-xs sm:text-sm font-medium"><?php esc_html_e( 'All Offers Tested', 'bigtricks' ); ?></p>
+			</div>
+			<div class="bg-white/5 backdrop-blur-sm p-6 rounded-3xl border border-white/10 hover:bg-white/10 transition-colors">
+				<p class="text-2xl sm:text-3xl md:text-5xl font-black text-orange-400 mb-2">24/7</p>
+				<p class="font-bold text-sm sm:text-lg mb-1"><?php esc_html_e( 'Telegram Alerts', 'bigtricks' ); ?></p>
+				<p class="text-slate-400 text-xs sm:text-sm font-medium"><?php esc_html_e( 'Instant Updates', 'bigtricks' ); ?></p>
+			</div>
+		</div>
+	</div>
+</section>
+</div><!-- /max-w-[1400px] container -->
 
 </main>
 

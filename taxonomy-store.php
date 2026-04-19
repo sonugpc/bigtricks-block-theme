@@ -77,18 +77,27 @@ $feed_query  = new WP_Query( $query_args );
 $total_posts = $feed_query->found_posts;
 $max_pages   = $feed_query->max_num_pages;
 
-// Per-type count badges for filter chips
-$type_counts = [];
-foreach ( [ 'post', 'deal', 'referral-codes', 'credit-card' ] as $pt ) {
-	$count_query         = new WP_Query( [
-		'post_type'      => $pt,
-		'post_status'    => 'publish',
-		'posts_per_page' => 1,
-		'tax_query'      => [ [ 'taxonomy' => 'store', 'field' => 'term_id', 'terms' => $store_id ] ], // phpcs:ignore WordPress.DB.SlowDBQuery
-		'fields'         => 'ids',
-	] );
-	$type_counts[ $pt ]  = $count_query->found_posts;
-	wp_reset_postdata();
+// Per-type count badges for filter chips — single query instead of 4 WP_Query calls
+$type_counts = [ 'post' => 0, 'deal' => 0, 'referral-codes' => 0, 'credit-card' => 0 ];
+if ( $store_id && $store_term instanceof WP_Term ) {
+	global $wpdb;
+	$ttid = (int) $store_term->term_taxonomy_id;
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
+	$rows = $wpdb->get_results(
+		$wpdb->prepare(
+			"SELECT p.post_type, COUNT(*) AS cnt
+			FROM {$wpdb->posts} p
+			INNER JOIN {$wpdb->term_relationships} tr ON tr.object_id = p.ID
+			WHERE tr.term_taxonomy_id = %d
+			AND p.post_status = 'publish'
+			AND p.post_type IN ('post','deal','referral-codes','credit-card')
+			GROUP BY p.post_type",
+			$ttid
+		)
+	);
+	foreach ( $rows as $row ) {
+		$type_counts[ $row->post_type ] = (int) $row->cnt;
+	}
 }
 
 $type_labels = [
@@ -121,14 +130,14 @@ add_filter( 'pre_get_document_title', function () use ( $store_name ) {
 	<div class="flex-1 min-w-0 w-full overflow-hidden">
 
 		<!-- ═══ STORE HERO ═══ -->
-		<div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-6 overflow-hidden relative">
+		<div class="bg-white dark:bg-slate-800 rounded-3xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 sm:p-8 mb-8 flex flex-col sm:flex-row items-start sm:items-center gap-6 overflow-hidden relative">
 			<!-- Decorative background -->
-			<div class="absolute inset-0 bg-gradient-to-br from-primary-50/60 via-white to-purple-50/30 pointer-events-none" aria-hidden="true"></div>
+			<div class="absolute inset-0 bg-gradient-to-br from-primary-50/60 via-white to-purple-50/30 dark:from-slate-800 dark:via-slate-800 dark:to-slate-800 pointer-events-none" aria-hidden="true"></div>
 
 			<!-- Store Logo / Initials -->
 			<div class="relative z-10 shrink-0">
 				<?php if ( $logo_url ) : ?>
-				<div class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border-2 border-white shadow-lg overflow-hidden bg-white flex items-center justify-center p-2">
+				<div class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl border-2 border-white shadow-lg overflow-hidden bg-white flex items-center justify-center">
 					<img
 						src="<?php echo esc_url( $logo_url ); ?>"
 						alt="<?php echo esc_attr( $store_name ); ?> logo"
@@ -176,9 +185,9 @@ add_filter( 'pre_get_document_title', function () use ( $store_name ) {
 				</h1>
 
 				<?php if ( $store_desc ) : ?>
-				<p class="text-slate-500 text-sm sm:text-base leading-relaxed max-w-2xl mb-4">
+				<div class="prose prose-slate max-w-none prose-img:rounded-2xl prose-img:shadow-md prose-a:text-primary-600 hover:prose-a:text-primary-800 prose-headings:font-black prose-p:leading-relaxed prose-p:text-slate-600 dark:prose-invert break-words mb-4">
 					<?php echo wp_kses_post( wpautop( $store_desc ) ); ?>
-				</p>
+				</div>
 				<?php endif; ?>
 
 				<!-- Visit Store CTA -->
@@ -187,7 +196,7 @@ add_filter( 'pre_get_document_title', function () use ( $store_name ) {
 					href="<?php echo esc_url( $st_link ); ?>"
 					target="_blank"
 					rel="noopener noreferrer nofollow"
-					class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-black rounded-xl shadow-md shadow-primary-200 transition-all active:scale-95"
+					class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-black rounded-xl shadow-md shadow-primary-200 dark:shadow-none transition-all active:scale-95"
 					aria-label="<?php printf( esc_attr__( 'Visit %s official website', 'bigtricks' ), esc_attr( $store_name ) ); ?>"
 				>
 					<i data-lucide="external-link" class="w-4 h-4 shrink-0"></i>
@@ -209,7 +218,7 @@ add_filter( 'pre_get_document_title', function () use ( $store_name ) {
 					?>
 				<a
 					href="<?php echo esc_url( $filter_url ); ?>"
-					class="whitespace-nowrap inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold transition-all <?php echo $is_active ? 'bg-primary-600 text-white shadow-md shadow-primary-200' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300'; ?>"
+					class="whitespace-nowrap inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold transition-all <?php echo $is_active ? 'bg-primary-600 text-white shadow-md shadow-primary-200 dark:shadow-none' : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-300'; ?>"
 					aria-current="<?php echo $is_active ? 'true' : 'false'; ?>"
 				>
 					<?php echo esc_html( $type_label ); ?>
@@ -279,7 +288,7 @@ add_filter( 'pre_get_document_title', function () use ( $store_name ) {
 		<div class="mt-8 flex justify-center" id="bt-load-more-wrap">
 			<button
 				id="bt-load-more"
-				class="flex items-center gap-3 bg-white border-2 border-slate-200 hover:border-primary-400 text-slate-700 hover:text-primary-600 font-black px-8 py-4 rounded-2xl shadow-sm hover:shadow-md transition-all active:scale-95"
+					class="flex items-center gap-3 bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 hover:border-primary-400 text-slate-700 dark:text-slate-300 hover:text-primary-600 font-black px-8 py-4 rounded-2xl shadow-sm hover:shadow-md dark:shadow-slate-900/20 dark:hover:shadow-slate-900/40 transition-all active:scale-95"
 				data-page="1"
 				data-max-pages="<?php echo esc_attr( $max_pages ); ?>"
 				data-store="<?php echo esc_attr( $store_id ); ?>"

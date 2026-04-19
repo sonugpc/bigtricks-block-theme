@@ -8,6 +8,8 @@
 get_header();
 ?>
 
+<?php get_template_part( 'template-parts/share-popover' ); ?>
+
 <main class="max-w-[1400px] mx-auto px-4 py-6 md:py-8 flex flex-col lg:flex-row gap-8 flex-1 w-full" id="main-content">
 
 	<!-- Single Post Column -->
@@ -48,6 +50,7 @@ get_header();
 		<article class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden w-full relative" itemscope itemtype="https://schema.org/Article">
 
 			<!-- Hero Image -->
+			<?php if ( bigtricks_option( 'bt_show_featured_image', '1' ) === '1' ) : ?>
 			<div class="w-full h-64 sm:h-[400px] bg-slate-50 flex items-center justify-center p-8 border-b border-slate-100 relative group overflow-hidden">
 				<img
 					src="<?php echo esc_url( $thumb_url ); ?>"
@@ -63,66 +66,41 @@ get_header();
 				</div>
 				<?php endif; ?>
 			</div>
+			<?php endif; ?>
 
 			<!-- Content Area -->
 			<div class="p-6 sm:p-10 lg:p-12">
+				<?php bigtricks_breadcrumbs(); ?>
 
 				<!-- Title -->
 				<h1 class="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white leading-tight mb-4 break-words" itemprop="name">
 					<?php the_title(); ?>
 				</h1>
 
-				<!-- Social Share (below title) -->
-				<div class="flex flex-wrap items-center gap-3 mb-6 pb-6 border-b border-slate-100 dark:border-slate-800">
-					<span class="text-xs font-bold text-slate-400 uppercase tracking-wider"><?php esc_html_e( 'Share:', 'bigtricks' ); ?></span>
-
-					<!-- WhatsApp share -->
-					<a href="https://wa.me/?text=<?php echo rawurlencode( get_the_title() . ' ' . get_permalink() ); ?>" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 bg-[#25D366]/10 text-[#128C7E] hover:bg-[#25D366]/20 px-3 py-1.5 rounded-full text-xs font-black transition-colors border border-[#25D366]/20">
-						<i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
-						<?php esc_html_e( 'WhatsApp', 'bigtricks' ); ?>
-					</a>
-
-					<!-- Twitter/X -->
-					<a href="https://twitter.com/intent/tweet?url=<?php echo rawurlencode( get_permalink() ); ?>&text=<?php echo rawurlencode( get_the_title() ); ?>" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 bg-black/5 text-slate-700 hover:bg-black/10 px-3 py-1.5 rounded-full text-xs font-black transition-colors border border-slate-200">
-						<i data-lucide="twitter" class="w-3.5 h-3.5"></i>
-						<?php esc_html_e( 'Twitter', 'bigtricks' ); ?>
-					</a>
-
-					<!-- Telegram -->
-					<a href="https://t.me/share/url?url=<?php echo rawurlencode( get_permalink() ); ?>&text=<?php echo rawurlencode( get_the_title() ); ?>" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 px-3 py-1.5 rounded-full text-xs font-black transition-colors border border-blue-100">
-						<i data-lucide="send" class="w-3.5 h-3.5"></i>
-						<?php esc_html_e( 'Telegram', 'bigtricks' ); ?>
-					</a>
-
-					<!-- Copy link -->
-					<button class="bt-share-copy flex items-center gap-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 px-3 py-1.5 rounded-full text-xs font-black transition-colors border border-slate-200" data-url="<?php echo esc_attr( get_permalink() ); ?>" aria-label="<?php esc_attr_e( 'Copy link', 'bigtricks' ); ?>">
-						<i data-lucide="link-2" class="w-3.5 h-3.5"></i>
-						<?php esc_html_e( 'Copy', 'bigtricks' ); ?>
-					</button>
-
-					<!-- Fake share count -->
-					<span class="ml-auto text-xs text-slate-400 font-bold flex items-center gap-1">
-						<i data-lucide="share-2" class="w-3 h-3"></i>
-						<?php echo esc_html( number_format_i18n( $fake_share ) ); ?> <?php esc_html_e( 'shares', 'bigtricks' ); ?>
-					</span>
-				</div>
-
-				<!-- Meta Bar -->
-				<div class="flex flex-wrap items-center gap-4 sm:gap-6 text-slate-500 font-bold text-sm mb-8 pb-8 border-b border-slate-100">
+				<!-- Unified Meta + Share Row -->
+				<div class="flex flex-wrap items-center gap-2 sm:gap-3 text-slate-500 font-bold text-sm mb-8 pb-8 border-b border-slate-100 dark:border-slate-800">
 					<div class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
 						<i data-lucide="clock" class="w-4 h-4"></i>
 						<time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>" itemprop="datePublished">
 							<?php echo esc_html( get_the_date( 'M j, Y' ) ); ?>
 						</time>
 					</div>
-					<a href="#comments" class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-primary-50 hover:text-primary-600 transition-colors">
+					<a href="#comments" class="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-primary-50 hover:text-primary-600 transition-colors" aria-label="<?php esc_attr_e( 'View comments', 'bigtricks' ); ?>">
 						<i data-lucide="message-square" class="w-4 h-4"></i>
-						<?php echo esc_html( $comments_num ); ?> <?php esc_html_e( 'Comments', 'bigtricks' ); ?>
+						<?php echo esc_html( $comments_num ); ?>
 					</a>
-					<?php if ( $cat_name ) : ?>
-					<a href="<?php echo esc_url( $cat_link ); ?>" class="sm:hidden flex items-center gap-2 text-xs font-black text-primary-600 uppercase tracking-wider bg-primary-50 px-3 py-1.5 rounded-full border border-primary-100">
-						<i data-lucide="tag" class="w-3 h-3"></i> <?php echo esc_html( $cat_name ); ?>
-					</a>
+					<?php if ( bigtricks_option( 'bt_show_social_share', '1' ) === '1' ) : ?>
+					<button onclick="openSharePopover(event)" class="ml-auto inline-flex items-center gap-1.5 bg-primary-50 hover:bg-primary-100 text-primary-700 px-3 py-1.5 rounded-lg text-xs font-black border border-primary-200 transition-colors" aria-label="<?php esc_attr_e( 'Share this post', 'bigtricks' ); ?>">
+						<i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+						<?php esc_html_e( 'Share', 'bigtricks' ); ?>
+						<span class="text-primary-300">|</span>
+						<?php echo esc_html( number_format_i18n( $fake_share ) ); ?>
+					</button>
+					<?php else : ?>
+					<span class="ml-auto flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 text-slate-500" aria-label="<?php esc_attr_e( 'Share count', 'bigtricks' ); ?>">
+						<i data-lucide="trending-up" class="w-4 h-4"></i>
+						<?php echo esc_html( number_format_i18n( $fake_share ) ); ?>
+					</span>
 					<?php endif; ?>
 				</div>
 
@@ -198,46 +176,19 @@ get_header();
 				<?php endif; ?>
 
 				<!-- Related Posts -->
-				<?php
-				$related_args  = [
-					'post_type'      => 'post',
+				<?php 
+				$cat_obj = get_the_category( $post_id );
+				get_template_part( 'template-parts/related-posts', null, [
+					'post_id'        => $post_id,
+					'category'       => ! empty( $cat_obj ) ? $cat_obj[0]->slug : '',
 					'posts_per_page' => 3,
-					'post__not_in'   => [ $post_id ],
-					'orderby'        => 'rand',
-				];
-				if ( ! empty( $cat_obj ) ) {
-					$related_args['cat'] = $cat_obj[0]->term_id;
-				}
-				$related_query = new WP_Query( $related_args );
+					'title'          => __( 'Related Deals', 'bigtricks' ),
+					'icon'           => 'zap',
+				] );
 				?>
-				<?php if ( $related_query->have_posts() ) : ?>
-				<div class="mt-12">
-					<h2 class="text-2xl font-black text-slate-900 mb-6 flex items-center gap-2">
-						<i data-lucide="zap" class="w-5 h-5 text-primary-500"></i>
-						<?php esc_html_e( 'Related Deals', 'bigtricks' ); ?>
-					</h2>
-					<div class="grid sm:grid-cols-3 gap-4">
-						<?php while ( $related_query->have_posts() ) :
-							$related_query->the_post();
-							$rel_thumb = bigtricks_get_thumbnail_url( get_the_ID(), 'medium' );
-							?>
-						<a href="<?php the_permalink(); ?>" class="bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-md hover:-translate-y-1 transition-all duration-300 group block">
-							<div class="h-32 bg-slate-50 flex items-center justify-center p-4 border-b border-slate-100">
-								<img src="<?php echo esc_url( $rel_thumb ); ?>" alt="<?php the_title_attribute(); ?>" class="max-h-full max-w-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform" loading="lazy" decoding="async">
-							</div>
-							<div class="p-4">
-								<h3 class="font-bold text-slate-900 text-sm line-clamp-2 group-hover:text-primary-600 transition-colors"><?php the_title(); ?></h3>
-								<time class="text-xs text-slate-400 mt-1 block"><?php echo esc_html( get_the_date( 'M j, Y' ) ); ?></time>
-							</div>
-						</a>
-						<?php endwhile; ?>
-						<?php wp_reset_postdata(); ?>
-					</div>
-				</div>
-				<?php endif; ?>
 
 				<!-- Comments -->
-				<?php if ( comments_open() || get_comments_number() ) : ?>
+				<?php if ( bigtricks_option( 'bt_show_comments', '1' ) === '1' && ( comments_open() || get_comments_number() ) ) : ?>
 				<div id="comments" class="mt-12">
 					<?php comments_template(); ?>
 				</div>

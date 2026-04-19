@@ -172,9 +172,9 @@ $comment_count = get_comments_number();
 			'class_submit'         => 'bt-submit-btn bg-primary-600 hover:bg-primary-700 text-white font-black py-3 px-7 rounded-xl transition-colors cursor-pointer border-0 text-sm flex items-center gap-2',
 			'submit_button'        => '<button name="%1$s" type="submit" id="%2$s" class="%3$s"><i data-lucide="send" class="w-4 h-4"></i> %4$s</button>',
 			'submit_field'         => '<div class="flex items-center justify-between gap-4 pt-1">%1$s %2$s</div>',
-			'comment_field'        => '<div class="relative"><textarea id="comment" name="comment" rows="3" placeholder="' . esc_attr__( 'Write a comment…', 'bigtricks' ) . '" class="bt-chat-textarea w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent resize-none transition-all"' . $aria_req . '></textarea></div>',
+			'comment_field'        => '<div class="relative"><textarea id="comment" name="comment" rows="3" placeholder="' . (is_singular('referral-codes') ? esc_attr__( 'Join the discussion...', 'bigtricks' ) : esc_attr__( 'Write a comment or note about your code…', 'bigtricks' )) . '" class="bt-chat-textarea w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-800 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent resize-none transition-all"' . $aria_req . '></textarea></div>',
 			'fields'               => apply_filters( 'comment_form_default_fields', [
-				'author' => '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3"><div>'
+				'author' => '<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3"><div>'
 					. '<label for="author" class="block text-xs font-bold text-slate-500 mb-1">' . esc_html__( 'Name', 'bigtricks' ) . ' <span class="text-red-400">*</span></label>'
 					. '<input id="author" name="author" type="text" placeholder="' . esc_attr__( 'Your name', 'bigtricks' ) . '" value="' . esc_attr( $commenter['comment_author'] ) . '" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all"' . $aria_req . '></div>',
 				'email'  => '<div>'

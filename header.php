@@ -2,11 +2,44 @@
 <html <?php language_attributes(); ?> class="scroll-smooth">
 <head>
 <meta charset="<?php bloginfo( 'charset' ); ?>">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <?php wp_head(); ?>
 </head>
 <body <?php body_class( 'min-h-screen bg-slate-50 dark:bg-slate-950 font-sans text-slate-800 dark:text-slate-100 flex flex-col overflow-x-hidden' ); ?>>
 <?php wp_body_open(); ?>
+
+<?php
+// ── Announcement Banner (Section 16) ──────────────────────────────
+$ann = function_exists( 'bt_get_announcement' ) ? bt_get_announcement() : [];
+if ( ! empty( $ann['active'] ) && ! empty( $ann['text'] ) ) :
+	$color_map = [
+		'primary' => '#4f46e5',
+		'red'     => '#dc2626',
+		'emerald' => '#059669',
+		'orange'  => '#ea580c',
+		'slate'   => '#1e293b',
+	];
+	$bg     = $color_map[ $ann['color'] ] ?? '#4f46e5';
+	$ann_id = 'ann_' . substr( md5( $ann['text'] . $ann['url'] ), 0, 8 );
+?>
+<script>!function(){if(localStorage.getItem(<?php echo wp_json_encode( 'bt_' . $ann_id ); ?>)){var s=document.createElement('style');s.textContent='#bt-announcement{display:none!important}';document.head.appendChild(s);}}();</script>
+<div id="bt-announcement" data-ann-id="<?php echo esc_attr( $ann_id ); ?>"
+     style="background:<?php echo esc_attr( $bg ); ?>;color:#fff;font-size:13px;text-align:center;padding:8px 48px 8px 16px;position:relative;z-index:60;">
+	<?php if ( ! empty( $ann['image_url'] ) ) : ?>
+		<img src="<?php echo esc_url( $ann['image_url'] ); ?>" alt=""
+		     style="width:20px;height:20px;object-fit:cover;border-radius:3px;vertical-align:middle;margin-right:6px;display:inline-block;">
+	<?php endif; ?>
+	<?php if ( ! empty( $ann['url'] ) ) : ?>
+		<a href="<?php echo esc_url( $ann['url'] ); ?>" style="color:#fff;text-decoration:underline;"><?php echo wp_kses_post( $ann['text'] ); ?></a>
+	<?php else : ?>
+		<?php echo wp_kses_post( $ann['text'] ); ?>
+	<?php endif; ?>
+	<button
+		onclick="var k=<?php echo wp_json_encode( 'bt_' . $ann_id ); ?>;localStorage.setItem(k,'1');document.getElementById('bt-announcement').remove();"
+		aria-label="<?php esc_attr_e( 'Dismiss announcement', 'bigtricks' ); ?>"
+		style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;cursor:pointer;font-size:18px;line-height:1;padding:4px;">&#10005;</button>
+</div>
+<?php endif; ?>
 
 <!-- ──────────────────── HEADER ──────────────────── -->
 <header class="bg-white sticky top-0 z-50 shadow-sm border-b border-slate-200 w-full" role="banner">
@@ -25,10 +58,32 @@
 			</button>
 
 			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="text-2xl font-black flex items-center gap-2 text-slate-900 no-underline hover:no-underline" aria-label="<?php bloginfo( 'name' ); ?> Home">
-				<div class="bg-primary-600 text-white p-1.5 rounded-xl shadow-lg shadow-primary-200">
+				<?php
+				// Priority 1: WordPress Customizer custom logo
+				$custom_logo_id = get_theme_mod( 'custom_logo' );
+				$bt_logo_url    = $custom_logo_id ? wp_get_attachment_image_url( $custom_logo_id, 'full' ) : '';
+				
+				// Priority 2: Custom theme option (fallback)
+				if ( ! $bt_logo_url ) {
+					$bt_logo_url = bigtricks_option( 'bt_logo_url' );
+				}
+				
+				$bt_site_name = bigtricks_option( 'bt_site_name' ) ?: get_bloginfo( 'name' );
+				
+				if ( $bt_logo_url ) : ?>
+				<img
+					src="<?php echo esc_url( $bt_logo_url ); ?>"
+					alt="<?php echo esc_attr( $bt_site_name ); ?>"
+					class="h-10 w-auto max-w-[180px] object-contain"
+					loading="eager"
+					decoding="async"
+				>
+				<?php else : ?>
+				<div class="bg-primary-600 text-white p-1.5 rounded-xl shadow-lg shadow-primary-200 dark:shadow-none">
 					<i data-lucide="zap" class="w-5 h-5 fill-current"></i>
 				</div>
-				<span class="hidden xs:block"><?php bloginfo( 'name' ); ?></span>
+				<span class="hidden xs:block"><?php echo esc_html( $bt_site_name ); ?></span>
+				<?php endif; ?>
 			</a>
 		</div>
 
@@ -40,7 +95,7 @@
 					'theme_location'  => 'primary',
 					'menu_class'      => 'flex items-center gap-1 xl:gap-2 list-none m-0 p-0',
 					'container'       => false,
-					'depth'           => 1,
+				'depth'           => 2,
 					'walker'          => new Bigtricks_Icon_Nav_Walker(),
 					'fallback_cb'     => false,
 					'items_wrap'      => '<ul class="%2$s">%3$s</ul>',
@@ -78,7 +133,7 @@
 					class="w-full py-2.5 pl-5 pr-12 rounded-full bg-slate-100 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:bg-white transition-all border border-transparent focus:border-primary-200 shadow-inner text-sm"
 					autocomplete="off"
 				>
-				<button type="submit" class="absolute right-1.5 top-1.5 bottom-1.5 px-3 bg-primary-600 hover:bg-primary-700 rounded-full text-white shadow-md flex items-center justify-center transition-colors" aria-label="<?php esc_attr_e( 'Search', 'bigtricks' ); ?>">
+				<button type="submit" class="absolute right-1.5 top-1.5 bottom-1.5 px-3 bg-primary-600 hover:bg-primary-700 rounded-full text-white shadow-md dark:shadow-slate-900/30 flex items-center justify-center transition-colors" aria-label="<?php esc_attr_e( 'Search', 'bigtricks' ); ?>">
 					<i data-lucide="search" class="w-4 h-4"></i>
 				</button>
 			</form>
@@ -111,27 +166,36 @@
 			</button>
 
 			<?php if ( is_user_logged_in() ) : ?>
-				<a href="<?php echo esc_url( admin_url( 'post-new.php' ) ); ?>" class="hidden sm:flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-primary-600 hover:bg-primary-50 px-4 py-2 rounded-full transition-all border border-slate-200 hover:border-primary-200 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800">
-					<i data-lucide="plus-circle" class="w-4 h-4"></i>
-					<span><?php esc_html_e( 'Submit', 'bigtricks' ); ?></span>
-				</a>
-				<a href="<?php echo esc_url( admin_url() ); ?>" class="flex items-center gap-2 text-sm font-bold bg-slate-900 hover:bg-slate-800 dark:bg-primary-600 dark:hover:bg-primary-700 text-white px-4 py-2.5 rounded-full shadow-md hover:shadow-lg transition-all active:scale-95">
-					<i data-lucide="user" class="w-4 h-4"></i>
-					<span class="hidden sm:inline"><?php esc_html_e( 'Dashboard', 'bigtricks' ); ?></span>
+				<a href="<?php echo esc_url( admin_url() ); ?>" class="flex items-center justify-center p-2.5 text-slate-600 hover:text-primary-600 hover:bg-primary-50 rounded-full transition-all border border-slate-200 hover:border-primary-200 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 shadow-sm dark:shadow-slate-900/20" title="<?php esc_attr_e( 'Dashboard', 'bigtricks' ); ?>" aria-label="<?php esc_attr_e( 'Go to Dashboard', 'bigtricks' ); ?>">
+					<i data-lucide="user" class="w-5 h-5"></i>
 				</a>
 			<?php else : ?>
-				<a href="<?php echo esc_url( home_url( '/submit-deal/' ) ); ?>" class="hidden sm:flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-primary-600 hover:bg-primary-50 px-4 py-2 rounded-full transition-all border border-slate-200 hover:border-primary-200 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800">
-					<i data-lucide="plus-circle" class="w-4 h-4"></i>
-					<span><?php esc_html_e( 'Submit', 'bigtricks' ); ?></span>
-				</a>
-				<a href="<?php echo esc_url( wp_login_url() ); ?>" class="flex items-center gap-2 text-sm font-bold bg-primary-600 hover:bg-primary-700 text-white px-5 py-2.5 rounded-full shadow-md shadow-primary-200 hover:shadow-lg transition-all active:scale-95">
-					<i data-lucide="user" class="w-4 h-4"></i>
-					<span class="hidden sm:inline"><?php esc_html_e( 'Sign In', 'bigtricks' ); ?></span>
+				<a href="<?php echo esc_url( wp_login_url() ); ?>" class="flex items-center justify-center p-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-md shadow-primary-200 dark:shadow-none hover:shadow-lg dark:hover:shadow-none transition-all active:scale-95" title="<?php esc_attr_e( 'Sign In', 'bigtricks' ); ?>" aria-label="<?php esc_attr_e( 'Sign In', 'bigtricks' ); ?>">
+					<i data-lucide="user" class="w-5 h-5"></i>
 				</a>
 			<?php endif; ?>
 		</div>
 	</div>
 </header>
+
+<!-- ──────────────────── MOBILE SEARCH BAR ──────────────────── -->
+<div class="md:hidden bg-white border-b border-slate-200 px-4 py-3 sticky top-16 z-30">
+	<form role="search" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>" class="relative w-full">
+		<label for="bt-mobile-search-bar" class="sr-only"><?php esc_html_e( 'Search deals, stores, coupons', 'bigtricks' ); ?></label>
+		<input
+			id="bt-mobile-search-bar"
+			type="search"
+			name="s"
+			placeholder="<?php esc_attr_e( 'Search deals...', 'bigtricks' ); ?>"
+			value="<?php echo esc_attr( get_search_query() ); ?>"
+			class="w-full py-2.5 pl-5 pr-12 rounded-full bg-slate-100 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:bg-white transition-all border border-transparent focus:border-primary-200 shadow-inner text-sm"
+			autocomplete="off"
+		>
+		<button type="submit" class="absolute right-1.5 top-1.5 bottom-1.5 px-3 bg-primary-600 hover:bg-primary-700 rounded-full text-white shadow-md dark:shadow-slate-900/30 flex items-center justify-center transition-colors" aria-label="<?php esc_attr_e( 'Search', 'bigtricks' ); ?>">
+			<i data-lucide="search" class="w-4 h-4"></i>
+		</button>
+	</form>
+</div>
 
 <!-- ──────────────────── NOTIFICATION DRAWER ──────────────────── -->
 <div
@@ -181,7 +245,7 @@
 				name="s"
 				placeholder="<?php esc_attr_e( 'Search deals...', 'bigtricks' ); ?>"
 				value="<?php echo esc_attr( get_search_query() ); ?>"
-				class="w-full py-3 pl-4 pr-12 rounded-xl bg-white border border-slate-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 shadow-sm"
+				class="w-full py-3 pl-4 pr-12 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary-500 shadow-sm dark:shadow-slate-900/20"
 			>
 			<button type="submit" class="absolute right-3 top-3 text-primary-600" aria-label="<?php esc_attr_e( 'Search', 'bigtricks' ); ?>">
 				<i data-lucide="search" class="w-5 h-5"></i>
@@ -189,47 +253,21 @@
 		</form>
 	</div>
 
-	<!-- Quick Links Grid -->
-	<div class="grid grid-cols-2 gap-2 p-4 border-b border-slate-100">
-		<a href="<?php echo esc_url( home_url( '/store/' ) ); ?>" class="bg-slate-50 p-3 rounded-xl flex flex-col items-center gap-2 font-bold text-slate-700 hover:text-primary-600 hover:bg-primary-50 transition-colors">
-			<i data-lucide="shopping-bag" class="w-6 h-6 text-primary-500"></i>
-			<?php esc_html_e( 'Stores', 'bigtricks' ); ?>
-		</a>
-		<a href="<?php echo esc_url( home_url( '/category/credit-cards/' ) ); ?>" class="bg-slate-50 p-3 rounded-xl flex flex-col items-center gap-2 font-bold text-slate-700 hover:text-primary-600 hover:bg-primary-50 transition-colors">
-			<i data-lucide="credit-card" class="w-6 h-6 text-primary-500"></i>
-			<?php esc_html_e( 'Cards', 'bigtricks' ); ?>
-		</a>
-		<a href="<?php echo esc_url( home_url( '/blog/' ) ); ?>" class="bg-slate-50 p-3 rounded-xl flex flex-col items-center gap-2 font-bold text-slate-700 hover:text-primary-600 hover:bg-primary-50 transition-colors">
-			<i data-lucide="book-open" class="w-6 h-6 text-primary-500"></i>
-			<?php esc_html_e( 'Blog', 'bigtricks' ); ?>
-		</a>
-		<a href="<?php echo esc_url( home_url( '/submit-deal/' ) ); ?>" class="bg-slate-50 p-3 rounded-xl flex flex-col items-center gap-2 font-bold text-slate-700 hover:text-primary-600 hover:bg-primary-50 transition-colors">
-			<i data-lucide="plus-circle" class="w-6 h-6 text-primary-500"></i>
-			<?php esc_html_e( 'Submit', 'bigtricks' ); ?>
-		</a>
-	</div>
-
 	<!-- Categories List -->
 	<div class="px-4 py-2 text-xs font-black text-slate-400 uppercase tracking-wider">
-		<?php esc_html_e( 'Categories', 'bigtricks' ); ?>
+		<?php esc_html_e( 'Menu', 'bigtricks' ); ?>
 	</div>
-	<ul role="list">
-		<li>
-			<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="px-6 py-3 flex items-center justify-between font-bold text-slate-600 hover:bg-slate-50 border-l-4 border-transparent hover:border-primary-300 transition-colors">
-				<?php esc_html_e( 'All Deals', 'bigtricks' ); ?>
-				<i data-lucide="chevron-right" class="w-4 h-4 opacity-50"></i>
-			</a>
-		</li>
-		<?php
-		$mobile_cats = bigtricks_get_top_categories( 10 );
-		foreach ( $mobile_cats as $cat ) :
-			?>
-			<li>
-				<a href="<?php echo esc_url( get_category_link( $cat->term_id ) ); ?>" class="px-6 py-3 flex items-center justify-between font-bold text-slate-600 hover:bg-slate-50 border-l-4 border-transparent hover:border-primary-300 transition-colors">
-					<span><?php echo esc_html( $cat->name ); ?></span>
-					<i data-lucide="chevron-right" class="w-4 h-4 opacity-50"></i>
-				</a>
-			</li>
-		<?php endforeach; ?>
-	</ul>
+	<?php
+	if ( has_nav_menu( 'mobile' ) ) {
+		wp_nav_menu( [
+			'theme_location'  => 'mobile',
+			'menu_class'      => 'list-none m-0 p-0',
+			'container'       => false,
+			'depth'           => 2,
+			'walker'          => new Bigtricks_Mobile_Nav_Walker(),
+			'fallback_cb'     => false,
+			'items_wrap'      => '<ul class="%2$s">%3$s</ul>',
+		] );
+	}
+	?>
 </div>

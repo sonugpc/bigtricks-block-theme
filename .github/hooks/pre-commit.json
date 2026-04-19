@@ -1,0 +1,43 @@
+{
+  "name": "Bigtricks Pre-Commit Validation",
+  "description": "Enforces code quality, security, and theme-specific patterns before file modifications",
+  "version": "1.0.0",
+  "event": "PreToolUse",
+  "conditions": {
+    "tools": [
+      "replace_string_in_file",
+      "multi_replace_string_in_file",
+      "create_file"
+    ],
+    "filePatterns": [
+      "**/*.php",
+      "**/assets/js/**/*.js"
+    ]
+  },
+  "actions": [
+    {
+      "type": "runScript",
+      "script": ".github/hooks/scripts/pre-commit-check.sh",
+      "description": "Run pre-commit validation checks",
+      "blocking": true,
+      "showOutput": true
+    },
+    {
+      "type": "injectContext",
+      "context": "CRITICAL THEME PATTERNS TO ENFORCE:\n\n1. META FIELD TYPE SAFETY:\n   - ❌ NEVER: get_post_meta($id, '_btdeals_offer_sale_price', true)\n   - ✅ ALWAYS: floatval(get_post_meta($id, '_btdeals_offer_sale_price', true))\n   - Rule: ALL meta retrievals MUST be type-cast (floatval, absint, sanitize_text_field, esc_url, wp_kses_post)\n\n2. AJAX SECURITY:\n   - ✅ REQUIRED in all AJAX handlers: check_ajax_referer('bigtricks_load_more', 'nonce');\n   - ✅ REQUIRED: Sanitize ALL $_POST/$_GET inputs before use\n\n3. OUTPUT ESCAPING:\n   - ✅ HTML output: esc_html($var)\n   - ✅ Attributes: esc_attr($var)\n   - ✅ URLs: esc_url($var)\n   - ✅ Trusted HTML: wp_kses_post($var)\n\n4. LUCIDE ICONS:\n   - ✅ REQUIRED after AJAX HTML injection: lucide.createIcons()\n   - Pattern: insertAdjacentHTML() → lucide.createIcons()\n\n5. DARK MODE:\n   - ✅ ALL new UI components MUST include dark:* variants\n   - Pattern: bg-white dark:bg-slate-900\n\nThese patterns are documented in .github/copilot-instructions.md",
+      "priority": "high"
+    }
+  ],
+  "onFailure": {
+    "action": "block",
+    "message": "Pre-commit validation failed. Please fix the issues and try again. See .github/copilot-instructions.md for patterns."
+  },
+  "metadata": {
+    "author": "Bigtricks Theme",
+    "lastUpdated": "2026-04-17",
+    "relatedDocs": [
+      ".github/copilot-instructions.md",
+      "PLAN.md"
+    ]
+  }
+}

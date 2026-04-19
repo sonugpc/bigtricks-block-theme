@@ -34,7 +34,7 @@ get_header();
 				<div class="space-y-3 mb-6">
 					<button
 						type="button"
-						class="w-full flex items-center justify-center gap-3 bg-white border-2 border-slate-200 hover:border-primary-200 hover:bg-primary-50 text-slate-700 font-bold py-3.5 rounded-2xl transition-all text-sm shadow-sm hover:shadow-md active:scale-[0.98]"
+							class="w-full flex items-center justify-center gap-3 bg-white border-2 border-slate-200 hover:border-primary-200 hover:bg-primary-50 text-slate-700 font-bold py-3.5 rounded-2xl transition-all text-sm shadow-sm hover:shadow-md dark:shadow-slate-900/20 dark:hover:shadow-slate-900/30 active:scale-[0.98]"
 						onclick="alert('Google login requires a plugin like Social Login or WooCommerce Social Login.')"
 					>
 						<svg class="w-5 h-5" viewBox="0 0 24 24" aria-hidden="true">
@@ -131,10 +131,7 @@ get_header();
 					<button
 						type="submit"
 						name="wp-submit"
-						class="w-full bg-primary-600 hover:bg-primary-700 text-white font-black py-4 rounded-2xl text-base shadow-lg shadow-primary-200 hover:shadow-xl transition-all active:scale-[0.98] flex items-center justify-center gap-2"
-					>
-						<i data-lucide="log-in" class="w-5 h-5"></i>
-						<?php esc_html_e( 'Sign In', 'bigtricks' ); ?>
+					class="w-full bg-primary-600 hover:bg-primary-700 text-white font-black py-4 rounded-2xl text-base shadow-lg shadow-primary-200 dark:shadow-none hover:shadow-xl dark:hover:shadow-none transition-all active:scale-[0.98] flex items-center justify-center gap-2"
 					</button>
 				</form>
 

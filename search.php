@@ -23,6 +23,18 @@ get_header();
 			?>
 		</h1>
 
+		<?php
+		// Note: post_type is already set to all CPTs via pre_get_posts in functions.php §10b
+
+		// Map CPT slug → template-part filename
+		$template_map = [
+			'post'           => 'card-post',
+			'deal'           => 'card-deal',
+			'referral-codes' => 'card-referral-code',
+			'credit-card'    => 'card-credit-card',
+		];
+		?>
+
 		<?php if ( have_posts() ) : ?>
 		<p class="text-slate-500 font-medium mb-6">
 			<?php
@@ -31,48 +43,15 @@ get_header();
 			?>
 		</p>
 		<div class="space-y-6">
-			<?php while ( have_posts() ) :
+			<?php
+			while ( have_posts() ) :
 				the_post();
-				$sid         = get_the_ID();
-				$thumb_url   = bigtricks_get_thumbnail_url( $sid, 'medium_large' );
-				$cat_obj     = get_the_category();
-				$cat_name    = ! empty( $cat_obj ) ? $cat_obj[0]->name : '';
-
-				$comments_n  = (int) get_comments_number();
-				?>
-			<article class="bg-white rounded-3xl shadow-sm border border-slate-200/60 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group flex flex-col h-full">
-				<div class="flex flex-col sm:flex-row h-full">
-					<a href="<?php the_permalink(); ?>" class="sm:w-[240px] shrink-0 bg-slate-50 p-5 flex items-center justify-center sm:border-r border-b sm:border-b-0 border-slate-100 relative" tabindex="-1" aria-hidden="true">
-						<img src="<?php echo esc_url( $thumb_url ); ?>" alt="<?php the_title_attribute(); ?>" class="max-h-[160px] max-w-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500" loading="lazy">
-						<div class="absolute top-3 left-3"><?php echo wp_kses_post( bigtricks_deal_type_badge( $sid ) ); ?></div>
-					</a>
-					<div class="p-5 sm:p-6 lg:p-8 flex-1 flex flex-col justify-between min-w-0">
-						<div>
-							<?php if ( $cat_name ) : ?>
-							<div class="mb-2 flex items-center gap-1.5 text-xs font-bold text-primary-600 uppercase tracking-wider">
-								<i data-lucide="tag" class="w-3 h-3"></i> <?php echo esc_html( $cat_name ); ?>
-							</div>
-							<?php endif; ?>
-							<h2 class="font-black text-slate-900 group-hover:text-primary-600 leading-snug mb-3 transition-colors text-lg sm:text-xl line-clamp-2 break-words">
-								<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-							</h2>
-							<div class="text-slate-600 text-sm line-clamp-2 break-words mb-4"><?php the_excerpt(); ?></div>
-						</div>
-						<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-slate-100">
-							<div class="flex items-center gap-4 text-sm font-bold text-slate-500">
-								<a href="<?php echo esc_url( get_permalink() . '#comments' ); ?>" class="flex items-center gap-1.5 hover:text-primary-600">
-									<i data-lucide="message-square" class="w-4 h-4"></i> <?php echo esc_html( $comments_n ); ?>
-								</a>
-								<time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>" class="hidden lg:flex items-center gap-1.5 text-xs text-slate-400">
-									<i data-lucide="clock" class="w-4 h-4"></i> <?php echo esc_html( get_the_date( 'M j, Y' ) ); ?>
-								</time>
-							</div>
-							<div><?php echo wp_kses_post( bigtricks_deal_cta_button( $sid ) ); ?></div>
-						</div>
-					</div>
-				</div>
-			</article>
-			<?php endwhile; ?>
+				$pid           = get_the_ID();
+				$current_type  = get_post_type();
+				$template_slug = $template_map[ $current_type ] ?? 'card-post';
+				get_template_part( 'template-parts/' . $template_slug, null, [ 'post_id' => $pid ] );
+			endwhile;
+			?>
 		</div>
 		<?php the_posts_pagination(); ?>
 		<?php else : ?>
