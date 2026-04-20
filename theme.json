@@ -120,6 +120,9 @@
         "color": { "text": "#0f172a" }
       },
       "link": {
+        "typography": {
+          "textDecoration": ""
+        },
         "color": { "text": "#4f46e5" },
         ":hover": {
           "color": { "text": "#4338ca" }

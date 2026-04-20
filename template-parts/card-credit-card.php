@@ -72,7 +72,7 @@ $star_empty   = 5 - $star_filled - $star_half;
 		<!-- Card Visual -->
 		<a
 			href="<?php echo $permalink; ?>"
-			class="bt-card-thumb sm:w-[220px] shrink-0 bg-gradient-to-br <?php echo esc_attr( $card_gradient ); ?> flex flex-col items-center justify-center sm:border-r sm:border-b-0 border-b border-slate-100 relative overflow-hidden"
+			class="bt-card-thumb sm:w-[220px] shrink-0  flex flex-col items-center justify-center sm:border-r sm:border-b-0 border-b border-slate-100 relative overflow-hidden"
 			tabindex="-1"
 			aria-hidden="true"
 		>
@@ -80,7 +80,7 @@ $star_empty   = 5 - $star_filled - $star_half;
 			<img
 				src="<?php echo esc_url( $thumb_url ); ?>"
 				alt="<?php the_title_attribute(); ?>"
-				class="w-full h-full object-cover drop-shadow-2xl transition-transform duration-500 group-hover:scale-125 group-hover:rotate-2"
+				class="w-full h-64 object-contain drop-shadow-2xl transition-transform duration-500 group-hover:scale-125 group-hover:rotate-2"
 				loading="lazy"
 				decoding="async"
 				width="220"

@@ -28,9 +28,13 @@ $offer_url   = esc_url( (string) get_post_meta( $post_id, '_btdeals_offer_url', 
 $sale_price  = sanitize_text_field( (string) get_post_meta( $post_id, '_btdeals_offer_sale_price', true ) );
 $old_price   = sanitize_text_field( (string) get_post_meta( $post_id, '_btdeals_offer_old_price', true ) );
 $coupon      = sanitize_text_field( (string) get_post_meta( $post_id, '_btdeals_coupon_code', true ) );
-$short_desc  = wp_kses_post( (string) get_post_meta( $post_id, '_btdeals_short_description', true ) );
 $btn_text    = sanitize_text_field( (string) get_post_meta( $post_id, '_btdeals_button_text', true ) ) ?: 'Get Deal';
 $is_expired  = (bool) get_post_meta( $post_id, '_btdeals_is_expired', true );
+
+// Excerpt fallback for cards without price meta: use post content only.
+$post_content = (string) get_post_field( 'post_content', $post_id );
+$rendered_content = do_shortcode( $post_content );
+$card_excerpt = trim( wp_trim_words( wp_strip_all_tags( $rendered_content ), 22 ) );
 
 // Thumbnail priority: featured image > product_thumbnail_url > offer_thumbnail_url
 $offer_thumb   = sanitize_text_field( (string) get_post_meta( $post_id, '_btdeals_offer_thumbnail_url', true ) );
@@ -151,10 +155,8 @@ $dest_url = $offer_url ?: $permalink;
 					<span class="text-base text-slate-400 line-through font-medium">₹<?php echo esc_html( $old_price ); ?></span>
 					<?php endif; ?>
 				</div>
-				<?php elseif ( $short_desc ) : ?>
-				<div class="text-slate-600 text-sm line-clamp-2 break-words mb-3"><?php echo wp_kses_post( $short_desc ); ?></div>
-				<?php else : ?>
-				<div class="text-slate-600 text-sm line-clamp-2 break-words mb-3"><?php the_excerpt(); ?></div>
+				<?php elseif ( '' !== $card_excerpt ) : ?>
+				<div class="text-slate-600 text-sm line-clamp-2 break-words mb-3"><?php echo esc_html( $card_excerpt ); ?></div>
 				<?php endif; ?>
 			</div>
 
