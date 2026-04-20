@@ -711,8 +711,7 @@ get_header();
 				'posts_per_page' => 3,
 				'post_status'    => 'publish',
 				'post__not_in'   => array( $post_id ),
-				'orderby'        => 'meta_value_num',
-				'meta_key'       => 'rating',
+				'orderby'        => 'date',
 				'order'          => 'DESC',
 			);
 

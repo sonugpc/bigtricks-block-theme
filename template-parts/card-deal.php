@@ -22,6 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 $post_id    = get_the_ID();
 $permalink  = esc_url( get_permalink() );
 $comments   = (int) get_comments_number();
+$post_time_ago = esc_html( bigtricks_time_ago( get_the_time( 'U', $post_id ) ) );
 
 // Meta
 $offer_url   = esc_url( (string) get_post_meta( $post_id, '_btdeals_offer_url', true ) );
@@ -115,7 +116,7 @@ $dest_url = $offer_url ?: $permalink;
 		<div class="p-5 sm:p-6 flex-1 flex flex-col justify-between bg-white relative min-w-0">
 			<div>
 				<!-- Store / Category breadcrumb -->
-				<div class="mb-2 flex items-center gap-2 flex-wrap">
+				<div class="mb-2 flex items-center gap-2 flex-wrap relative z-10">
 					<?php if ( $store_name ) : ?>
 					<div class="flex items-center gap-1.5 text-xs font-bold text-slate-500 uppercase tracking-wider">
 						<i data-lucide="shopping-bag" class="w-3 h-3"></i>
@@ -138,8 +139,8 @@ $dest_url = $offer_url ?: $permalink;
 					<?php endif; ?>
 				</div>
 
-				<h2 class="font-black text-slate-900 group-hover:text-primary-600 leading-snug mb-2 transition-colors break-words text-lg sm:text-xl line-clamp-2">
-					<a href="<?php echo $permalink; ?>" class="focus:outline-none focus:underline">
+				<h2 class="font-black text-slate-900 group-hover:text-primary-600 leading-snug mb-2 transition-colors break-words text-lg sm:text-xl line-clamp-2 relative">
+					<a href="<?php echo esc_url( $permalink ); ?>" class="focus:outline-none focus:underline">
 						<span class="absolute inset-0 z-0" aria-hidden="true"></span>
 						<?php the_title(); ?>
 					</a>
@@ -162,6 +163,10 @@ $dest_url = $offer_url ?: $permalink;
 
 			<div class="flex flex-col sm:flex-row flex-wrap sm:items-center justify-between gap-3 mt-auto pt-4 border-t border-slate-100 relative z-10">
 				<div class="flex items-center gap-3 text-sm font-bold text-slate-500 flex-wrap">
+					<span class="flex items-center gap-1.5 text-slate-400">
+						<i data-lucide="clock" class="w-3.5 h-3.5"></i>
+						<time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>" class="text-xs" title="<?php echo esc_attr( get_the_date( 'M j, Y g:i A' ) ); ?>"><?php echo $post_time_ago; ?></time>
+					</span>
 					<!-- Coupon code display -->
 				<?php if ( $coupon ) : ?>
 					<button

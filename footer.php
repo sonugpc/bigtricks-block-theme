@@ -230,6 +230,19 @@
 	</div>
 </footer>
 
+<button
+	type="button"
+	id="bt-back-to-top"
+	class="fixed bottom-5 right-5 z-40 inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:bg-slate-50 hover:text-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 opacity-0 translate-y-2 pointer-events-none"
+	aria-label="Back to top"
+	title="Back to top"
+>
+	<svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+		<path d="M12 19V5"></path>
+		<path d="m5 12 7-7 7 7"></path>
+	</svg>
+</button>
+
 <?php wp_footer(); ?>
 </body>
 </html>

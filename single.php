@@ -86,6 +86,12 @@ get_header();
 							<?php echo esc_html( get_the_date( 'M j, Y' ) ); ?>
 						</time>
 					</div>
+					<?php if ( $cat_name && $cat_link ) : ?>
+					<a href="<?php echo esc_url( $cat_link ); ?>" class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-primary-50 hover:text-primary-600 transition-colors">
+						<i data-lucide="tag" class="w-4 h-4"></i>
+						<?php echo esc_html( $cat_name ); ?>
+					</a>
+					<?php endif; ?>
 					<a href="#comments" class="flex items-center gap-1.5 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-primary-50 hover:text-primary-600 transition-colors" aria-label="<?php esc_attr_e( 'View comments', 'bigtricks' ); ?>">
 						<i data-lucide="message-square" class="w-4 h-4"></i>
 						<?php echo esc_html( $comments_num ); ?>

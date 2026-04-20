@@ -186,7 +186,7 @@ add_filter( 'pre_get_document_title', function () use ( $store_name ) {
 
 				<?php if ( $store_desc ) : ?>
 				<div class="prose prose-slate max-w-none prose-img:rounded-2xl prose-img:shadow-md prose-a:text-primary-600 hover:prose-a:text-primary-800 prose-headings:font-black prose-p:leading-relaxed prose-p:text-slate-600 dark:prose-invert break-words mb-4">
-					<?php echo wp_kses_post( wpautop( $store_desc ) ); ?>
+					<?php echo wp_kses_post( do_shortcode( wpautop( $store_desc ) ) ); ?>
 				</div>
 				<?php endif; ?>
 

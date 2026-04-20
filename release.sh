@@ -107,8 +107,9 @@ if ! git diff-index --quiet HEAD -- 2>/dev/null; then
   echo ""
   git status --short
   echo ""
-  read -rp "  Continue anyway? Staged + unstaged changes will be included in the release commit. [y/N] " CONFIRM
-  [[ "${CONFIRM,,}" == "y" ]] || { echo "Aborted."; exit 0; }
+  printf "  Continue anyway? Staged + unstaged changes will be included in the release commit. [y/N] "
+  read -r CONFIRM </dev/tty || CONFIRM="n"
+  [[ "$CONFIRM" == "y" || "$CONFIRM" == "Y" ]] || { echo "Aborted."; exit 0; }
 fi
 
 # git must be available

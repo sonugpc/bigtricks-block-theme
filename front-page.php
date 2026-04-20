@@ -267,7 +267,7 @@ $type_labels = [
 			$bt_telegram  = bigtricks_option( 'bt_telegram_url' );
 			$bt_whatsapp  = bigtricks_option( 'bt_whatsapp_url' );
 		?>
-		<div class="bg-gradient-to-r from-primary-600 via-blue-600 to-cyan-500 rounded-3xl p-6 sm:p-10 text-white shadow-xl shadow-primary-200/50 dark:shadow-slate-900/50 relative overflow-hidden group">
+		<div class="bt-feed-cta bg-gradient-to-r from-primary-600 via-blue-600 to-cyan-500 rounded-3xl p-6 sm:p-10 text-white shadow-xl shadow-primary-200/50 dark:shadow-slate-900/50 relative overflow-hidden group">
 			<div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
 			<div class="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-8">
 				<div class="text-center lg:text-left">

@@ -8,6 +8,39 @@
 (function () {
   "use strict";
 
+  /* ── 0. Shared Utilities ───────────────────────────── */
+  if (!window.bigtricksUtils) {
+    window.bigtricksUtils = {};
+  }
+
+  // Shared relative-time formatter for dynamic UI components.
+  if (typeof window.bigtricksUtils.formatRelativeTime !== "function") {
+    window.bigtricksUtils.formatRelativeTime = function (timestamp) {
+      if (!timestamp) return "Just now";
+
+      const date = new Date(Number(timestamp) * 1000);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffMins = Math.floor(diffMs / (1000 * 60));
+      const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+      if (diffMins < 1) {
+        return "Just now";
+      } else if (diffMins < 60) {
+        return `${diffMins}m ago`;
+      } else if (diffHours < 24) {
+        return `${diffHours}h ago`;
+      } else if (diffDays === 1) {
+        return "Yesterday";
+      } else if (diffDays < 7) {
+        return `${diffDays}d ago`;
+      }
+
+      return date.toLocaleDateString();
+    };
+  }
+
   /* ── 1. Initialize Lucide Icons ──────────────────────── */
   function initLucide() {
     if (typeof lucide !== "undefined") {
@@ -808,6 +841,68 @@
     });
   }
 
+  /* ── 12. Account Menu (<details>) click-outside close ─ */
+  function initAccountMenu() {
+    const details = document.querySelector("header details.relative");
+    if (!details) return;
+
+    document.addEventListener("click", function (e) {
+      if (!details.contains(e.target)) {
+        details.removeAttribute("open");
+      }
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && details.hasAttribute("open")) {
+        details.removeAttribute("open");
+      }
+    });
+  }
+
+  /* ── 13. Back To Top Button ─────────────────────────── */
+  function initBackToTop() {
+    const btn = document.getElementById("bt-back-to-top");
+    if (!btn) return;
+
+    const threshold = 420;
+    let ticking = false;
+
+    function setVisible(visible) {
+      btn.classList.toggle("opacity-0", !visible);
+      btn.classList.toggle("translate-y-2", !visible);
+      btn.classList.toggle("pointer-events-none", !visible);
+      btn.classList.toggle("opacity-100", visible);
+      btn.classList.toggle("translate-y-0", visible);
+      btn.setAttribute("aria-hidden", visible ? "false" : "true");
+    }
+
+    function updateVisibility() {
+      setVisible(window.scrollY > threshold);
+      ticking = false;
+    }
+
+    window.addEventListener(
+      "scroll",
+      function () {
+        if (!ticking) {
+          window.requestAnimationFrame(updateVisibility);
+          ticking = true;
+        }
+      },
+      { passive: true },
+    );
+
+    btn.addEventListener("click", function () {
+      const reduceMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+
+      window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+    });
+
+    updateVisibility();
+  }
+
   /* ── Init ────────────────────────────────────────────── */
   document.addEventListener("DOMContentLoaded", function () {
     initDarkMode(); // Dark mode first to avoid flash
@@ -821,6 +916,8 @@
     initNotificationDrawer();
     initCountUp();
     initAjaxSearch(); // AJAX search autocomplete
+    initAccountMenu(); // Account <details> dropdown click-outside
+    initBackToTop();
 
     // Note: load-more already calls lucide.createIcons({ nodes: [container] }) before
     // dispatching bigtricks:contentLoaded, so no full-page re-scan is needed here.

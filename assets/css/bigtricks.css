@@ -16,6 +16,44 @@
   --bt-secondary-hover: #1e293b;
 }
 
+/* ── Glassmorphism Utility ─────────────────────────── */
+.bt-glass {
+  background: rgba(255, 255, 255, 0.72) !important;
+  border-color: rgba(226, 232, 240, 0.75) !important;
+  box-shadow:
+    0 10px 30px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(14px) saturate(155%);
+  backdrop-filter: blur(14px) saturate(155%);
+}
+
+header.sticky.bt-glass {
+  background: rgba(255, 255, 255, 0.78) !important;
+}
+
+html.dark .bt-glass {
+  background: rgba(15, 23, 42, 0.72) !important;
+  border-color: rgba(51, 65, 85, 0.8) !important;
+  box-shadow:
+    0 14px 38px rgba(2, 6, 23, 0.55),
+    inset 0 1px 0 rgba(148, 163, 184, 0.12);
+}
+
+html.dark header.sticky.bt-glass {
+  background: rgba(15, 23, 42, 0.78) !important;
+}
+
+@supports not (
+  (-webkit-backdrop-filter: blur(2px)) or (backdrop-filter: blur(2px))
+) {
+  .bt-glass {
+    background: #ffffff !important;
+  }
+  html.dark .bt-glass {
+    background: #0f172a !important;
+  }
+}
+
 /* ── Fonts ─────────────────────────────────────────── */
 body {
   font-family:
@@ -239,14 +277,24 @@ html.dark .bt-dark-icon-sun {
   gap: 1.5rem;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 768px) {
   #bt-feed-container[data-view="grid"] {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
+@media (min-width: 1024px) {
+  #bt-feed-container[data-view="grid"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 #bt-feed-container[data-view="grid"] .bt-deal-card .bt-card-inner {
   flex-direction: column !important;
+}
+
+#bt-feed-container[data-view="grid"] .bt-feed-cta {
+  grid-column: 1 / -1;
 }
 
 #bt-feed-container[data-view="grid"] .bt-card-thumb {
@@ -283,6 +331,39 @@ html.dark .bt-dark-icon-sun {
   opacity: 0.7;
   pointer-events: none;
   cursor: default;
+}
+
+/* Loot deals archive overflow guards */
+body.page-template-page-deals-archive #main-content {
+  overflow-x: hidden;
+}
+
+body.page-template-page-deals-archive .telegram-message,
+body.page-template-page-deals-archive .telegram-message * {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Referral single FAQ answer overflow guards */
+body.single-referral-codes .referral-faq-answer {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+body.single-referral-codes .referral-faq-answer,
+body.single-referral-codes .referral-faq-answer * {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+body.single-referral-codes .referral-faq-answer pre,
+body.single-referral-codes .referral-faq-answer code,
+body.single-referral-codes .referral-faq-answer table {
+  max-width: 100%;
+}
+
+body.single-referral-codes .referral-faq-answer pre {
+  overflow-x: auto;
 }
 
 #bt-load-more.loading .bt-load-icon {

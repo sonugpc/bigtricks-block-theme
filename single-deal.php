@@ -444,7 +444,8 @@ get_header();
 		'post_type'      => 'deal',
 		'posts_per_page' => 4,
 		'post__not_in'   => array( $post_id ),
-		'orderby'        => 'rand',
+		'orderby'        => 'date',
+		'order'          => 'DESC',
 	);
 	
 	// Try to get deals from same store first
@@ -469,6 +470,7 @@ get_header();
 			'posts_per_page' => 4,
 			'post__not_in'   => array( $post_id ),
 			'orderby'        => 'date',
+			'order'          => 'DESC',
 		);
 		$related_query = new WP_Query( $related_args );
 	}

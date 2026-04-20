@@ -57,7 +57,7 @@ $comments  = (int) get_comments_number();
 		<div class="p-5 sm:p-6 flex-1 flex flex-col justify-between bg-white relative min-w-0">
 			<div>
 				<?php if ( $cat_name ) : ?>
-				<div class="mb-2 flex items-center gap-1.5 text-xs font-bold text-primary-600 uppercase tracking-wider">
+				<div class="mb-2 flex items-center gap-1.5 text-xs font-bold text-primary-600 uppercase tracking-wider relative z-10">
 					<i data-lucide="tag" class="w-3 h-3"></i>
 					<?php if ( $cat_link ) : ?>
 					<a href="<?php echo $cat_link; ?>" class="hover:underline"><?php echo esc_html( $cat_name ); ?></a>
@@ -67,8 +67,8 @@ $comments  = (int) get_comments_number();
 				</div>
 				<?php endif; ?>
 
-				<h2 class="font-black text-slate-900 group-hover:text-primary-600 leading-snug mb-3 transition-colors break-words text-lg sm:text-xl line-clamp-2">
-					<a href="<?php echo $permalink; ?>" class="focus:outline-none focus:underline">
+				<h2 class="font-black text-slate-900 group-hover:text-primary-600 leading-snug mb-3 transition-colors break-words text-lg sm:text-xl line-clamp-2 relative">
+					<a href="<?php echo esc_url( $permalink ); ?>" class="focus:outline-none focus:underline">
 						<span class="absolute inset-0 z-0" aria-hidden="true"></span>
 						<?php the_title(); ?>
 					</a>

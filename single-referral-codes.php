@@ -87,6 +87,7 @@ get_header();
 <?php get_template_part( 'template-parts/share-popover' ); ?>
 
 <main class="max-w-[1400px] mx-auto px-4 py-6 md:py-8" id="main-content">
+	<?php get_template_part( 'template-parts/breadcrumb' ); ?>
 
 	<?php while ( have_posts() ) : the_post();
 		$post_id = get_the_ID();
@@ -120,6 +121,7 @@ get_header();
 
 		$categories = get_the_category();
 		$category_name = ! empty( $categories ) ? $categories[0]->name : 'Referral Program';
+		$category_url  = ! empty( $categories ) ? get_category_link( (int) $categories[0]->term_id ) : '';
 		$expects_code_submission = ! empty( $referral_code );
 		$is_submitted            = isset( $_GET['submitted'] ) && '1' === sanitize_text_field( wp_unslash( $_GET['submitted'] ) );
 	?>
@@ -145,9 +147,15 @@ get_header();
 				
 				<div class="flex flex-wrap items-center justify-center lg:justify-start gap-3 w-full">
 					<?php if ( $category_name ) : ?>
-					<div class="px-4 py-1.5 border border-primary-500 text-primary-600 dark:text-primary-400 rounded-full text-sm font-bold bg-primary-50/50 dark:bg-primary-900/20 max-w-full truncate">
-						<?php echo esc_html( $category_name ); ?>
-					</div>
+						<?php if ( $category_url && ! is_wp_error( $category_url ) ) : ?>
+							<a href="<?php echo esc_url( $category_url ); ?>" class="px-4 py-1.5 border border-primary-500 text-primary-600 dark:text-primary-400 rounded-full text-sm font-bold bg-primary-50/50 dark:bg-primary-900/20 max-w-full truncate hover:underline">
+								<?php echo esc_html( $category_name ); ?>
+							</a>
+						<?php else : ?>
+							<div class="px-4 py-1.5 border border-primary-500 text-primary-600 dark:text-primary-400 rounded-full text-sm font-bold bg-primary-50/50 dark:bg-primary-900/20 max-w-full truncate">
+								<?php echo esc_html( $category_name ); ?>
+							</div>
+						<?php endif; ?>
 					<?php endif; ?>
 
 					<div class="flex items-center justify-center flex-wrap gap-1.5 px-4 py-1.5 border border-slate-200 dark:border-slate-700 rounded-full text-sm font-bold text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800">
@@ -161,14 +169,14 @@ get_header();
 							<i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
 						</div>
 					</div>
+
+					<?php if ( $signup_bonus ) : ?>
+						<div class="inline-flex items-center justify-center lg:justify-start gap-2 text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1.5 rounded-full text-sm border border-emerald-100 dark:border-emerald-800/50 max-w-full">
+							<i data-lucide="gift" class="w-4 h-4 shrink-0"></i>
+							<span class="truncate">Bonus: <?php echo esc_html( $signup_bonus ); ?></span>
+						</div>
+					<?php endif; ?>
 				</div>
-				
-				<?php if ( $signup_bonus ) : ?>
-					<div class="inline-flex items-center justify-center lg:justify-start gap-2 text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-900/20 px-3 py-1.5 rounded-lg mt-2 text-sm border border-emerald-100 dark:border-emerald-800/50 max-w-full break-words">
-						<i data-lucide="gift" class="w-4 flex-shrink-0 h-4"></i>
-						<span class="break-words">Bonus: <?php echo esc_html( $signup_bonus ); ?></span>
-					</div>
-				<?php endif; ?>
 			</div>
 
 			<!-- Right: Actions -->
@@ -482,7 +490,7 @@ get_header();
 								<i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 dark:text-slate-400"></i>
 							</span>
 						</summary>
-						<div class="p-6 pt-0 text-slate-600 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-700 mt-2 prose dark:prose-invert" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+						<div class="referral-faq-answer p-6 pt-0 text-slate-600 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-700 mt-2 prose dark:prose-invert" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
 							<div itemprop="text">
 								<?php echo wp_kses_post( wpautop( $answer ) ); ?>
 							</div>

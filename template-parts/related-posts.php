@@ -27,7 +27,8 @@ $related_args = [
 	'post_type'      => 'post',
 	'posts_per_page' => $posts_per_page,
 	'post__not_in'   => [ $post_id ],
-	'orderby'        => 'rand',
+	'orderby'        => 'date',
+	'order'          => 'DESC',
 	'post_status'    => 'publish',
 ];
 

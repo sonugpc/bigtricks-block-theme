@@ -29,6 +29,7 @@ $signup_bonus     = sanitize_text_field( (string) get_post_meta( $post_id, 'sign
 $app_name         = sanitize_text_field( (string) get_post_meta( $post_id, 'app_name', true ) );
 $referral_rewards = wp_kses_post( (string) get_post_meta( $post_id, 'referral_rewards', true ) );
 $short_desc       = wp_kses_post( (string) get_post_meta( $post_id, 'short_description', true ) );
+$usage_count      = absint( get_post_meta( $post_id, 'referral_code_usage_count', true ) );
 
 // Thumbnail: featured image = app logo
 $thumb_url = bigtricks_get_thumbnail_url( $post_id, 'medium' );
@@ -38,6 +39,11 @@ $display_name = $app_name ?: get_the_title();
 
 // Destination link
 $dest_url = $referral_link ?: $permalink;
+
+// CTA label: use signup bonus text when linking to app/referral URL.
+$cta_label = $referral_link
+	? ( $signup_bonus ?: __( 'Get Referral', 'bigtricks' ) )
+	: __( 'View Details', 'bigtricks' );
 
 // Category
 $cat_obj  = get_the_category();
@@ -84,7 +90,7 @@ $store_link  = ! empty( $store_terms ) && ! is_wp_error( $store_terms ) ? esc_ur
 		<div class="p-5 sm:p-6 flex-1 flex flex-col justify-between bg-white relative min-w-0">
 			<div>
 				<!-- Store & Category breadcrumb -->
-				<div class="mb-2 flex items-center gap-2 flex-wrap">
+				<div class="mb-2 flex items-center gap-2 flex-wrap relative z-10">
 					<?php if ( $store_name ) : ?>
 					<div class="flex items-center gap-1.5 text-xs font-bold text-slate-500 uppercase tracking-wider">
 						<i data-lucide="shopping-bag" class="w-3 h-3"></i>
@@ -107,8 +113,8 @@ $store_link  = ! empty( $store_terms ) && ! is_wp_error( $store_terms ) ? esc_ur
 					<?php endif; ?>
 				</div>
 
-				<h2 class="font-black text-slate-900 group-hover:text-primary-600 leading-snug mb-2 transition-colors break-words text-lg sm:text-xl line-clamp-2">
-					<a href="<?php echo $permalink; ?>" class="focus:outline-none focus:underline">
+				<h2 class="font-black text-slate-900 group-hover:text-primary-600 leading-snug mb-2 transition-colors break-words text-lg sm:text-xl line-clamp-2 relative">
+					<a href="<?php echo esc_url( $permalink ); ?>" class="focus:outline-none focus:underline">
 						<span class="absolute inset-0 z-0" aria-hidden="true"></span>
 						<?php the_title(); ?>
 					</a>
@@ -131,14 +137,22 @@ $store_link  = ! empty( $store_terms ) && ! is_wp_error( $store_terms ) ? esc_ur
 				<div class="flex items-center gap-3 flex-wrap">
 					<!-- Referral code copy chip -->
 					<?php if ( $referral_code ) : ?>
-					<button
-						class="bt-copy-code flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white border border-emerald-500 px-4 py-2 rounded-xl text-sm font-black transition-all active:scale-95 shadow-sm shadow-emerald-200"
-						data-code="<?php echo esc_attr( $referral_code ); ?>"
-						aria-label="<?php echo esc_attr( sprintf( __( 'Copy referral code: %s', 'bigtricks' ), $referral_code ) ); ?>"
-					>
-						<i data-lucide="copy" class="w-4 h-4 shrink-0"></i>
-						<?php echo esc_html( $referral_code ); ?>
-					</button>
+					<div class="inline-flex items-center overflow-hidden rounded-xl border border-emerald-300 bg-emerald-50">
+						<span class="px-3 py-2 text-sm font-black tracking-wide text-emerald-700"><?php echo esc_html( $referral_code ); ?></span>
+						<button
+							class="bt-copy-code border-l border-emerald-300 bg-emerald-500 p-2.5 text-white transition-colors hover:bg-emerald-600"
+							data-code="<?php echo esc_attr( $referral_code ); ?>"
+							aria-label="<?php echo esc_attr( sprintf( __( 'Copy referral code: %s', 'bigtricks' ), $referral_code ) ); ?>"
+						>
+							<i data-lucide="copy" class="h-4 w-4 shrink-0"></i>
+						</button>
+					</div>
+					<?php endif; ?>
+					<?php if ( $usage_count > 0 ) : ?>
+					<span class="inline-flex items-center gap-1.5 rounded-xl bg-slate-100 px-3 py-2 text-sm font-bold text-slate-600">
+						<i data-lucide="users" class="w-4 h-4"></i>
+						<?php echo esc_html( number_format_i18n( $usage_count ) ); ?> <?php esc_html_e( 'used', 'bigtricks' ); ?>
+					</span>
 					<?php endif; ?>
 					<?php if ( $comments > 0 ) : ?>
 					<a href="<?php echo esc_url( $permalink . '#comments' ); ?>" class="flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-primary-600 transition-colors">
@@ -154,7 +168,7 @@ $store_link  = ! empty( $store_terms ) && ! is_wp_error( $store_terms ) ? esc_ur
 						rel="<?php echo $referral_link ? 'noopener noreferrer nofollow' : ''; ?>"
 						class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-black bg-primary-600 hover:bg-primary-700 text-white shadow-md shadow-primary-200 dark:shadow-none transition-all active:scale-95"
 					>
-						<?php echo $referral_link ? esc_html__( 'Get Referral', 'bigtricks' ) : esc_html__( 'View Details', 'bigtricks' ); ?>
+						<?php echo esc_html( $cta_label ); ?>
 						<i data-lucide="external-link" class="w-4 h-4 shrink-0"></i>
 					</a>
 				</div>

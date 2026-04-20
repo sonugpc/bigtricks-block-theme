@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BIGTRICKS_VERSION', '1.0.9' );
+define( 'BIGTRICKS_VERSION', '1.0.10' );
 define( 'BIGTRICKS_DIR', get_template_directory() );
 define( 'BIGTRICKS_URI', get_template_directory_uri() );
 
@@ -204,6 +204,412 @@ add_filter( 'script_loader_tag', function ( string $tag, string $handle ) : stri
 	return str_replace( '<script ', '<script async onload="lucide.createIcons()" ', $tag );
 }, 10, 2 );
 
+/**
+ * Resolve frontend login page URL with optional redirect target.
+ */
+function bigtricks_get_login_url( string $redirect_to = '' ): string {
+	$login_page = get_page_by_path( 'login' );
+	$login_url  = $login_page ? get_permalink( $login_page ) : home_url( '/login/' );
+
+	if ( $redirect_to !== '' ) {
+		$login_url = add_query_arg( 'redirect_to', $redirect_to, $login_url );
+	}
+
+	return esc_url_raw( (string) $login_url );
+}
+
+/**
+ * Resolve frontend dashboard URL.
+ */
+function bigtricks_get_dashboard_url(): string {
+	$dashboard_page = get_page_by_path( 'dashboard' );
+	$dashboard_url  = $dashboard_page ? get_permalink( $dashboard_page ) : home_url( '/dashboard/' );
+
+	return esc_url_raw( (string) $dashboard_url );
+}
+
+/**
+ * Resolve frontend submit page URL.
+ */
+function bigtricks_get_submit_page_url(): string {
+	$submit_page = get_page_by_path( 'submit' );
+	if ( ! $submit_page ) {
+		$submit_page = get_page_by_path( 'submit-post' );
+	}
+
+	$submit_url = $submit_page ? get_permalink( $submit_page ) : home_url( '/submit/' );
+
+	return esc_url_raw( (string) $submit_url );
+}
+
+/**
+ * Resolve frontend saved posts page URL.
+ */
+function bigtricks_get_saved_posts_page_url(): string {
+	$saved_page = get_page_by_path( 'saved-posts' );
+	if ( ! $saved_page ) {
+		$saved_page = get_page_by_path( 'my-saved-posts' );
+	}
+
+	$saved_url = $saved_page ? get_permalink( $saved_page ) : home_url( '/saved-posts/' );
+
+	return esc_url_raw( (string) $saved_url );
+}
+
+add_filter( 'login_url', function ( string $login_url, string $redirect, bool $force_reauth ): string {
+	unset( $force_reauth );
+
+	return bigtricks_get_login_url( $redirect );
+}, 10, 3 );
+
+// Redirect direct GET requests to wp-login.php to the frontend /login page.
+add_action( 'login_init', function (): void {
+	if ( strtoupper( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ?? '' ) ) ) !== 'GET' ) {
+		return;
+	}
+
+	$action = isset( $_REQUEST['action'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['action'] ) ) : 'login';
+	if ( 'login' !== $action ) {
+		return;
+	}
+
+	$redirect_to = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
+	wp_safe_redirect( bigtricks_get_login_url( $redirect_to ) );
+	exit;
+} );
+
+// Send failed frontend login attempts back to /login with an error flag.
+add_action( 'wp_login_failed', function (): void {
+	$referrer = wp_get_referer();
+	if ( ! $referrer ) {
+		return;
+	}
+
+	if ( str_contains( $referrer, 'wp-login.php' ) || str_contains( $referrer, 'wp-admin' ) ) {
+		return;
+	}
+
+	// Preserve the original redirect_to from the submitted form so the user lands
+	// on the correct page after a successful retry, not back on the login page.
+	$original_redirect = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+	$target = add_query_arg( 'login', 'failed', bigtricks_get_login_url( $original_redirect ) );
+	wp_safe_redirect( $target );
+	exit;
+} );
+
+// Keep selected frontend pages private and send guests to /login.
+add_action( 'template_redirect', function (): void {
+	if ( is_admin() ) {
+		return;
+	}
+
+	$locked_pages = [ 'dashboard', 'submit', 'submit-post', 'saved-posts', 'my-saved-posts' ];
+	if ( ! is_page( $locked_pages ) ) {
+		return;
+	}
+
+	if ( is_user_logged_in() ) {
+		return;
+	}
+
+	$current_url = ( is_ssl() ? 'https://' : 'http://' ) . ( $_SERVER['HTTP_HOST'] ?? '' ) . ( $_SERVER['REQUEST_URI'] ?? '' );
+	wp_safe_redirect( bigtricks_get_login_url( esc_url_raw( $current_url ) ) );
+	exit;
+} );
+
+// Logged-in users should not stay on /login.
+add_action( 'template_redirect', function (): void {
+	if ( ! is_page( 'login' ) || ! is_user_logged_in() ) {
+		return;
+	}
+
+	$redirect_to = isset( $_GET['redirect_to'] ) ? esc_url_raw( wp_unslash( $_GET['redirect_to'] ) ) : '';
+	$target      = $redirect_to !== '' ? $redirect_to : bigtricks_get_dashboard_url();
+
+	wp_safe_redirect( $target );
+	exit;
+} );
+
+add_action( 'admin_post_bigtricks_submit_frontend_content', 'bigtricks_handle_frontend_content_submission' );
+add_action( 'admin_post_nopriv_bigtricks_submit_frontend_content', function (): void {
+	$current_url = home_url( '/submit/' );
+	wp_safe_redirect( bigtricks_get_login_url( $current_url ) );
+	exit;
+} );
+
+/**
+ * Handle frontend submissions for offer posts, deal posts, and referral codes.
+ */
+function bigtricks_handle_frontend_content_submission(): void {
+	if ( ! is_user_logged_in() ) {
+		wp_safe_redirect( bigtricks_get_login_url( bigtricks_get_submit_page_url() ) );
+		exit;
+	}
+
+	if ( ! isset( $_POST['bigtricks_submit_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['bigtricks_submit_nonce'] ) ), 'bigtricks_submit_frontend' ) ) {
+		wp_safe_redirect( add_query_arg( 'submit_error', 'invalid_nonce', bigtricks_get_submit_page_url() ) );
+		exit;
+	}
+
+	$submission_type = isset( $_POST['submission_type'] ) ? sanitize_text_field( wp_unslash( $_POST['submission_type'] ) ) : '';
+	$allowed_types   = [ 'offer', 'deal', 'referral' ];
+	if ( ! in_array( $submission_type, $allowed_types, true ) ) {
+		wp_safe_redirect( add_query_arg( 'submit_error', 'invalid_type', bigtricks_get_submit_page_url() ) );
+		exit;
+	}
+
+	$title   = sanitize_text_field( wp_unslash( $_POST['post_title'] ?? '' ) );
+	$content = wp_kses_post( wp_unslash( $_POST['post_content'] ?? '' ) );
+	$excerpt = sanitize_textarea_field( wp_unslash( $_POST['post_excerpt'] ?? '' ) );
+
+	if ( '' === $title || '' === trim( wp_strip_all_tags( $content ) ) ) {
+		wp_safe_redirect( add_query_arg( [ 'submit_error' => 'missing_required', 'type' => $submission_type ], bigtricks_get_submit_page_url() ) );
+		exit;
+	}
+
+	$post_type = 'post';
+	if ( 'deal' === $submission_type ) {
+		$post_type = 'deal';
+	} elseif ( 'referral' === $submission_type ) {
+		$post_type = 'referral-codes';
+	}
+
+	$status = apply_filters( 'bigtricks_frontend_submission_status', 'pending', $submission_type, wp_get_current_user() );
+
+	$postarr = [
+		'post_title'   => $title,
+		'post_content' => $content,
+		'post_excerpt' => $excerpt,
+		'post_status'  => sanitize_key( (string) $status ),
+		'post_type'    => $post_type,
+		'post_author'  => get_current_user_id(),
+	];
+
+	$post_id = wp_insert_post( wp_slash( $postarr ), true );
+	if ( is_wp_error( $post_id ) ) {
+		wp_safe_redirect( add_query_arg( [ 'submit_error' => 'insert_failed', 'type' => $submission_type ], bigtricks_get_submit_page_url() ) );
+		exit;
+	}
+
+	$categories_raw = $_POST['post_categories'] ?? [];
+	if ( ! is_array( $categories_raw ) ) {
+		$categories_raw = [ $categories_raw ];
+	}
+	$category_ids = array_values( array_filter( array_map( 'absint', $categories_raw ) ) );
+	if ( ! empty( $category_ids ) ) {
+		wp_set_post_terms( $post_id, $category_ids, 'category' );
+	}
+
+	$store_term_id = absint( $_POST['store_term_id'] ?? 0 );
+	if ( $store_term_id > 0 ) {
+		wp_set_post_terms( $post_id, [ $store_term_id ], 'store' );
+	}
+
+	if ( 'deal' === $submission_type ) {
+		$meta_map = [
+			'_btdeals_offer_url'              => esc_url_raw( wp_unslash( $_POST['deal_offer_url'] ?? '' ) ),
+			'_btdeals_offer_thumbnail_url'    => esc_url_raw( wp_unslash( $_POST['deal_offer_thumbnail_url'] ?? '' ) ),
+			'_btdeals_product_thumbnail_url'  => esc_url_raw( wp_unslash( $_POST['deal_product_thumbnail_url'] ?? '' ) ),
+			'_btdeals_offer_sale_price'       => (string) floatval( wp_unslash( $_POST['deal_sale_price'] ?? '0' ) ),
+			'_btdeals_offer_old_price'        => (string) floatval( wp_unslash( $_POST['deal_old_price'] ?? '0' ) ),
+			'_btdeals_coupon_code'            => sanitize_text_field( wp_unslash( $_POST['deal_coupon_code'] ?? '' ) ),
+			'_btdeals_discount'               => (string) absint( $_POST['deal_discount'] ?? 0 ),
+			'_btdeals_discount_tag'           => sanitize_text_field( wp_unslash( $_POST['deal_discount_tag'] ?? '' ) ),
+			'_btdeals_button_text'            => sanitize_text_field( wp_unslash( $_POST['deal_button_text'] ?? '' ) ),
+			'_btdeals_verify_label'           => sanitize_text_field( wp_unslash( $_POST['deal_verify_label'] ?? '' ) ),
+			'_btdeals_product_feature'        => wp_kses_post( wp_unslash( $_POST['deal_product_feature'] ?? '' ) ),
+			'_btdeals_disclaimer'             => wp_kses_post( wp_unslash( $_POST['deal_disclaimer'] ?? '' ) ),
+			'_btdeals_store'                  => sanitize_text_field( wp_unslash( $_POST['deal_store_name'] ?? '' ) ),
+			'_btdeals_mask_coupon'            => isset( $_POST['deal_mask_coupon'] ) ? '1' : '0',
+			'_btdeals_is_expired'             => isset( $_POST['deal_is_expired'] ) ? '1' : '0',
+		];
+
+		$expiration_raw = sanitize_text_field( wp_unslash( $_POST['deal_expiration_date'] ?? '' ) );
+		if ( '' !== $expiration_raw ) {
+			$expiration_ts = strtotime( $expiration_raw );
+			if ( false !== $expiration_ts ) {
+				$meta_map['_btdeals_expiration_date'] = (string) $expiration_ts;
+			}
+		}
+
+		foreach ( $meta_map as $meta_key => $meta_value ) {
+			if ( '' === $meta_value ) {
+				continue;
+			}
+			update_post_meta( $post_id, $meta_key, $meta_value );
+		}
+	}
+
+	if ( 'referral' === $submission_type ) {
+		$ref_meta = [
+			'app_name'          => sanitize_text_field( wp_unslash( $_POST['ref_app_name'] ?? '' ) ),
+			'referral_code'     => sanitize_text_field( wp_unslash( $_POST['ref_referral_code'] ?? '' ) ),
+			'referral_link'     => esc_url_raw( wp_unslash( $_POST['ref_referral_link'] ?? '' ) ),
+			'signup_bonus'      => sanitize_text_field( wp_unslash( $_POST['ref_signup_bonus'] ?? '' ) ),
+			'referral_rewards'  => sanitize_text_field( wp_unslash( $_POST['ref_referral_rewards'] ?? '' ) ),
+			'short_description' => sanitize_textarea_field( wp_unslash( $_POST['ref_short_description'] ?? '' ) ),
+		];
+
+		foreach ( $ref_meta as $meta_key => $meta_value ) {
+			if ( '' === $meta_value ) {
+				continue;
+			}
+			update_post_meta( $post_id, $meta_key, $meta_value );
+		}
+	}
+
+	wp_safe_redirect( add_query_arg( [ 'submitted' => '1', 'type' => $submission_type ], bigtricks_get_submit_page_url() ) );
+	exit;
+}
+
+// ---------------------------------------------------------------------------
+// §5b – Frontend user registration
+// ---------------------------------------------------------------------------
+
+add_action( 'admin_post_nopriv_bigtricks_frontend_register', 'bigtricks_handle_frontend_registration' );
+add_action( 'admin_post_bigtricks_frontend_register', 'bigtricks_handle_frontend_registration' );
+
+/**
+ * Redirect back to the login page's register tab with an error code.
+ */
+function bigtricks_register_redirect( string $error_code ): void {
+	$login_page = get_page_by_path( 'login' );
+	$login_url  = $login_page ? (string) get_permalink( $login_page ) : home_url( '/login/' );
+	wp_safe_redirect( add_query_arg( [ 'tab' => 'register', 'reg_error' => $error_code ], $login_url ) );
+	exit;
+}
+
+/**
+ * Handle frontend account registration.
+ *
+ * Spam protection:
+ *  1. WordPress nonce
+ *  2. Honeypot field (must stay empty; bots fill it)
+ *  3. Time-challenge — HMAC-signed timestamp, minimum 3 seconds between render and submit
+ *  4. Stateless math CAPTCHA — answer verified via HMAC (no session/transient needed)
+ *  5. Standard validation: email, password length, password match, uniqueness
+ */
+function bigtricks_handle_frontend_registration(): void {
+
+	// 1. Nonce check.
+	if (
+		! isset( $_POST['bigtricks_register_nonce'] ) ||
+		! wp_verify_nonce(
+			sanitize_text_field( wp_unslash( $_POST['bigtricks_register_nonce'] ) ),
+			'bigtricks_frontend_register'
+		)
+	) {
+		bigtricks_register_redirect( 'nonce_failed' );
+	}
+
+	// 2. Registration must be enabled in Settings → General.
+	if ( ! get_option( 'users_can_register' ) ) {
+		bigtricks_register_redirect( 'registration_disabled' );
+	}
+
+	// 3. Honeypot — bots fill hidden fields; humans leave them blank.
+	if ( ! empty( $_POST['bt_website'] ) ) {
+		// Fake success to avoid tipping off bots.
+		$login_page = get_page_by_path( 'login' );
+		$login_url  = $login_page ? (string) get_permalink( $login_page ) : home_url( '/login/' );
+		wp_safe_redirect( add_query_arg( 'registered', '1', $login_url ) );
+		exit;
+	}
+
+	// 4. Time challenge — reject submissions under 3 seconds (automated fills).
+	$form_ts_raw   = sanitize_text_field( wp_unslash( $_POST['bt_form_ts'] ?? '' ) );
+	$form_time_raw = sanitize_text_field( wp_unslash( $_POST['bt_form_time'] ?? '' ) );
+	$form_ts       = (int) $form_ts_raw;
+
+	if (
+		0 === $form_ts ||
+		'' === $form_time_raw ||
+		! hash_equals( hash_hmac( 'sha256', (string) $form_ts, wp_salt( 'auth' ) ), $form_time_raw )
+	) {
+		bigtricks_register_redirect( 'spam' );
+	}
+
+	if ( ( time() - $form_ts ) < 3 ) {
+		bigtricks_register_redirect( 'too_fast' );
+	}
+
+	// 5. Math CAPTCHA — stateless: verify submitted answer via HMAC.
+	$captcha_answer_raw = sanitize_text_field( wp_unslash( $_POST['bt_captcha_answer'] ?? '' ) );
+	$captcha_hash_raw   = sanitize_text_field( wp_unslash( $_POST['bt_captcha_hash'] ?? '' ) );
+	$captcha_answer     = (int) $captcha_answer_raw;
+
+	if (
+		'' === $captcha_answer_raw ||
+		'' === $captcha_hash_raw ||
+		! hash_equals(
+			hash_hmac( 'sha256', (string) $captcha_answer, wp_salt( 'secure_auth' ) ),
+			$captcha_hash_raw
+		)
+	) {
+		bigtricks_register_redirect( 'captcha_failed' );
+	}
+
+	// 6. Sanitize inputs.
+	$display_name = sanitize_text_field( wp_unslash( $_POST['reg_display_name'] ?? '' ) );
+	$email        = sanitize_email( wp_unslash( $_POST['reg_email'] ?? '' ) );
+	$password     = wp_unslash( $_POST['reg_password'] ?? '' );
+	$password2    = wp_unslash( $_POST['reg_password2'] ?? '' );
+
+	// 7. Validate.
+	if ( '' === $display_name || '' === $email || '' === $password ) {
+		bigtricks_register_redirect( 'missing_fields' );
+	}
+
+	if ( ! is_email( $email ) ) {
+		bigtricks_register_redirect( 'invalid_email' );
+	}
+
+	if ( strlen( $password ) < 8 ) {
+		bigtricks_register_redirect( 'weak_password' );
+	}
+
+	if ( $password !== $password2 ) {
+		bigtricks_register_redirect( 'password_mismatch' );
+	}
+
+	if ( email_exists( $email ) ) {
+		bigtricks_register_redirect( 'email_exists' );
+	}
+
+	// 8. Derive a unique username from display name.
+	$base = sanitize_user( strtolower( str_replace( ' ', '_', $display_name ) ), true );
+	$base = '' !== $base ? $base : 'user';
+	$uname = $base;
+	$i    = 1;
+	while ( username_exists( $uname ) ) {
+		$uname = $base . $i;
+		$i++;
+	}
+
+	// 9. Create the account.
+	$user_id = wp_create_user( $uname, $password, $email );
+
+	if ( is_wp_error( $user_id ) ) {
+		bigtricks_register_redirect( 'register_failed' );
+	}
+
+	// 10. Force subscriber role and set display name (defence in depth).
+	$user = new WP_User( (int) $user_id );
+	$user->set_role( 'subscriber' );
+	wp_update_user( [
+		'ID'           => (int) $user_id,
+		'display_name' => $display_name,
+		'nickname'     => $display_name,
+	] );
+
+	// 11. Auto-login and redirect to dashboard (or original destination).
+	wp_set_current_user( (int) $user_id );
+	wp_set_auth_cookie( (int) $user_id );
+	$redirect_to = isset( $_POST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_POST['redirect_to'] ) ) : bigtricks_get_dashboard_url();
+	wp_safe_redirect( $redirect_to );
+	exit;
+}
+
 
 
 // ─────────────────────────────────────────────
@@ -230,12 +636,35 @@ function bigtricks_force_cpt_template( string $template ): string {
 			return ( $theme_template && file_exists( $theme_template ) ) ? $theme_template : $template;
 		}
 	}
+
+	// Force deal archive to the theme's custom archive template.
+	if ( is_post_type_archive( 'deal' ) ) {
+		$archive_template = locate_template( 'page-deals-archive.php', false, false );
+		if ( $archive_template && file_exists( $archive_template ) ) {
+			return $archive_template;
+		}
+	}
+
 	return $template;
 }
 
 // Run late so theme template wins over plugin-provided templates.
 add_filter( 'single_template',  'bigtricks_force_cpt_template', 999 );
 add_filter( 'template_include', 'bigtricks_force_cpt_template', 999 );
+
+// Register /loot-deals as public archive URL for the Deal CPT.
+add_action( 'init', function (): void {
+	add_rewrite_rule( '^loot-deals/?$', 'index.php?post_type=deal', 'top' );
+}, 20 );
+
+// Ensure archive links for deals consistently point to /loot-deals/.
+add_filter( 'post_type_archive_link', function ( string $link, string $post_type ): string {
+	if ( 'deal' === $post_type ) {
+		return home_url( '/loot-deals/' );
+	}
+
+	return $link;
+}, 10, 2 );
 
 
 // ─────────────────────────────────────────────
@@ -582,6 +1011,16 @@ function bigtricks_ajax_load_more(): void {
 	$store    = isset( $_POST['store'] ) ? absint( $_POST['store'] ) : 0;
         $card_cat = isset( $_POST['card_cat'] ) ? absint( $_POST['card_cat'] ) : 0;
         $type_raw = isset( $_POST['type'] ) ? sanitize_text_field( wp_unslash( $_POST['type'] ) ) : 'all';
+	$search   = isset( $_POST['search'] ) ? sanitize_text_field( wp_unslash( $_POST['search'] ) ) : '';
+	$min_price = isset( $_POST['min_price'] ) ? floatval( wp_unslash( $_POST['min_price'] ) ) : 0;
+	$max_price = isset( $_POST['max_price'] ) ? floatval( wp_unslash( $_POST['max_price'] ) ) : 0;
+	$loot_grid = isset( $_POST['loot_grid'] ) && '1' === sanitize_text_field( wp_unslash( $_POST['loot_grid'] ) );
+
+	$categories_raw = $_POST['categories'] ?? [];
+	if ( ! is_array( $categories_raw ) ) {
+		$categories_raw = [ $categories_raw ];
+	}
+	$categories_multi = array_values( array_filter( array_map( 'absint', $categories_raw ) ) );
 
         $allowed_types = [ 'all', 'post', 'deal', 'referral-codes', 'credit-card' ];
         $type          = in_array( $type_raw, $allowed_types, true ) ? $type_raw : 'all';
@@ -599,31 +1038,72 @@ function bigtricks_ajax_load_more(): void {
                 'order'          => 'DESC',
         ];
 
-        if ( $cat > 0 ) {
-                $args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery
-                        [
-                                'taxonomy' => 'category',
-                                'field'    => 'term_id',
-                                'terms'    => $cat,
-                        ],
-                ];
-        } elseif ( $store > 0 ) {
-                $args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery
-                        [
-                                'taxonomy' => 'store',
-                                'field'    => 'term_id',
-                                'terms'    => $store,
-                        ],
-                ];
-        } elseif ( $card_cat > 0 ) {
-                $args['tax_query'] = [ // phpcs:ignore WordPress.DB.SlowDBQuery
-                        [
-                                'taxonomy' => 'card-category',
-                                'field'    => 'term_id',
-                                'terms'    => $card_cat,
-                        ],
-                ];
-        }
+	if ( '' !== $search ) {
+		$args['s'] = $search;
+	}
+
+	$tax_query = [];
+	// $categories_multi (multi-select) supersedes $cat (legacy single) to avoid
+	// two conflicting category clauses under AND relation that return zero results.
+	if ( ! empty( $categories_multi ) ) {
+		$tax_query[] = [
+			'taxonomy' => 'category',
+			'field'    => 'term_id',
+			'terms'    => $categories_multi,
+		];
+	} elseif ( $cat > 0 ) {
+		$tax_query[] = [
+			'taxonomy' => 'category',
+			'field'    => 'term_id',
+			'terms'    => [ $cat ],
+		];
+	}
+
+	if ( $store > 0 ) {
+		$tax_query[] = [
+			'taxonomy' => 'store',
+			'field'    => 'term_id',
+			'terms'    => [ $store ],
+		];
+	}
+
+	if ( $card_cat > 0 ) {
+		$tax_query[] = [
+			'taxonomy' => 'card-category',
+			'field'    => 'term_id',
+			'terms'    => [ $card_cat ],
+		];
+	}
+
+	if ( ! empty( $tax_query ) ) {
+		if ( count( $tax_query ) > 1 ) {
+			$tax_query = array_merge( [ 'relation' => 'AND' ], $tax_query );
+		}
+		$args['tax_query'] = $tax_query; // phpcs:ignore WordPress.DB.SlowDBQuery
+	}
+
+	$meta_query = [ 'relation' => 'AND' ];
+	if ( $min_price > 0 ) {
+		$meta_query[] = [
+			'key'     => '_btdeals_offer_sale_price',
+			'value'   => $min_price,
+			'compare' => '>=',
+			'type'    => 'NUMERIC',
+		];
+	}
+
+	if ( $max_price > 0 ) {
+		$meta_query[] = [
+			'key'     => '_btdeals_offer_sale_price',
+			'value'   => $max_price,
+			'compare' => '<=',
+			'type'    => 'NUMERIC',
+		];
+	}
+
+	if ( count( $meta_query ) > 1 ) {
+		$args['meta_query'] = $meta_query; // phpcs:ignore WordPress.DB.SlowDBQuery
+	}
 
 	// Map CPT slug → template-part filename (without 'template-parts/' prefix)
 	$template_map = [
@@ -640,7 +1120,11 @@ function bigtricks_ajax_load_more(): void {
 		$query->the_post();
 		$pid           = get_the_ID();
 		$current_type  = get_post_type();
-		$template_slug = $template_map[ $current_type ] ?? 'card-post';
+		if ( $loot_grid && 'deal' === $current_type ) {
+			$template_slug = 'card-deal-loot-grid';
+		} else {
+			$template_slug = $template_map[ $current_type ] ?? 'card-post';
+		}
 		get_template_part( 'template-parts/' . $template_slug, null, [ 'post_id' => $pid ] );
 	endwhile;
 	wp_reset_postdata();
@@ -648,7 +1132,149 @@ function bigtricks_ajax_load_more(): void {
 	$html     = ob_get_clean();
 	$has_more = ( $page < $query->max_num_pages );
 
-	wp_send_json_success( [ 'html' => $html, 'has_more' => $has_more ] );
+	wp_send_json_success( [
+		'html'     => $html,
+		'has_more' => $has_more,
+		'count'    => (int) $query->found_posts,
+	] );
+}
+
+/**
+ * Get category IDs that are children of the "loot-deals" parent category.
+ *
+ * @return int[]
+ */
+function bigtricks_get_loot_deals_category_ids(): array {
+	$parent = get_term_by( 'slug', 'loot-deals', 'category' );
+	if ( ! $parent || is_wp_error( $parent ) ) {
+		return [];
+	}
+
+	$child_ids = get_terms( [
+		'taxonomy'   => 'category',
+		'hide_empty' => false,
+		'parent'     => (int) $parent->term_id,
+		'fields'     => 'ids',
+	] );
+
+	if ( is_wp_error( $child_ids ) || empty( $child_ids ) ) {
+		return [];
+	}
+
+	return array_values( array_filter( array_map( 'absint', $child_ids ) ) );
+}
+
+add_action( 'wp_ajax_bigtricks_loot_deals_filter', 'bigtricks_ajax_loot_deals_filter' );
+add_action( 'wp_ajax_nopriv_bigtricks_loot_deals_filter', 'bigtricks_ajax_loot_deals_filter' );
+
+/**
+ * AJAX: Loot Deals archive filters and infinite pagination.
+ */
+function bigtricks_ajax_loot_deals_filter(): void {
+	check_ajax_referer( 'bigtricks_loot_filter', 'nonce' );
+
+	$page      = isset( $_POST['page'] ) ? absint( $_POST['page'] ) : 1;
+	$store     = isset( $_POST['store'] ) ? absint( $_POST['store'] ) : 0;
+	$search    = isset( $_POST['search'] ) ? sanitize_text_field( wp_unslash( $_POST['search'] ) ) : '';
+	$min_price = isset( $_POST['min_price'] ) ? floatval( wp_unslash( $_POST['min_price'] ) ) : 0;
+	$max_price = isset( $_POST['max_price'] ) ? floatval( wp_unslash( $_POST['max_price'] ) ) : 0;
+
+	$categories_raw = $_POST['categories'] ?? [];
+	if ( ! is_array( $categories_raw ) ) {
+		$categories_raw = [ $categories_raw ];
+	}
+
+	$selected_categories = array_values( array_filter( array_map( 'absint', $categories_raw ) ) );
+	$loot_category_ids   = bigtricks_get_loot_deals_category_ids();
+
+	if ( empty( $loot_category_ids ) ) {
+		wp_send_json_success( [
+			'html'     => '',
+			'has_more' => false,
+			'count'    => 0,
+		] );
+	}
+
+	$filtered_categories = empty( $selected_categories )
+		? $loot_category_ids
+		: array_values( array_intersect( $selected_categories, $loot_category_ids ) );
+
+	if ( empty( $filtered_categories ) ) {
+		wp_send_json_success( [
+			'html'     => '',
+			'has_more' => false,
+			'count'    => 0,
+		] );
+	}
+
+	$args = [
+		'post_type'      => 'deal',
+		'post_status'    => 'publish',
+		'posts_per_page' => 12,
+		'paged'          => max( 1, $page ),
+		'orderby'        => 'date',
+		'order'          => 'DESC',
+		'tax_query'      => [ // phpcs:ignore WordPress.DB.SlowDBQuery
+			'relation' => 'AND',
+			[
+				'taxonomy' => 'category',
+				'field'    => 'term_id',
+				'terms'    => $filtered_categories,
+			],
+		],
+	];
+
+	if ( $store > 0 ) {
+		$args['tax_query'][] = [ // phpcs:ignore WordPress.DB.SlowDBQuery
+			'taxonomy' => 'store',
+			'field'    => 'term_id',
+			'terms'    => [ $store ],
+		];
+	}
+
+	if ( '' !== $search ) {
+		$args['s'] = $search;
+	}
+
+	$meta_query = [ 'relation' => 'AND' ];
+	if ( $min_price > 0 ) {
+		$meta_query[] = [
+			'key'     => '_btdeals_offer_sale_price',
+			'value'   => $min_price,
+			'compare' => '>=',
+			'type'    => 'NUMERIC',
+		];
+	}
+
+	if ( $max_price > 0 ) {
+		$meta_query[] = [
+			'key'     => '_btdeals_offer_sale_price',
+			'value'   => $max_price,
+			'compare' => '<=',
+			'type'    => 'NUMERIC',
+		];
+	}
+
+	if ( count( $meta_query ) > 1 ) {
+		$args['meta_query'] = $meta_query; // phpcs:ignore WordPress.DB.SlowDBQuery
+	}
+
+	$query = new WP_Query( $args );
+
+	ob_start();
+	while ( $query->have_posts() ) {
+		$query->the_post();
+		get_template_part( 'template-parts/card-deal-loot-grid', null, [ 'post_id' => get_the_ID() ] );
+	}
+	wp_reset_postdata();
+
+	$html = ob_get_clean();
+
+	wp_send_json_success( [
+		'html'     => $html,
+		'has_more' => ( max( 1, $page ) < (int) $query->max_num_pages ),
+		'count'    => (int) $query->found_posts,
+	] );
 }
 
 // ─────────────────────────────────────────────
@@ -659,6 +1285,8 @@ add_action( 'pre_get_posts', function ( WP_Query $query ): void {
 	// Only modify main query on search pages (not in admin)
 	if ( ! is_admin() && $query->is_main_query() && $query->is_search() ) {
 		$query->set( 'post_type', [ 'post', 'deal', 'referral-codes', 'credit-card' ] );
+		$query->set( 'orderby', 'date' );
+		$query->set( 'order', 'DESC' );
 	}
 } );
 
@@ -1299,6 +1927,21 @@ add_action( 'admin_init', function () {
 		'bigtricks_theme', 'bt_navigation'
 	);
 
+	add_settings_field( 'bt_enable_user_dashboard', __( 'User Dashboard & Profile Menu', 'bigtricks' ),
+		function () {
+			$val = bigtricks_option( 'bt_enable_user_dashboard', '1' );
+			?>
+			<label>
+				<input type="hidden" name="bigtricks_theme_options[bt_enable_user_dashboard]" value="0">
+				<input type="checkbox" name="bigtricks_theme_options[bt_enable_user_dashboard]" value="1" <?php checked( $val, '1' ); ?>>
+				<?php esc_html_e( 'Show the profile icon / account menu in the header (Dashboard, Submit, Saved Posts, Sign In)', 'bigtricks' ); ?>
+			</label>
+			<p class="description" style="margin-top:4px"><?php esc_html_e( 'Disable this to hide the profile icon completely — useful if you do not use the frontend submission system.', 'bigtricks' ); ?></p>
+			<?php
+		},
+		'bigtricks_theme', 'bt_navigation'
+	);
+
 	// ── Section: Social & Community ────────────────────────────
 	add_settings_section( 'bt_social', __( 'Social & Community Links', 'bigtricks' ), function () {
 		echo '<p class="description">' . esc_html__( 'Used in the footer and share prompts.', 'bigtricks' ) . '</p>';
@@ -1362,7 +2005,7 @@ function bigtricks_sanitize_theme_options( $input ): array {
 		}
 	}
 	// Checkbox / toggle fields (value '1' or '0')
-	$toggle_keys = [ 'bt_show_featured_image', 'bt_show_social_share', 'bt_show_comments', 'bt_show_breadcrumbs' ];
+	$toggle_keys = [ 'bt_show_featured_image', 'bt_show_social_share', 'bt_show_comments', 'bt_show_breadcrumbs', 'bt_enable_user_dashboard' ];
 	foreach ( $toggle_keys as $key ) {
 		$clean[ $key ] = isset( $input[ $key ] ) && $input[ $key ] === '1' ? '1' : '0';
 	}
@@ -1764,6 +2407,31 @@ add_shortcode( 'bigtricks_contact_form', function ( $atts ) {
 	</div>
 	<?php
 	return ob_get_clean();
+} );
+
+/**
+ * Date helper shortcodes for dynamic copy.
+ *
+ * Usage:
+ * [daytoday]   -> 17th October 2026
+ * [monthtoday] -> October 2026
+ * [yeartoday]  -> 2026
+ * [today]      -> 17th October 2026
+ */
+add_shortcode( 'daytoday', function () {
+	return wp_date( 'jS F Y' );
+} );
+
+add_shortcode( 'monthtoday', function () {
+	return wp_date( 'F Y' );
+} );
+
+add_shortcode( 'yeartoday', function () {
+	return wp_date( 'Y' );
+} );
+
+add_shortcode( 'today', function () {
+	return wp_date( 'jS F Y' );
 } );
 
 /**
