@@ -13,6 +13,7 @@ This theme includes reusable widget components that can be used anywhere in your
    - Follow Us Widget
    - Telegram CTA Widget
    - WhatsApp CTA Widget
+   - Community CTA Widget
 3. [Engagement Widgets](#engagement-widgets)
    - Newsletter Widget
    - Trending Categories Widget
@@ -274,9 +275,47 @@ Set `bt_whatsapp_url` in **Appearance → Theme Settings → Social & Community 
 
 ---
 
+### 8. Community CTA Widget
+
+**File:** `template-parts/widget-community-cta.php`  
+**Shortcode:** `[bigtricks_community_cta]`
+
+Promotional banner featuring both Telegram and WhatsApp community links with member counts.
+
+**Template Usage:**
+
+```php
+<?php get_template_part( 'template-parts/widget-community-cta' ); ?>
+```
+
+**Shortcode Usage:**
+
+```php
+[bigtricks_community_cta]
+```
+
+**Shortcode Attributes:**
+
+- `telegram_url` - Telegram channel URL (default: `https://telegram.dog/+0k3Gk4JPe_FjN2Zl`)
+- `whatsapp_url` - WhatsApp group URL (default: `https://links.bigtricks.in/whatsapp`)
+- `telegram_members` - Telegram member count text (default: `28.5K`)
+- `whatsapp_members` - WhatsApp member description (default: `Active community`)
+
+**Features:**
+
+- ✅ Black background with white text
+- ✅ Side-by-side layout for Telegram and WhatsApp CTAs
+- ✅ Lucide icons (send for Telegram, message-circle for WhatsApp)
+- ✅ Hover effects on buttons
+- ✅ Responsive design (stacks on mobile)
+- ✅ Member count indicators with green pulse dots
+- ✅ Links open in new tabs
+
+---
+
 ## Engagement Widgets
 
-### 8. Newsletter Widget
+### 9. Newsletter Widget
 
 **File:** `template-parts/widget-newsletter.php`
 
@@ -302,7 +341,7 @@ By default, submits to homepage. Update form handler in `functions.php` to proce
 
 ---
 
-### 9. Trending Categories Widget
+### 10. Trending Categories Widget
 
 **File:** `template-parts/widget-trending-categories.php`
 
@@ -333,7 +372,7 @@ get_template_part( 'template-parts/widget-trending-categories', null, [
 
 ---
 
-### 10. Download App Widget
+### 11. Download App Widget
 
 **File:** `template-parts/widget-download-app.php`
 

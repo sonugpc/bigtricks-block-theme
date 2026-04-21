@@ -132,7 +132,7 @@ $sale_price = get_post_meta( $post_id, '_btdeals_offer_sale_price', true );
 **Always follow this priority** (see [single-deal.php L58-67](../single-deal.php#L58-L67)):
 
 ```php
-// Priority: offer_thumbnail_url > product_thumbnail_url > featured_image
+// Priority: offer_thumbnail_url > product_thumbnail_url > featured_image > store_logo
 $product_image_url = '';
 if ( $offer_thumbnail_url ) {
     $product_image_url = $offer_thumbnail_url;
@@ -140,6 +140,8 @@ if ( $offer_thumbnail_url ) {
     $product_image_url = $product_thumbnail_url;
 } elseif ( has_post_thumbnail() ) {
     $product_image_url = get_the_post_thumbnail_url( $post_id, 'large' );
+} elseif ( $store_logo ) {
+    $product_image_url = $store_logo;
 }
 ```
 

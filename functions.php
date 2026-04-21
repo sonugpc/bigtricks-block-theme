@@ -651,7 +651,6 @@ function bigtricks_force_cpt_template( string $template ): string {
 // Run late so theme template wins over plugin-provided templates.
 add_filter( 'single_template',  'bigtricks_force_cpt_template', 999 );
 add_filter( 'template_include', 'bigtricks_force_cpt_template', 999 );
-
 // Register /loot-deals as public archive URL for the Deal CPT.
 add_action( 'init', function (): void {
 	add_rewrite_rule( '^loot-deals/?$', 'index.php?post_type=deal', 'top' );
@@ -1952,6 +1951,9 @@ add_action( 'admin_init', function () {
 		'bt_whatsapp_url'  => [ __( 'WhatsApp Group URL', 'bigtricks' ), 'https://chat.whatsapp.com/...' ],
 		'bt_twitter_url'   => [ __( 'Twitter / X Profile URL', 'bigtricks' ), 'https://twitter.com/yourhandle' ],
 		'bt_instagram_url' => [ __( 'Instagram Profile URL', 'bigtricks' ), 'https://instagram.com/yourhandle' ],
+		'bt_youtube_url'   => [ __( 'YouTube Channel URL', 'bigtricks' ), 'https://youtube.com/@yourchannel' ],
+		'bt_facebook_url'  => [ __( 'Facebook Page URL', 'bigtricks' ), 'https://facebook.com/yourpage' ],
+		'bt_linkedin_url'  => [ __( 'LinkedIn Profile URL', 'bigtricks' ), 'https://linkedin.com/in/yourprofile' ],
 	];
 	foreach ( $social_fields as $key => [ $label, $placeholder ] ) {
 		add_settings_field( $key, $label,
@@ -1998,7 +2000,7 @@ function bigtricks_sanitize_theme_options( $input ): array {
 	}
 	$clean = [];
 	// URL fields
-	$url_keys = [ 'bt_telegram_url', 'bt_whatsapp_url', 'bt_twitter_url', 'bt_instagram_url' ];
+	$url_keys = [ 'bt_telegram_url', 'bt_whatsapp_url', 'bt_twitter_url', 'bt_instagram_url', 'bt_youtube_url', 'bt_facebook_url', 'bt_linkedin_url' ];
 	foreach ( $url_keys as $key ) {
 		if ( isset( $input[ $key ] ) ) {
 			$clean[ $key ] = esc_url_raw( $input[ $key ] );
@@ -2587,6 +2589,35 @@ add_shortcode( 'bigtricks_advertise_form', function ( $atts ) {
 	return ob_get_clean();
 } );
 
+/**
+ * Community CTA Shortcode
+ * Usage: [bigtricks_community_cta]
+ */
+add_shortcode( 'bigtricks_community_cta', function ( $atts ) {
+	$atts = is_array( $atts ) ? $atts : [];
+
+	$allowed_atts = [ 'telegram_url', 'whatsapp_url', 'telegram_members', 'whatsapp_members' ];
+	$sanitized_atts = [];
+
+	foreach ( $allowed_atts as $key ) {
+		if ( ! isset( $atts[ $key ] ) ) {
+			continue;
+		}
+
+		$value = (string) $atts[ $key ];
+
+		if ( 'telegram_url' === $key || 'whatsapp_url' === $key ) {
+			$sanitized_atts[ $key ] = esc_url_raw( $value );
+		} else {
+			$sanitized_atts[ $key ] = sanitize_text_field( $value );
+		}
+	}
+
+	ob_start();
+	get_template_part( 'template-parts/widget-community-cta', null, $sanitized_atts );
+	return ob_get_clean();
+} );
+
 // ─────────────────────────────────────────────
 // 16. Banners & Alerts (Announcement Banner + Notifications)
 //     Admin UI at Settings → Banners & Alerts
@@ -2782,10 +2813,23 @@ add_action( 'wp_ajax_bt_fetch_url_preview', function () {
 	$post_id = url_to_postid( $url );
 	if ( $post_id ) {
 		$post  = get_post( $post_id );
-		$thumb = get_the_post_thumbnail_url( $post_id, 'medium' )
-		       ?: get_post_meta( $post_id, '_btdeals_offer_thumbnail_url', true )
+		$thumb = get_post_meta( $post_id, '_btdeals_offer_thumbnail_url', true )
 		       ?: get_post_meta( $post_id, '_btdeals_product_thumbnail_url', true )
+		       ?: get_the_post_thumbnail_url( $post_id, 'medium' )
 		       ?: '';
+		// If no thumb, try store logo
+		if ( ! $thumb ) {
+			$store_terms = get_the_terms( $post_id, 'store' );
+			if ( $store_terms && ! is_wp_error( $store_terms ) ) {
+				$store_logo = get_term_meta( $store_terms[0]->term_id, 'thumb_image', true );
+				if ( $store_logo && is_numeric( $store_logo ) ) {
+					$store_logo = wp_get_attachment_image_url( (int) $store_logo, 'medium' );
+				}
+				if ( $store_logo ) {
+					$thumb = $store_logo;
+				}
+			}
+		}
 		wp_send_json_success( [
 			'title'   => get_the_title( $post_id ),
 			'excerpt' => has_excerpt( $post_id )

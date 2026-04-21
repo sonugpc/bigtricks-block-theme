@@ -110,8 +110,12 @@ const MANUAL_ICONS = {
     '<path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>',
   instagram:
     '<rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>',
+  linkedin:
+    '<path d="M6.94 8.5a1.56 1.56 0 1 1 0-3.12 1.56 1.56 0 0 1 0 3.12z" fill="currentColor" stroke="none"/><path d="M5.5 10h2.88v8.5H5.5z" fill="currentColor" stroke="none"/><path d="M10 10h2.75v1.16h.04c.38-.72 1.31-1.48 2.69-1.48 2.87 0 3.4 1.89 3.4 4.35v4.47H16v-3.96c0-.94-.02-2.15-1.31-2.15-1.31 0-1.51 1.03-1.51 2.08v4.03H10z" fill="currentColor" stroke="none"/>',
   twitter:
-    '<path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/>',
+    '<path d="M4 4h4.8l4.42 6.31L18.46 4H20l-6.1 6.96L20 20h-4.8l-4.68-6.69L5.17 20H3.6l6.18-7.05L4 4z" fill="currentColor" stroke="none"/>',
+  youtube:
+    '<path d="M21.58 7.19a2.5 2.5 0 0 0-1.76-1.77C18.26 5 12 5 12 5s-6.26 0-7.82.42A2.5 2.5 0 0 0 2.42 7.2 26.7 26.7 0 0 0 2 12a26.7 26.7 0 0 0 .42 4.81 2.5 2.5 0 0 0 1.76 1.77C5.74 19 12 19 12 19s6.26 0 7.82-.42a2.5 2.5 0 0 0 1.76-1.77A26.7 26.7 0 0 0 22 12a26.7 26.7 0 0 0-.42-4.81z" fill="currentColor" stroke="none"/><path d="m10 15 5-3-5-3z" fill="currentColor" stroke="none"/>',
 };
 
 const icons = {};

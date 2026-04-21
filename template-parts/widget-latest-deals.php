@@ -37,13 +37,26 @@ $latest_deals = new WP_Query( array(
 			while ( $latest_deals->have_posts() ) : $latest_deals->the_post();
 				$deal_id = get_the_ID();
 				
-				// Thumbnail priority: offer_thumbnail_url > product_thumbnail_url > featured_image
+				// Thumbnail priority: offer_thumbnail_url > product_thumbnail_url > featured_image > store_logo
 				$thumb_url = get_post_meta( $deal_id, '_btdeals_offer_thumbnail_url', true );
 				if ( ! $thumb_url ) {
 					$thumb_url = get_post_meta( $deal_id, '_btdeals_product_thumbnail_url', true );
 				}
 				if ( ! $thumb_url && has_post_thumbnail() ) {
 					$thumb_url = get_the_post_thumbnail_url( $deal_id, 'thumbnail' );
+				}
+				if ( ! $thumb_url ) {
+					// Get store logo
+					$store_terms = get_the_terms( $deal_id, 'store' );
+					if ( $store_terms && ! is_wp_error( $store_terms ) ) {
+						$store_logo = get_term_meta( $store_terms[0]->term_id, 'thumb_image', true );
+						if ( $store_logo && is_numeric( $store_logo ) ) {
+							$store_logo = wp_get_attachment_image_url( (int) $store_logo, 'thumbnail' );
+						}
+						if ( $store_logo ) {
+							$thumb_url = $store_logo;
+						}
+					}
 				}
 				
 				// Pricing

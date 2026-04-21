@@ -266,6 +266,9 @@ $type_labels = [
 			<?php if ( $post_index === 3 ) : // In-feed CTA after 3rd post
 			$bt_telegram  = bigtricks_option( 'bt_telegram_url' );
 			$bt_whatsapp  = bigtricks_option( 'bt_whatsapp_url' );
+			$bt_youtube   = bigtricks_option( 'bt_youtube_url' );
+			$bt_facebook  = bigtricks_option( 'bt_facebook_url' );
+			$bt_linkedin  = bigtricks_option( 'bt_linkedin_url' );
 		?>
 		<div class="bt-feed-cta bg-gradient-to-r from-primary-600 via-blue-600 to-cyan-500 rounded-3xl p-6 sm:p-10 text-white shadow-xl shadow-primary-200/50 dark:shadow-slate-900/50 relative overflow-hidden group">
 			<div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
@@ -287,6 +290,24 @@ $type_labels = [
 					<a href="<?php echo esc_url( $bt_whatsapp ); ?>" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto bg-[#25D366] text-white font-black py-3.5 px-6 sm:px-8 rounded-2xl shadow-lg hover:scale-105 hover:shadow-xl transition-all flex items-center justify-center gap-3">
 						<i data-lucide="message-circle" class="w-5 h-5"></i>
 						<?php esc_html_e( 'WhatsApp', 'bigtricks' ); ?>
+					</a>
+					<?php endif; ?>
+					<?php if ( $bt_youtube ) : ?>
+					<a href="<?php echo esc_url( $bt_youtube ); ?>" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto bg-red-600 text-white font-black py-3.5 px-6 sm:px-8 rounded-2xl shadow-lg hover:scale-105 hover:shadow-xl transition-all flex items-center justify-center gap-3">
+						<i data-lucide="youtube" class="w-5 h-5"></i>
+						<?php esc_html_e( 'YouTube', 'bigtricks' ); ?>
+					</a>
+					<?php endif; ?>
+					<?php if ( $bt_facebook ) : ?>
+					<a href="<?php echo esc_url( $bt_facebook ); ?>" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto bg-blue-600 text-white font-black py-3.5 px-6 sm:px-8 rounded-2xl shadow-lg hover:scale-105 hover:shadow-xl transition-all flex items-center justify-center gap-3">
+						<i data-lucide="facebook" class="w-5 h-5"></i>
+						<?php esc_html_e( 'Facebook', 'bigtricks' ); ?>
+					</a>
+					<?php endif; ?>
+					<?php if ( $bt_linkedin ) : ?>
+					<a href="<?php echo esc_url( $bt_linkedin ); ?>" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto bg-blue-700 text-white font-black py-3.5 px-6 sm:px-8 rounded-2xl shadow-lg hover:scale-105 hover:shadow-xl transition-all flex items-center justify-center gap-3">
+						<i data-lucide="linkedin" class="w-5 h-5"></i>
+						<?php esc_html_e( 'LinkedIn', 'bigtricks' ); ?>
 					</a>
 					<?php endif; ?>
 				</div>

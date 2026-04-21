@@ -25,7 +25,22 @@ $discount_meta  = intval( get_post_meta( $post_id, '_btdeals_discount', true ) )
 $offer_thumb    = esc_url( (string) get_post_meta( $post_id, '_btdeals_offer_thumbnail_url', true ) );
 $product_thumb  = esc_url( (string) get_post_meta( $post_id, '_btdeals_product_thumbnail_url', true ) );
 
-// Priority: offer_thumbnail_url > product_thumbnail_url > featured image.
+$store_terms = get_the_terms( $post_id, 'store' );
+$store_name  = ( ! empty( $store_terms ) && ! is_wp_error( $store_terms ) ) ? (string) $store_terms[0]->name : '';
+$store_url   = '';
+$store_logo  = '';
+if ( ! empty( $store_terms ) && ! is_wp_error( $store_terms ) ) {
+	$maybe_store_url = get_term_link( $store_terms[0] );
+	if ( ! is_wp_error( $maybe_store_url ) ) {
+		$store_url = esc_url( (string) $maybe_store_url );
+	}
+	$store_logo = get_term_meta( $store_terms[0]->term_id, 'thumb_image', true );
+	if ( $store_logo && is_numeric( $store_logo ) ) {
+		$store_logo = wp_get_attachment_image_url( (int) $store_logo, 'medium' );
+	}
+}
+
+// Priority: offer_thumbnail_url > product_thumbnail_url > featured image > store_logo.
 $product_image_url = '';
 if ( $offer_thumb ) {
 	$product_image_url = $offer_thumb;
@@ -33,20 +48,12 @@ if ( $offer_thumb ) {
 	$product_image_url = $product_thumb;
 } elseif ( has_post_thumbnail( $post_id ) ) {
 	$product_image_url = (string) get_the_post_thumbnail_url( $post_id, 'large' );
+} elseif ( $store_logo ) {
+	$product_image_url = $store_logo;
 }
 
 if ( '' === $product_image_url ) {
 	$product_image_url = BIGTRICKS_URI . '/assets/images/placeholder.svg';
-}
-
-$store_terms = get_the_terms( $post_id, 'store' );
-$store_name  = ( ! empty( $store_terms ) && ! is_wp_error( $store_terms ) ) ? (string) $store_terms[0]->name : '';
-$store_url   = '';
-if ( ! empty( $store_terms ) && ! is_wp_error( $store_terms ) ) {
-	$maybe_store_url = get_term_link( $store_terms[0] );
-	if ( ! is_wp_error( $maybe_store_url ) ) {
-		$store_url = esc_url( (string) $maybe_store_url );
-	}
 }
 
 $category_terms = get_the_terms( $post_id, 'category' );

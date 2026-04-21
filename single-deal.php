@@ -11,7 +11,7 @@ get_header();
 
 <?php get_template_part( 'template-parts/share-popover' ); ?>
 
-<main class="max-w-[1400px] mx-auto px-4 py-6 md:py-8" id="main-content">
+<main class="w-full px-4 py-6 md:py-8" id="main-content">
 
 	<?php while ( have_posts() ) : the_post(); 
 		// Get deal meta fields (correct field names from plugin)
@@ -36,24 +36,14 @@ get_header();
 		$short_description      = get_post_meta( $post_id, '_btdeals_short_description', true );
 		$store_name_meta        = get_post_meta( $post_id, '_btdeals_store', true );
 		
-		// Thumbnail priority: featured image > product_thumbnail_url > offer_thumbnail_url
-		$product_image_url = '';
-		if ( has_post_thumbnail() ) {
-			$product_image_url = get_the_post_thumbnail_url( $post_id, 'large' );
-		} elseif ( $product_thumbnail_url ) {
-			$product_image_url = $product_thumbnail_url;
-		} elseif ( $offer_thumbnail_url ) {
-			$product_image_url = $offer_thumbnail_url;
-		}
-		
-		// Calculate savings
+		// Calculate savings amount
 		$savings = '';
 		$savings_amount = 0;
+
 		if ( $old_price > 0 && $sale_price > 0 && $old_price > $sale_price ) {
 			$savings_amount = $old_price - $sale_price;
 			$savings = '₹' . number_format( $savings_amount );
 		}
-		
 		// Calculate discount if not provided
 		if ( ! $discount_percent && $old_price > 0 && $sale_price > 0 ) {
 			$discount_percent = intval( round( ( ( $old_price - $sale_price ) / $old_price ) * 100 ) );
@@ -73,6 +63,18 @@ get_header();
 			}
 		} elseif ( $store_name_meta ) {
 			$store_name = ucfirst( $store_name_meta );
+		}
+		
+		// Thumbnail priority: offer_thumbnail_url > product_thumbnail_url > featured_image > store_logo
+		$product_image_url = '';
+		if ( $offer_thumbnail_url ) {
+			$product_image_url = $offer_thumbnail_url;
+		} elseif ( $product_thumbnail_url ) {
+			$product_image_url = $product_thumbnail_url;
+		} elseif ( has_post_thumbnail() ) {
+			$product_image_url = get_the_post_thumbnail_url( $post_id, 'large' );
+		} elseif ( $store_logo ) {
+			$product_image_url = $store_logo;
 		}
 		
 		// Get primary category
@@ -354,12 +356,12 @@ get_header();
 
 				<!-- Product Features Section -->
 				<?php if ( $product_feature ) : ?>
-					<div class="mb-8 bg-blue-50 rounded-2xl p-6 border border-blue-100">
-						<h2 class="text-xl font-black text-slate-900 mb-4 flex items-center gap-2">
-							<i data-lucide="list-checks" class="w-5 h-5 text-blue-500"></i>
+					<div class="mb-8 bg-blue-50 dark:bg-transparent rounded-2xl p-6 border border-blue-100 dark:border-slate-700">
+						<h2 class="text-xl font-black text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
+							<i data-lucide="list-checks" class="w-5 h-5 text-blue-500 dark:text-blue-400"></i>
 							<?php esc_html_e( 'Product Features', 'bigtricks' ); ?>
 						</h2>
-						<div class="prose prose-slate max-w-none">
+						<div class="prose prose-slate dark:prose-invert max-w-none">
 							<?php echo wp_kses_post( $product_feature ); ?>
 						</div>
 					</div>
@@ -375,18 +377,18 @@ get_header();
 				<!-- Price History CTA Block -->
 				<?php if ( $store_name ) : ?>
 					<div class="mb-8">
-						<a href="<?php echo esc_url( home_url( '/price-history/?store=' . urlencode( strtolower( str_replace( ' ', '-', $store_name ) ) ) . '&pid=' . $post_id ) ); ?>" class="block bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-200 rounded-2xl p-6 hover:shadow-lg transition-all group">
+						<a href="<?php echo esc_url( home_url( '/price-history/?store=' . urlencode( strtolower( str_replace( ' ', '-', $store_name ) ) ) . '&pid=' . $post_id ) ); ?>" class="block bg-transparent border-2 border-purple-200 dark:border-slate-700 rounded-2xl p-6 hover:shadow-lg dark:hover:shadow-slate-900/30 transition-all group hover:bg-purple-50/50 dark:hover:bg-slate-800/50">
 							<div class="flex items-center justify-between gap-4">
 								<div class="flex items-center gap-4">
-									<div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+									<div class="w-12 h-12 bg-purple-500 dark:bg-purple-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
 										<i data-lucide="trending-up" class="w-6 h-6 text-white"></i>
 									</div>
 									<div>
-										<h3 class="text-lg font-black text-slate-900 mb-1"><?php esc_html_e( 'Track Price History', 'bigtricks' ); ?></h3>
-										<p class="text-sm text-slate-600"><?php esc_html_e( 'See historical prices and get the best deal alerts', 'bigtricks' ); ?></p>
+										<h3 class="text-lg font-black text-slate-900 dark:text-slate-100 mb-1"><?php esc_html_e( 'Track Price History', 'bigtricks' ); ?></h3>
+										<p class="text-sm text-slate-600 dark:text-slate-400"><?php esc_html_e( 'See historical prices and get the best deal alerts', 'bigtricks' ); ?></p>
 									</div>
 								</div>
-								<i data-lucide="chevron-right" class="w-6 h-6 text-purple-500 group-hover:translate-x-1 transition-transform"></i>
+								<i data-lucide="chevron-right" class="w-6 h-6 text-purple-500 dark:text-purple-400 group-hover:translate-x-1 transition-transform"></i>
 							</div>
 						</a>
 					</div>
@@ -504,14 +506,26 @@ get_header();
 					$rel_discount_tag = get_post_meta( $rel_post_id, '_btdeals_discount_tag', true );
 					$rel_is_expired = (bool) get_post_meta( $rel_post_id, '_btdeals_is_expired', true );
 					
-// Thumbnail priority: featured_image > product_thumbnail_url > offer_thumbnail_url
-				$rel_thumb = '';
-				if ( has_post_thumbnail() ) {
-					$rel_thumb = get_the_post_thumbnail_url( $rel_post_id, 'medium' );
-				} elseif ( $rel_product_thumbnail_url ) {
-					$rel_thumb = $rel_product_thumbnail_url;
-				} elseif ( $rel_offer_thumbnail_url ) {
-					$rel_thumb = $rel_offer_thumbnail_url;
+					// Thumbnail priority: offer_thumbnail_url > product_thumbnail_url > featured_image > store_logo
+					$rel_thumb = '';
+					if ( $rel_offer_thumbnail_url ) {
+						$rel_thumb = $rel_offer_thumbnail_url;
+					} elseif ( $rel_product_thumbnail_url ) {
+						$rel_thumb = $rel_product_thumbnail_url;
+					} elseif ( has_post_thumbnail() ) {
+						$rel_thumb = get_the_post_thumbnail_url( $rel_post_id, 'medium' );
+					} else {
+						// Try store logo
+						$rel_store_terms = get_the_terms( $rel_post_id, 'store' );
+						if ( $rel_store_terms && ! is_wp_error( $rel_store_terms ) ) {
+							$rel_store_logo = get_term_meta( $rel_store_terms[0]->term_id, 'thumb_image', true );
+							if ( $rel_store_logo && is_numeric( $rel_store_logo ) ) {
+								$rel_store_logo = wp_get_attachment_image_url( (int) $rel_store_logo, 'medium' );
+							}
+							if ( $rel_store_logo ) {
+								$rel_thumb = $rel_store_logo;
+							}
+						}
 					}
 					
 					// Calculate discount if not in meta

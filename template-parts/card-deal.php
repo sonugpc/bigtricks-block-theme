@@ -37,23 +37,32 @@ $post_content = (string) get_post_field( 'post_content', $post_id );
 $rendered_content = do_shortcode( $post_content );
 $card_excerpt = trim( wp_trim_words( wp_strip_all_tags( $rendered_content ), 22 ) );
 
-// Thumbnail priority: featured image > product_thumbnail_url > offer_thumbnail_url
-$offer_thumb   = sanitize_text_field( (string) get_post_meta( $post_id, '_btdeals_offer_thumbnail_url', true ) );
-$product_thumb = sanitize_text_field( (string) get_post_meta( $post_id, '_btdeals_product_thumbnail_url', true ) );
-if ( has_post_thumbnail( $post_id ) ) {
-	$thumb_url = esc_url( (string) get_the_post_thumbnail_url( $post_id, 'medium_large' ) );
-} elseif ( $product_thumb ) {
-	$thumb_url = esc_url( $product_thumb );
-} elseif ( $offer_thumb ) {
-	$thumb_url = esc_url( $offer_thumb );
-} else {
-	$thumb_url = esc_url( BIGTRICKS_URI . '/assets/images/placeholder.svg' );
-}
-
 // Store taxonomy
 $store_terms = get_the_terms( $post_id, 'store' );
 $store_name  = ! empty( $store_terms ) && ! is_wp_error( $store_terms ) ? $store_terms[0]->name : '';
 $store_link  = ! empty( $store_terms ) && ! is_wp_error( $store_terms ) ? esc_url( get_term_link( $store_terms[0] ) ) : '';
+$store_logo  = '';
+if ( $store_terms && ! is_wp_error( $store_terms ) ) {
+	$store_logo = get_term_meta( $store_terms[0]->term_id, 'thumb_image', true );
+	if ( $store_logo && is_numeric( $store_logo ) ) {
+		$store_logo = wp_get_attachment_image_url( (int) $store_logo, 'medium' );
+	}
+}
+
+// Thumbnail priority: offer_thumbnail_url > product_thumbnail_url > featured_image > store_logo
+$offer_thumb   = sanitize_text_field( (string) get_post_meta( $post_id, '_btdeals_offer_thumbnail_url', true ) );
+$product_thumb = sanitize_text_field( (string) get_post_meta( $post_id, '_btdeals_product_thumbnail_url', true ) );
+if ( $offer_thumb ) {
+	$thumb_url = esc_url( $offer_thumb );
+} elseif ( $product_thumb ) {
+	$thumb_url = esc_url( $product_thumb );
+} elseif ( has_post_thumbnail( $post_id ) ) {
+	$thumb_url = esc_url( (string) get_the_post_thumbnail_url( $post_id, 'medium_large' ) );
+} elseif ( $store_logo ) {
+	$thumb_url = esc_url( $store_logo );
+} else {
+	$thumb_url = esc_url( BIGTRICKS_URI . '/assets/images/placeholder.svg' );
+}
 
 // Category
 $cat_obj  = get_the_category();
@@ -199,3 +208,4 @@ $dest_url = $offer_url ?: $permalink;
 		</div>
 	</div>
 </article>
+
