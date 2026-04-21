@@ -208,52 +208,54 @@ add_filter( 'script_loader_tag', function ( string $tag, string $handle ) : stri
  * Resolve frontend login page URL with optional redirect target.
  */
 function bigtricks_get_login_url( string $redirect_to = '' ): string {
-	$login_page = get_page_by_path( 'login' );
-	$login_url  = $login_page ? get_permalink( $login_page ) : home_url( '/login/' );
-
-	if ( $redirect_to !== '' ) {
-		$login_url = add_query_arg( 'redirect_to', $redirect_to, $login_url );
+	static $base_url = null;
+	if ( null === $base_url ) {
+		$login_page = get_page_by_path( 'login' );
+		$base_url   = $login_page ? (string) get_permalink( $login_page ) : home_url( '/login/' );
 	}
 
-	return esc_url_raw( (string) $login_url );
+	$url = $base_url;
+	if ( $redirect_to !== '' ) {
+		$url = add_query_arg( 'redirect_to', $redirect_to, $url );
+	}
+
+	return esc_url_raw( $url );
 }
 
 /**
  * Resolve frontend dashboard URL.
  */
 function bigtricks_get_dashboard_url(): string {
-	$dashboard_page = get_page_by_path( 'dashboard' );
-	$dashboard_url  = $dashboard_page ? get_permalink( $dashboard_page ) : home_url( '/dashboard/' );
-
-	return esc_url_raw( (string) $dashboard_url );
+	static $url = null;
+	if ( null === $url ) {
+		$page = get_page_by_path( 'dashboard' );
+		$url  = $page ? esc_url_raw( (string) get_permalink( $page ) ) : home_url( '/dashboard/' );
+	}
+	return $url;
 }
 
 /**
  * Resolve frontend submit page URL.
  */
 function bigtricks_get_submit_page_url(): string {
-	$submit_page = get_page_by_path( 'submit' );
-	if ( ! $submit_page ) {
-		$submit_page = get_page_by_path( 'submit-post' );
+	static $url = null;
+	if ( null === $url ) {
+		$page = get_page_by_path( 'submit' ) ?: get_page_by_path( 'submit-post' );
+		$url  = $page ? esc_url_raw( (string) get_permalink( $page ) ) : home_url( '/submit/' );
 	}
-
-	$submit_url = $submit_page ? get_permalink( $submit_page ) : home_url( '/submit/' );
-
-	return esc_url_raw( (string) $submit_url );
+	return $url;
 }
 
 /**
  * Resolve frontend saved posts page URL.
  */
 function bigtricks_get_saved_posts_page_url(): string {
-	$saved_page = get_page_by_path( 'saved-posts' );
-	if ( ! $saved_page ) {
-		$saved_page = get_page_by_path( 'my-saved-posts' );
+	static $url = null;
+	if ( null === $url ) {
+		$page = get_page_by_path( 'saved-posts' ) ?: get_page_by_path( 'my-saved-posts' );
+		$url  = $page ? esc_url_raw( (string) get_permalink( $page ) ) : home_url( '/saved-posts/' );
 	}
-
-	$saved_url = $saved_page ? get_permalink( $saved_page ) : home_url( '/saved-posts/' );
-
-	return esc_url_raw( (string) $saved_url );
+	return $url;
 }
 
 add_filter( 'login_url', function ( string $login_url, string $redirect, bool $force_reauth ): string {
@@ -312,7 +314,7 @@ add_action( 'template_redirect', function (): void {
 		return;
 	}
 
-	$current_url = ( is_ssl() ? 'https://' : 'http://' ) . ( $_SERVER['HTTP_HOST'] ?? '' ) . ( $_SERVER['REQUEST_URI'] ?? '' );
+	$current_url = home_url( wp_unslash( $_SERVER['REQUEST_URI'] ?? '/' ) );
 	wp_safe_redirect( bigtricks_get_login_url( esc_url_raw( $current_url ) ) );
 	exit;
 } );
@@ -380,7 +382,7 @@ function bigtricks_handle_frontend_content_submission(): void {
 		'post_title'   => $title,
 		'post_content' => $content,
 		'post_excerpt' => $excerpt,
-		'post_status'  => sanitize_key( (string) $status ),
+		'post_status'  => in_array( $status, [ 'pending', 'draft', 'publish' ], true ) ? $status : 'pending',
 		'post_type'    => $post_type,
 		'post_author'  => get_current_user_id(),
 	];
@@ -473,8 +475,7 @@ add_action( 'admin_post_bigtricks_frontend_register', 'bigtricks_handle_frontend
  * Redirect back to the login page's register tab with an error code.
  */
 function bigtricks_register_redirect( string $error_code ): void {
-	$login_page = get_page_by_path( 'login' );
-	$login_url  = $login_page ? (string) get_permalink( $login_page ) : home_url( '/login/' );
+	$login_url = bigtricks_get_login_url();
 	wp_safe_redirect( add_query_arg( [ 'tab' => 'register', 'reg_error' => $error_code ], $login_url ) );
 	exit;
 }
@@ -529,8 +530,12 @@ function bigtricks_handle_frontend_registration(): void {
 		bigtricks_register_redirect( 'spam' );
 	}
 
-	if ( ( time() - $form_ts ) < 3 ) {
+	$elapsed = time() - $form_ts;
+	if ( $elapsed < 3 ) {
 		bigtricks_register_redirect( 'too_fast' );
+	}
+	if ( $elapsed > 7200 ) { // Tokens older than 2 hours are rejected to prevent replay attacks.
+		bigtricks_register_redirect( 'spam' );
 	}
 
 	// 5. Math CAPTCHA — stateless: verify submitted answer via HMAC.
@@ -991,7 +996,9 @@ function bigtricks_mobile_menu_fallback(): void {
 // 9. Flush rewrite rules on theme activation
 // ─────────────────────────────────────────────
 
-add_action( 'after_switch_theme', function () {
+add_action( 'after_switch_theme', function (): void {
+	// Register the loot-deals rewrite rule before flushing so it is persisted.
+	add_rewrite_rule( '^loot-deals/?$', 'index.php?post_type=deal', 'top' );
 	flush_rewrite_rules();
 } );
 
@@ -1140,10 +1147,16 @@ function bigtricks_ajax_load_more(): void {
 
 /**
  * Get category IDs that are children of the "loot-deals" parent category.
+ * Result is cached in a transient for 1 hour and invalidated on term changes.
  *
  * @return int[]
  */
 function bigtricks_get_loot_deals_category_ids(): array {
+	$cached = get_transient( 'bt_loot_deals_cat_ids' );
+	if ( false !== $cached ) {
+		return $cached;
+	}
+
 	$parent = get_term_by( 'slug', 'loot-deals', 'category' );
 	if ( ! $parent || is_wp_error( $parent ) ) {
 		return [];
@@ -1160,8 +1173,15 @@ function bigtricks_get_loot_deals_category_ids(): array {
 		return [];
 	}
 
-	return array_values( array_filter( array_map( 'absint', $child_ids ) ) );
+	$ids = array_values( array_filter( array_map( 'absint', $child_ids ) ) );
+	set_transient( 'bt_loot_deals_cat_ids', $ids, HOUR_IN_SECONDS );
+	return $ids;
 }
+
+// Clear the loot-deals category ID cache whenever categories are created or edited.
+add_action( 'created_category', function (): void { delete_transient( 'bt_loot_deals_cat_ids' ); } );
+add_action( 'edited_category',  function (): void { delete_transient( 'bt_loot_deals_cat_ids' ); } );
+add_action( 'delete_category',  function (): void { delete_transient( 'bt_loot_deals_cat_ids' ); } );
 
 add_action( 'wp_ajax_bigtricks_loot_deals_filter', 'bigtricks_ajax_loot_deals_filter' );
 add_action( 'wp_ajax_nopriv_bigtricks_loot_deals_filter', 'bigtricks_ajax_loot_deals_filter' );
@@ -2420,21 +2440,12 @@ add_shortcode( 'bigtricks_contact_form', function ( $atts ) {
  * [yeartoday]  -> 2026
  * [today]      -> 17th October 2026
  */
-add_shortcode( 'daytoday', function () {
-	return wp_date( 'jS F Y' );
-} );
-
-add_shortcode( 'monthtoday', function () {
-	return wp_date( 'F Y' );
-} );
-
-add_shortcode( 'yeartoday', function () {
-	return wp_date( 'Y' );
-} );
-
-add_shortcode( 'today', function () {
-	return wp_date( 'jS F Y' );
-} );
+// Canonical date shortcodes.
+add_shortcode( 'today',      function (): string { return wp_date( 'jS F Y' ); } );
+add_shortcode( 'monthtoday', function (): string { return wp_date( 'F Y' ); } );
+add_shortcode( 'yeartoday',  function (): string { return wp_date( 'Y' ); } );
+// [daytoday] is an alias of [today] kept for backward compatibility.
+add_shortcode( 'daytoday',   function (): string { return wp_date( 'jS F Y' ); } );
 
 /**
  * Advertise Form Shortcode

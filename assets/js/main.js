@@ -10,7 +10,13 @@
 
   /* ── 0. Shared Utilities ───────────────────────────── */
   if (!window.bigtricksUtils) {
-    window.bigtricksUtils = {};
+    // Non-enumerable, non-writable container prevents accidental overwrite by third-party scripts.
+    Object.defineProperty(window, "bigtricksUtils", {
+      value: {},
+      writable: false,
+      configurable: false,
+      enumerable: false,
+    });
   }
 
   // Shared relative-time formatter for dynamic UI components.
@@ -74,7 +80,7 @@
 
       slides[current].classList.replace("opacity-0", "opacity-100");
       slides[current].classList.replace("z-0", "z-10");
-      slides[current].setAttribute("aria-hidden", "false");
+      slides[current].removeAttribute("aria-hidden");
       if (dots[current]) {
         dots[current].classList.remove("bg-white/40", "w-2");
         dots[current].classList.add("bg-white", "w-6");
@@ -843,20 +849,23 @@
 
   /* ── 12. Account Menu (<details>) click-outside close ─ */
   function initAccountMenu() {
-    const details = document.querySelector("header details.relative");
+    const details = document.querySelector("#bt-account-menu");
     if (!details) return;
 
-    document.addEventListener("click", function (e) {
+    function handleBtAccountOutsideClick(e) {
       if (!details.contains(e.target)) {
         details.removeAttribute("open");
       }
-    });
+    }
 
-    document.addEventListener("keydown", function (e) {
+    function handleBtAccountEscKey(e) {
       if (e.key === "Escape" && details.hasAttribute("open")) {
         details.removeAttribute("open");
       }
-    });
+    }
+
+    document.addEventListener("click", handleBtAccountOutsideClick);
+    document.addEventListener("keydown", handleBtAccountEscKey);
   }
 
   /* ── 13. Back To Top Button ─────────────────────────── */
@@ -873,7 +882,11 @@
       btn.classList.toggle("pointer-events-none", !visible);
       btn.classList.toggle("opacity-100", visible);
       btn.classList.toggle("translate-y-0", visible);
-      btn.setAttribute("aria-hidden", visible ? "false" : "true");
+      if (visible) {
+        btn.removeAttribute("aria-hidden");
+      } else {
+        btn.setAttribute("aria-hidden", "true");
+      }
     }
 
     function updateVisibility() {
@@ -918,6 +931,13 @@
     initAjaxSearch(); // AJAX search autocomplete
     initAccountMenu(); // Account <details> dropdown click-outside
     initBackToTop();
+
+    // Google login placeholder — show informational alert until a Social Login plugin is active.
+    document
+      .getElementById("bt-google-login-placeholder")
+      ?.addEventListener("click", function () {
+        alert("Google login requires a Social Login plugin.");
+      });
 
     // Note: load-more already calls lucide.createIcons({ nodes: [container] }) before
     // dispatching bigtricks:contentLoaded, so no full-page re-scan is needed here.

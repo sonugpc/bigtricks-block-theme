@@ -167,7 +167,7 @@ if ( ! empty( $ann['active'] ) && ! empty( $ann['text'] ) ) :
 
 			<?php if ( bigtricks_option( 'bt_enable_user_dashboard', '1' ) === '1' ) : ?>
 			<?php if ( is_user_logged_in() ) : ?>
-				<details class="relative group">
+				<details id="bt-account-menu" class="relative group">
 					<summary class="list-none flex items-center justify-center p-2.5 text-slate-600 hover:text-primary-600 hover:bg-primary-50 rounded-full transition-all border border-slate-200 hover:border-primary-200 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 shadow-sm dark:shadow-slate-900/20 cursor-pointer" title="<?php esc_attr_e( 'My Account', 'bigtricks' ); ?>" aria-label="<?php esc_attr_e( 'Open account menu', 'bigtricks' ); ?>">
 						<i data-lucide="user" class="w-5 h-5"></i>
 					</summary>

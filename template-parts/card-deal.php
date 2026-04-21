@@ -50,8 +50,8 @@ if ( $store_terms && ! is_wp_error( $store_terms ) ) {
 }
 
 // Thumbnail priority: offer_thumbnail_url > product_thumbnail_url > featured_image > store_logo
-$offer_thumb   = sanitize_text_field( (string) get_post_meta( $post_id, '_btdeals_offer_thumbnail_url', true ) );
-$product_thumb = sanitize_text_field( (string) get_post_meta( $post_id, '_btdeals_product_thumbnail_url', true ) );
+$offer_thumb   = esc_url_raw( (string) get_post_meta( $post_id, '_btdeals_offer_thumbnail_url', true ) );
+$product_thumb = esc_url_raw( (string) get_post_meta( $post_id, '_btdeals_product_thumbnail_url', true ) );
 if ( $offer_thumb ) {
 	$thumb_url = esc_url( $offer_thumb );
 } elseif ( $product_thumb ) {

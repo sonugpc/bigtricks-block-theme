@@ -11,7 +11,7 @@ get_header();
 
 <?php get_template_part( 'template-parts/share-popover' ); ?>
 
-<main class="w-full px-4 py-6 md:py-8" id="main-content">
+<main class="max-w-[1400px] mx-auto px-4 py-6 md:py-8 w-full" id="main-content">
 
 	<?php while ( have_posts() ) : the_post(); 
 		// Get deal meta fields (correct field names from plugin)
@@ -512,7 +512,7 @@ get_header();
 						$rel_thumb = $rel_offer_thumbnail_url;
 					} elseif ( $rel_product_thumbnail_url ) {
 						$rel_thumb = $rel_product_thumbnail_url;
-					} elseif ( has_post_thumbnail() ) {
+					} elseif ( has_post_thumbnail( $rel_post_id ) ) {
 						$rel_thumb = get_the_post_thumbnail_url( $rel_post_id, 'medium' );
 					} else {
 						// Try store logo

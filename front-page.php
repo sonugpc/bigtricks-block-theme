@@ -249,6 +249,12 @@ $type_labels = [
 
 			<?php $post_index = 0; ?>
 		<?php
+		// Social URLs hoisted outside the loop to avoid repeated DB queries.
+		$bt_telegram  = bigtricks_option( 'bt_telegram_url' );
+		$bt_whatsapp  = bigtricks_option( 'bt_whatsapp_url' );
+		$bt_youtube   = bigtricks_option( 'bt_youtube_url' );
+		$bt_facebook  = bigtricks_option( 'bt_facebook_url' );
+		$bt_linkedin  = bigtricks_option( 'bt_linkedin_url' );
 		// Template-part map: CPT slug → template-parts file slug
 		$card_template_map = [
 			'post'           => 'card-post',
@@ -264,11 +270,6 @@ $type_labels = [
 			$tpl_slug     = $card_template_map[ $current_type ] ?? 'card-post';
 			?>
 			<?php if ( $post_index === 3 ) : // In-feed CTA after 3rd post
-			$bt_telegram  = bigtricks_option( 'bt_telegram_url' );
-			$bt_whatsapp  = bigtricks_option( 'bt_whatsapp_url' );
-			$bt_youtube   = bigtricks_option( 'bt_youtube_url' );
-			$bt_facebook  = bigtricks_option( 'bt_facebook_url' );
-			$bt_linkedin  = bigtricks_option( 'bt_linkedin_url' );
 		?>
 		<div class="bt-feed-cta bg-gradient-to-r from-primary-600 via-blue-600 to-cyan-500 rounded-3xl p-6 sm:p-10 text-white shadow-xl shadow-primary-200/50 dark:shadow-slate-900/50 relative overflow-hidden group">
 			<div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
