@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'BIGTRICKS_VERSION', '1.0.11' );
+define( 'BIGTRICKS_VERSION', '1.0.12' );
 define( 'BIGTRICKS_DIR', get_template_directory() );
 define( 'BIGTRICKS_URI', get_template_directory_uri() );
 
