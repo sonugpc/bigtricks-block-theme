@@ -19,6 +19,10 @@ get_header();
 			$post_id           = get_the_ID();
 			$post_type         = get_post_type();
 			$thumb_url         = bigtricks_get_thumbnail_url( $post_id, 'large' );
+			$hero_image_id     = get_post_thumbnail_id( $post_id );
+			$hero_image_meta   = $hero_image_id ? wp_get_attachment_metadata( $hero_image_id ) : null;
+			$hero_image_width  = is_array( $hero_image_meta ) && ! empty( $hero_image_meta['width'] ) ? (int) $hero_image_meta['width'] : 0;
+			$hero_image_height = is_array( $hero_image_meta ) && ! empty( $hero_image_meta['height'] ) ? (int) $hero_image_meta['height'] : 0;
 			$cat_obj           = get_the_category();
 			$cat_name          = ! empty( $cat_obj ) ? $cat_obj[0]->name : '';
 			$cat_link          = ! empty( $cat_obj ) ? get_category_link( $cat_obj[0]->term_id ) : '';
@@ -52,15 +56,40 @@ get_header();
 			<!-- Hero Image -->
 			<?php if ( bigtricks_option( 'bt_show_featured_image', '1' ) === '1' ) : ?>
 			<div class="w-full h-64 sm:h-[400px] bg-slate-50 flex items-center justify-center p-8 border-b border-slate-100 relative group overflow-hidden">
-				<img
-					src="<?php echo esc_url( $thumb_url ); ?>"
-					alt="<?php the_title_attribute(); ?>"
-					class="max-h-full max-w-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
-					loading="eager"
-					fetchpriority="high"
-					decoding="async"
-					itemprop="image"
-				>
+				<?php if ( $hero_image_id ) : ?>
+					<?php
+					echo wp_get_attachment_image(
+						$hero_image_id,
+						'large',
+						false,
+						[
+							'class'         => 'max-h-full max-w-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-105',
+							'loading'       => 'eager',
+							'fetchpriority' => 'high',
+							'decoding'      => 'async',
+							'data-no-lazy'  => '1',
+							'itemprop'      => 'image',
+							'alt'           => get_the_title(),
+							'sizes'         => '(max-width: 640px) 100vw, 1200px',
+						]
+					);
+					?>
+				<?php elseif ( $thumb_url ) : ?>
+					<img
+						src="<?php echo esc_url( $thumb_url ); ?>"
+						alt="<?php the_title_attribute(); ?>"
+						class="max-h-full max-w-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
+						<?php if ( $hero_image_width > 0 && $hero_image_height > 0 ) : ?>
+						width="<?php echo esc_attr( (string) $hero_image_width ); ?>"
+						height="<?php echo esc_attr( (string) $hero_image_height ); ?>"
+						<?php endif; ?>
+						loading="eager"
+						data-no-lazy="1"
+						fetchpriority="high"
+						decoding="async"
+						itemprop="image"
+					>
+				<?php endif; ?>
 				<?php if ( $post_type === 'deal' ) : ?>
 				<div class="absolute top-6 left-6 bg-red-50 text-red-600 font-black text-sm px-4 py-2 rounded-full shadow-md flex items-center gap-2 border border-red-100 backdrop-blur-sm">
 					<i data-lucide="flame" class="w-4 h-4 fill-current"></i> Deal

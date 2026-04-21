@@ -130,7 +130,7 @@ get_header();
 				<div class="flex justify-center">
 					<?php if ( $product_image_url ) : ?>
 						<div class="relative w-full max-w-[200px] sm:max-w-[280px] h-[200px] sm:h-[280px] flex items-center justify-center bg-white rounded-2xl p-4">
-						<img src="<?php echo esc_url( $product_image_url ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?>" class="max-w-full max-h-full object-contain" loading="eager" fetchpriority="high" decoding="async">
+						<img src="<?php echo esc_url( $product_image_url ); ?>" alt="<?php echo esc_attr( get_the_title() ); ?>" class="max-w-full max-h-full object-contain" loading="eager" data-no-lazy="1" fetchpriority="high" decoding="async">
 							<?php if ( $verify_label ) : ?>
 							<div class="absolute top-3 left-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-lg text-sm font-bold shadow-lg">
 								<i data-lucide="shield-check" class="w-4 h-4"></i>

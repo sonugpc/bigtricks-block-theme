@@ -71,13 +71,35 @@ if ( ! empty( $ann['active'] ) && ! empty( $ann['text'] ) ) :
 				$bt_site_name = bigtricks_option( 'bt_site_name' ) ?: get_bloginfo( 'name' );
 				
 				if ( $bt_logo_url ) : ?>
-				<img
-					src="<?php echo esc_url( $bt_logo_url ); ?>"
-					alt="<?php echo esc_attr( $bt_site_name ); ?>"
-					class="h-10 w-auto max-w-[180px] object-contain"
-					loading="eager"
-					decoding="async"
-				>
+					<?php if ( $custom_logo_id ) : ?>
+						<?php
+						echo wp_get_attachment_image(
+							$custom_logo_id,
+							'full',
+							false,
+							[
+								'class'         => 'h-10 w-auto max-w-[180px] object-contain',
+								'loading'       => 'eager',
+								'decoding'      => 'async',
+								'fetchpriority' => 'high',
+								'data-no-lazy'  => '1',
+								'alt'           => $bt_site_name,
+							]
+						);
+						?>
+					<?php else : ?>
+						<img
+							src="<?php echo esc_url( $bt_logo_url ); ?>"
+							alt="<?php echo esc_attr( $bt_site_name ); ?>"
+							class="h-10 w-auto max-w-[180px] object-contain"
+							width="180"
+							height="40"
+							loading="eager"
+							data-no-lazy="1"
+							decoding="async"
+							fetchpriority="high"
+						>
+					<?php endif; ?>
 				<?php else : ?>
 				<div class="bg-primary-600 text-white p-1.5 rounded-xl shadow-lg shadow-primary-200 dark:shadow-none">
 					<i data-lucide="zap" class="w-5 h-5 fill-current"></i>

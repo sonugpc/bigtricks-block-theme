@@ -136,7 +136,7 @@ get_header();
 				<div class="w-full lg:w-[200px] shrink-0">
 					<div class="aspect-[1.6/1] flex items-center justify-center relative overflow-hidden group">
 						<?php if ( $card_image ) : ?>
-							<img src="<?php echo esc_url( $card_image ); ?>" alt="<?php echo esc_attr( $card_name ); ?>" class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" loading="eager">
+							<img src="<?php echo esc_url( $card_image ); ?>" alt="<?php echo esc_attr( $card_name ); ?>" class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" loading="eager" data-no-lazy="1">
 						<?php else : ?>
 							<div class="text-slate-900 dark:text-white font-bold text-xl text-center">
 								<?php echo esc_html( $card_name ); ?>

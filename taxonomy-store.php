@@ -143,6 +143,7 @@ add_filter( 'pre_get_document_title', function () use ( $store_name ) {
 						alt="<?php echo esc_attr( $store_name ); ?> logo"
 						class="w-full h-full object-contain mix-blend-multiply"
 						loading="eager"
+						data-no-lazy="1"
 						decoding="async"
 						width="112"
 						height="112"

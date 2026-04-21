@@ -234,7 +234,23 @@ $bt_linkedin  = bigtricks_option( 'bt_linkedin_url' );
 			<div class="lg:col-span-2">
 				<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="text-3xl font-black text-white flex items-center gap-2 mb-4 no-underline" aria-label="<?php echo esc_attr( $bt_site_name ); ?>">
 					<?php if ( $bt_logo_url ) : ?>
-						<img src="<?php echo esc_url( $bt_logo_url ); ?>" alt="<?php echo esc_attr( $bt_site_name ); ?>" class="h-8 w-auto object-contain">
+						<?php if ( $custom_logo_id ) : ?>
+							<?php
+							echo wp_get_attachment_image(
+								$custom_logo_id,
+								'full',
+								false,
+								[
+									'class'    => 'h-8 w-auto object-contain',
+									'loading'  => 'lazy',
+									'decoding' => 'async',
+									'alt'      => $bt_site_name,
+								]
+							);
+							?>
+						<?php else : ?>
+							<img src="<?php echo esc_url( $bt_logo_url ); ?>" alt="<?php echo esc_attr( $bt_site_name ); ?>" class="h-8 w-auto object-contain" width="160" height="32" loading="lazy" decoding="async">
+						<?php endif; ?>
 					<?php else : ?>
 						<div class="bg-primary-600 text-white p-1.5 rounded-xl">
 							<i data-lucide="zap" class="w-6 h-6 fill-current"></i>

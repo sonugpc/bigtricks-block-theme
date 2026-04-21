@@ -83,6 +83,7 @@ $color_class = $cat_id ? $pastel_colors[ $cat_id % count( $pastel_colors ) ] : $
 							alt="<?php echo esc_attr( $cat_name ); ?>"
 							class="w-full h-full object-contain"
 							loading="eager"
+							data-no-lazy="1"
 							decoding="async"
 						>
 					</div>

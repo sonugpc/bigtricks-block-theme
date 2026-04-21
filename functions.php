@@ -160,6 +160,40 @@ add_action( 'wp_head', function () {
         echo '<script>!function(){var s=localStorage.getItem("bt_dark_mode");if(s==="1"||(s===null&&window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark")}}</script>' . "\n";
 }, 5 );
 
+// Help mobile LCP by preloading the singular featured image discovered as likely hero media.
+add_action( 'wp_head', function () {
+	if ( is_admin() || ! is_singular() ) {
+		return;
+	}
+
+	$post_id = get_queried_object_id();
+	if ( ! $post_id || ! has_post_thumbnail( $post_id ) ) {
+		return;
+	}
+
+	$image_id = get_post_thumbnail_id( $post_id );
+	if ( ! $image_id ) {
+		return;
+	}
+
+	$src = wp_get_attachment_image_url( $image_id, 'large' );
+	if ( ! $src ) {
+		return;
+	}
+
+	$srcset = wp_get_attachment_image_srcset( $image_id, 'large' );
+	$sizes  = wp_get_attachment_image_sizes( $image_id, 'large' );
+
+	echo '<link rel="preload" as="image" href="' . esc_url( $src ) . '"';
+	if ( $srcset ) {
+		echo ' imagesrcset="' . esc_attr( $srcset ) . '"';
+	}
+	if ( $sizes ) {
+		echo ' imagesizes="' . esc_attr( $sizes ) . '"';
+	}
+	echo ' fetchpriority="high">' . "\n";
+}, 6 );
+
 // Output footer color CSS custom properties as tiny inline style — no extra HTTP request.
 add_action( 'wp_head', function () {
 	$bg   = bigtricks_option( 'bt_footer_bg_color', '#020617' );
