@@ -223,179 +223,7 @@ get_header();
 			</div>
 			<?php endif; ?>
 
-
-			<!-- Referral Codes Tabs -->
-			<div class="bg-white dark:bg-slate-900 rounded-3xl shadow-soft p-6 md:p-8 overflow-hidden">
-				<!-- Tab Buttons -->
-				<div class="flex overflow-x-auto border-b border-slate-200 dark:border-slate-700 mb-8 whitespace-nowrap scrollbar-hide">
-					<button class="tab-btn active flex-1 py-4 px-6 text-center font-black text-slate-700 dark:text-slate-300 border-b-2 border-primary-500 dark:border-primary-400 transition-colors shrink-0" onclick="showTab('user-codes', this)">
-						<?php echo $referral_code ? 'User Submitted Codes' : 'User Submitted Links'; ?>
-					</button>
-					<button class="tab-btn flex-1 py-4 px-6 text-center font-black text-slate-500 dark:text-slate-500 border-b-2 border-transparent transition-colors shrink-0" onclick="showTab('official-codes', this)">
-						<?php echo $referral_code ? 'Official Codes' : 'Official Links'; ?>
-					</button>
-				</div>
-
-				<!-- User Submitted Codes Tab -->
-				<div id="user-codes" class="tab-content active">
-					<div class="space-y-6">
-						<?php
-						if ( function_exists( 'rcp_get_cached_comments' ) ) {
-							$comments = rcp_get_cached_comments( get_the_ID() );
-						} else {
-							$comments = get_comments( array(
-								'post_id' => get_the_ID(),
-								'status'  => 'approve',
-								'number'  => 10,
-								'order'   => 'DESC',
-							) );
-						}
-
-						// Find if there are any user-submitted codes
-						$has_user_codes = false;
-						if ( $comments ) {
-							foreach ( $comments as $comment ) {
-								$user_referral_code = bigtricks_extract_referral_submission( $comment, $expects_code_submission );
-								if ( ! empty( $user_referral_code ) ) {
-									$has_user_codes = true;
-									break;
-								}
-							}
-						}
-
-						// Render user codes list
-						if ( $comments && $has_user_codes ) :
-							foreach ( $comments as $comment ) :
-								$user_referral_code = bigtricks_extract_referral_submission( $comment, $expects_code_submission );
-								if ( empty( $user_referral_code ) ) continue;
-								$user_usage_count = (int) get_comment_meta( $comment->comment_ID, 'user_code_usage_count', true );
-						?>
-						<div class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
-							<div class="flex items-start justify-between mb-4">
-								<div class="flex items-center gap-3">
-									<div class="w-10 h-10 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center">
-										<i data-lucide="user" class="w-5 h-5 text-slate-600 dark:text-slate-400"></i>
-									</div>
-									<div>
-										<div class="font-bold text-slate-900 dark:text-white"><?php echo esc_html( $comment->comment_author ); ?></div>
-										<div class="text-sm text-slate-500 dark:text-slate-400"><?php echo date( 'M j, Y', strtotime( $comment->comment_date ) ); ?></div>
-									</div>
-								</div>
-							</div>
-							<?php if ( $user_referral_code ) : ?>
-							<div class="bg-white dark:bg-slate-900 rounded-xl p-4 mb-4 border-2 border-dashed border-emerald-300 dark:border-emerald-700">
-								<div class="flex items-center justify-between">
-									<div class="flex-1">
-										<?php if ( $expects_code_submission ) : ?>
-										<div class="font-mono font-black text-lg text-slate-800 dark:text-emerald-400 break-all"><?php echo esc_html( $user_referral_code ); ?></div>
-										<?php else : ?>
-										<a href="<?php echo esc_url( $user_referral_code ); ?>" target="_blank" rel="noopener" class="font-mono font-black text-lg text-blue-600 dark:text-blue-400 break-all hover:underline"><?php echo esc_html( $user_referral_code ); ?></a>
-										<?php endif; ?>
-									</div>
-									<?php if ( $expects_code_submission ) : ?>
-									<button class="bt-copy-code ml-4 bg-emerald-500 hover:bg-emerald-600 text-white p-3 rounded-xl transition-colors" data-code="<?php echo esc_attr( $user_referral_code ); ?>" data-comment-id="<?php echo esc_attr( $comment->comment_ID ); ?>">
-										<i data-lucide="copy" class="w-5 h-5"></i>
-									</button>
-									<?php else : ?>
-									<a href="<?php echo esc_url( $user_referral_code ); ?>" target="_blank" rel="noopener" class="ml-4 bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-xl transition-colors">
-										<i data-lucide="external-link" class="w-5 h-5"></i>
-									</a>
-									<?php endif; ?>
-								</div>
-								<?php if ( $user_usage_count > 0 && function_exists( 'rcp_format_usage_count' ) ) : ?>
-								<div class="flex items-center gap-2 mt-3 text-sm text-slate-600 dark:text-slate-400">
-									<i data-lucide="users" class="w-4 h-4"></i>
-									<span><?php echo rcp_format_usage_count( $user_usage_count ); ?> people used this code</span>
-								</div>
-								<?php endif; ?>
-							</div>
-							<?php endif; ?>
-							<?php if ( $comment->comment_content ) : ?>
-							<div class="text-slate-600 dark:text-slate-400 leading-relaxed">
-								<?php echo wp_kses_post( $comment->comment_content ); ?>
-							</div>
-							<?php endif; ?>
-						</div>
-						<?php endforeach; ?>
-						<!-- Show submission form below user codes if codes exist -->
-						<?php get_template_part( 'template-parts/referral-submit', null, [ 'referral_code' => $referral_code, 'is_submitted' => $is_submitted ] ); ?>
-						<?php else : ?>
-						<div class="text-center py-12">
-							<div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
-								<i data-lucide="message-square" class="w-8 h-8 text-slate-400"></i>
-							</div>
-							<h4 class="text-xl font-black text-slate-900 dark:text-white mb-2">No codes shared yet</h4>
-							<p class="text-slate-600 dark:text-slate-400">Be the first to share your referral code with the community!</p>
-						</div>
-						<?php endif; ?>
-					</div>
-				</div>
-
-				<!-- Official Codes Tab -->
-				<div id="official-codes" class="tab-content">
-					<div class="space-y-6">
-						<?php if ( $referral_code || $referral_link ) : ?>
-						<div class="bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 rounded-2xl p-6 border border-amber-200 dark:border-amber-800/50">
-							<div class="flex items-start gap-4">
-								<div class="w-12 h-12 bg-amber-100 dark:bg-amber-900/40 rounded-full flex items-center justify-center shrink-0">
-									<i data-lucide="crown" class="w-6 h-6 text-amber-600 dark:text-amber-500"></i>
-								</div>
-								<div class="flex-1">
-									<div class="flex items-center gap-2 mb-2">
-										<h4 class="font-black text-amber-900 dark:text-amber-400"><?php echo $referral_code ? 'Official Code' : 'Official Link'; ?></h4>
-										<span class="text-sm text-amber-700 dark:text-amber-500"><?php echo get_the_modified_date( 'M j, Y' ); ?></span>
-									</div>
-
-									<?php if ( $referral_code ) : ?>
-									<div class="bg-white dark:bg-slate-900 rounded-xl p-4 mb-4 border-2 border-dashed border-amber-300 dark:border-amber-700">
-										<div class="flex items-center justify-between">
-											<div class="font-mono font-black text-xl text-slate-800 dark:text-amber-400 break-all"><?php echo esc_html( $referral_code ); ?></div>
-											<button class="bt-copy-code ml-4 bg-amber-500 hover:bg-amber-600 text-white p-3 rounded-xl transition-colors" data-code="<?php echo esc_attr( $referral_code ); ?>">
-												<i data-lucide="copy" class="w-5 h-5"></i>
-											</button>
-										</div>
-									</div>
-									<?php endif; ?>
-
-									<?php if ( $referral_link ) : ?>
-									<div class="bg-white dark:bg-slate-900 rounded-xl p-4 mb-4 border-2 border-dashed border-amber-300 dark:border-amber-700">
-										<div class="flex items-center justify-between">
-											<a href="<?php echo esc_url( $referral_link ); ?>" target="_blank" rel="noopener" class="font-mono font-black text-xl text-blue-600 dark:text-blue-400 break-all hover:underline"><?php echo esc_html( $referral_link ); ?></a>
-											<a href="<?php echo esc_url( $referral_link ); ?>" target="_blank" rel="noopener" class="ml-4 bg-amber-500 hover:bg-amber-600 text-white p-3 rounded-xl transition-colors">
-												<i data-lucide="external-link" class="w-5 h-5"></i>
-											</a>
-										</div>
-									</div>
-									<?php endif; ?>
-
-									<p class="text-amber-800 dark:text-amber-300 leading-relaxed">
-										Official referral <?php echo $referral_code ? 'code' : 'link'; ?> with guaranteed signup bonus and best rates.
-									</p>
-								</div>
-							</div>
-						</div>
-						<?php else : ?>
-						<div class="text-center py-12">
-							<div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
-								<i data-lucide="building" class="w-8 h-8 text-slate-400"></i>
-							</div>
-							<h4 class="text-xl font-black text-slate-900 dark:text-white mb-2">No official codes available</h4>
-							<p class="text-slate-600 dark:text-slate-400">Check back later for official referral codes.</p>
-						</div>
-						<?php endif; ?>
-					</div>
-				</div>
-			</div>
-
-			
-
-
-			<!-- Submission form only below content if no user codes exist -->
-			<?php if ( ! $has_user_codes ) : ?>
-				<?php get_template_part( 'template-parts/referral-submit', null, [ 'referral_code' => $referral_code, 'is_submitted' => $is_submitted ] ); ?>
-			<?php endif; ?>
-
-<!-- Content Section -->
+			<!-- Content Section -->
 			<div class="bg-white dark:bg-slate-900 rounded-3xl shadow-soft p-6 md:p-8 overflow-hidden prose dark:prose-invert prose-emerald max-w-none">
 				<h2 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-6 flex items-center gap-3 not-prose">
 					<div class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
@@ -451,6 +279,165 @@ get_header();
 				</div>
 			</div>
 			<?php endif; ?>
+
+
+			   <!-- Combined Official & User Codes Section with Tabs -->
+			   <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-soft p-6 md:p-8 overflow-hidden">
+				   <div class="flex overflow-x-auto border-b border-slate-200 dark:border-slate-700 mb-8 whitespace-nowrap scrollbar-hide">
+					   <button class="tab-btn active flex-1 py-4 px-6 text-center font-black text-slate-700 dark:text-slate-300 border-b-2 border-primary-500 dark:border-primary-400 transition-colors shrink-0" onclick="showTab('official-codes', this)">
+						   <?php echo $referral_code ? 'Official Code' : 'Official Link'; ?>
+					   </button>
+					   <button class="tab-btn flex-1 py-4 px-6 text-center font-black text-slate-500 dark:text-slate-500 border-b-2 border-transparent transition-colors shrink-0" onclick="showTab('user-codes', this)">
+						   <?php echo $referral_code ? 'User Submitted Codes' : 'User Submitted Links'; ?>
+					   </button>
+				   </div>
+				   <!-- Official Code Tab -->
+				   <div id="official-codes" class="tab-content active">
+					   <div class="space-y-6">
+						   <?php if ( $referral_code || $referral_link ) : ?>
+						   <div class="bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 rounded-2xl p-6 border border-amber-200 dark:border-amber-800/50">
+							   <div class="flex items-start gap-4">
+								   <div class="w-12 h-12 bg-amber-100 dark:bg-amber-900/40 rounded-full flex items-center justify-center shrink-0">
+									   <i data-lucide="crown" class="w-6 h-6 text-amber-600 dark:text-amber-500"></i>
+								   </div>
+								   <div class="flex-1">
+									   <div class="flex items-center gap-2 mb-2">
+										   <h4 class="font-black text-amber-900 dark:text-amber-400"><?php echo $referral_code ? 'Official Code' : 'Official Link'; ?></h4>
+										   <span class="text-sm text-amber-700 dark:text-amber-500"><?php echo get_the_modified_date( 'M j, Y' ); ?></span>
+									   </div>
+									   <?php if ( $referral_code ) : ?>
+									   <div class="bg-white dark:bg-slate-900 rounded-xl p-4 mb-4 border-2 border-dashed border-amber-300 dark:border-amber-700">
+										   <div class="flex items-center justify-between">
+											   <div class="font-mono font-black text-xl text-slate-800 dark:text-amber-400 break-all"><?php echo esc_html( $referral_code ); ?></div>
+											   <button class="bt-copy-code ml-4 bg-amber-500 hover:bg-amber-600 text-white p-3 rounded-xl transition-colors" data-code="<?php echo esc_attr( $referral_code ); ?>">
+												   <i data-lucide="copy" class="w-5 h-5"></i>
+											   </button>
+										   </div>
+									   </div>
+									   <?php endif; ?>
+									   <?php if ( $referral_link ) : ?>
+									   <div class="bg-white dark:bg-slate-900 rounded-xl p-4 mb-4 border-2 border-dashed border-amber-300 dark:border-amber-700">
+										   <div class="flex items-center justify-between">
+											   <a href="<?php echo esc_url( $referral_link ); ?>" target="_blank" rel="noopener" class="font-mono font-black text-xl text-blue-600 dark:text-blue-400 break-all hover:underline"><?php echo esc_html( $referral_link ); ?></a>
+											   <a href="<?php echo esc_url( $referral_link ); ?>" target="_blank" rel="noopener" class="ml-4 bg-amber-500 hover:bg-amber-600 text-white p-3 rounded-xl transition-colors">
+												   <i data-lucide="external-link" class="w-5 h-5"></i>
+											   </a>
+										   </div>
+									   </div>
+									   <?php endif; ?>
+									   <p class="text-amber-800 dark:text-amber-300 leading-relaxed">
+										   Official referral <?php echo $referral_code ? 'code' : 'link'; ?> with guaranteed signup bonus and best rates.
+									   </p>
+								   </div>
+							   </div>
+						   </div>
+						   <?php else : ?>
+						   <div class="text-center py-12">
+							   <div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
+								   <i data-lucide="building" class="w-8 h-8 text-slate-400"></i>
+							   </div>
+							   <h4 class="text-xl font-black text-slate-900 dark:text-white mb-2">No official codes available</h4>
+							   <p class="text-slate-600 dark:text-slate-400">Check back later for official referral codes.</p>
+						   </div>
+						   <?php endif; ?>
+					   </div>
+				   </div>
+				   <!-- User Submitted Codes Tab -->
+				   <div id="user-codes" class="tab-content" style="display:none;">
+					   <div class="space-y-6">
+						   <?php
+						   if ( function_exists( 'rcp_get_cached_comments' ) ) {
+							   $comments = rcp_get_cached_comments( get_the_ID() );
+						   } else {
+							   $comments = get_comments( array(
+								   'post_id' => get_the_ID(),
+								   'status'  => 'approve',
+								   'number'  => 10,
+								   'order'   => 'DESC',
+							   ) );
+						   }
+
+						   // Find if there are any user-submitted codes
+						   $has_user_codes = false;
+						   if ( $comments ) {
+							   foreach ( $comments as $comment ) {
+								   $user_referral_code = bigtricks_extract_referral_submission( $comment, $expects_code_submission );
+								   if ( ! empty( $user_referral_code ) ) {
+									   $has_user_codes = true;
+									   break;
+								   }
+							   }
+						   }
+
+						   // Render user codes list
+						   if ( $comments && $has_user_codes ) :
+							   foreach ( $comments as $comment ) :
+								   $user_referral_code = bigtricks_extract_referral_submission( $comment, $expects_code_submission );
+								   if ( empty( $user_referral_code ) ) continue;
+								   $user_usage_count = (int) get_comment_meta( $comment->comment_ID, 'user_code_usage_count', true );
+						   ?>
+						   <div class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+							   <div class="flex items-start justify-between mb-4">
+								   <div class="flex items-center gap-3">
+									   <div class="w-10 h-10 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center">
+										   <i data-lucide="user" class="w-5 h-5 text-slate-600 dark:text-slate-400"></i>
+									   </div>
+									   <div>
+										   <div class="font-bold text-slate-900 dark:text-white"><?php echo esc_html( $comment->comment_author ); ?></div>
+										   <div class="text-sm text-slate-500 dark:text-slate-400"><?php echo date( 'M j, Y', strtotime( $comment->comment_date ) ); ?></div>
+									   </div>
+								   </div>
+							   </div>
+							   <?php if ( $user_referral_code ) : ?>
+							   <div class="bg-white dark:bg-slate-900 rounded-xl p-4 mb-4 border-2 border-dashed border-emerald-300 dark:border-emerald-700">
+								   <div class="flex items-center justify-between">
+									   <div class="flex-1">
+										   <?php if ( $expects_code_submission ) : ?>
+										   <div class="font-mono font-black text-lg text-slate-800 dark:text-emerald-400 break-all"><?php echo esc_html( $user_referral_code ); ?></div>
+										   <?php else : ?>
+										   <a href="<?php echo esc_url( $user_referral_code ); ?>" target="_blank" rel="noopener" class="font-mono font-black text-lg text-blue-600 dark:text-blue-400 break-all hover:underline"><?php echo esc_html( $user_referral_code ); ?></a>
+										   <?php endif; ?>
+									   </div>
+									   <?php if ( $expects_code_submission ) : ?>
+									   <button class="bt-copy-code ml-4 bg-emerald-500 hover:bg-emerald-600 text-white p-3 rounded-xl transition-colors" data-code="<?php echo esc_attr( $user_referral_code ); ?>" data-comment-id="<?php echo esc_attr( $comment->comment_ID ); ?>">
+										   <i data-lucide="copy" class="w-5 h-5"></i>
+									   </button>
+									   <?php else : ?>
+									   <a href="<?php echo esc_url( $user_referral_code ); ?>" target="_blank" rel="noopener" class="ml-4 bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-xl transition-colors">
+										   <i data-lucide="external-link" class="w-5 h-5"></i>
+									   </a>
+									   <?php endif; ?>
+								   </div>
+								   <?php if ( $user_usage_count > 0 && function_exists( 'rcp_format_usage_count' ) ) : ?>
+								   <div class="flex items-center gap-2 mt-3 text-sm text-slate-600 dark:text-slate-400">
+									   <i data-lucide="users" class="w-4 h-4"></i>
+									   <span><?php echo rcp_format_usage_count( $user_usage_count ); ?> people used this code</span>
+								   </div>
+								   <?php endif; ?>
+							   </div>
+							   <?php endif; ?>
+							   <?php if ( $comment->comment_content ) : ?>
+							   <div class="text-slate-600 dark:text-slate-400 leading-relaxed">
+								   <?php echo wp_kses_post( $comment->comment_content ); ?>
+							   </div>
+							   <?php endif; ?>
+						   </div>
+						   <?php endforeach; ?>
+					   <?php else : ?>
+						   <div class="text-center py-12">
+							   <div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
+								   <i data-lucide="message-square" class="w-8 h-8 text-slate-400"></i>
+							   </div>
+							   <h4 class="text-xl font-black text-slate-900 dark:text-white mb-2">No codes shared yet</h4>
+							   <p class="text-slate-600 dark:text-slate-400">Be the first to share your referral code with the community!</p>
+						   </div>
+					   <?php endif; ?>
+					   </div>
+				   </div>
+			   </div>
+
+			<!-- Submit Referral Code Section -->
+			<?php get_template_part( 'template-parts/referral-submit', null, [ 'referral_code' => $referral_code, 'is_submitted' => $is_submitted ] ); ?>
 
 			<!-- Comments -->
 			<?php
