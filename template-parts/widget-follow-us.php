@@ -93,7 +93,7 @@ if ( ! $telegram_url && ! $whatsapp_url && ! $twitter_url && ! $instagram_url &&
 		<!-- YouTube -->
 		<a href="<?php echo esc_url( $youtube_url ); ?>" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 bg-white dark:bg-slate-800 rounded-xl hover:shadow-md transition-all group">
 			<div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center shrink-0">
-				<i data-lucide="youtube" class="w-5 h-5 text-white"></i>
+				<svg class="w-5 h-5" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
 			</div>
 			<div class="flex-1">
 				<div class="text-sm font-bold text-slate-900 dark:text-white">YouTube</div>

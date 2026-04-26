@@ -283,8 +283,8 @@ $bt_linkedin  = bigtricks_option( 'bt_linkedin_url' );
 					</a>
 					<?php endif; ?>
 					<?php if ( $bt_youtube ) : ?>
-					<a href="<?php echo esc_url( $bt_youtube ); ?>" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-red-600 hover:text-white transition-colors" aria-label="YouTube">
-						<i data-lucide="youtube" class="w-4 h-4"></i>
+					<a href="<?php echo esc_url( $bt_youtube ); ?>" target="_blank" rel="noopener noreferrer" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-red-600 transition-colors" aria-label="YouTube">
+						<svg class="w-4 h-4" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.7 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
 					</a>
 					<?php endif; ?>
 					<?php if ( $bt_facebook ) : ?>

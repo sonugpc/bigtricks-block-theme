@@ -293,24 +293,6 @@ $type_labels = [
 						<?php esc_html_e( 'WhatsApp', 'bigtricks' ); ?>
 					</a>
 					<?php endif; ?>
-					<?php if ( $bt_youtube ) : ?>
-					<a href="<?php echo esc_url( $bt_youtube ); ?>" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto bg-red-600 text-white font-black py-3.5 px-6 sm:px-8 rounded-2xl shadow-lg hover:scale-105 hover:shadow-xl transition-all flex items-center justify-center gap-3">
-						<i data-lucide="youtube" class="w-5 h-5"></i>
-						<?php esc_html_e( 'YouTube', 'bigtricks' ); ?>
-					</a>
-					<?php endif; ?>
-					<?php if ( $bt_facebook ) : ?>
-					<a href="<?php echo esc_url( $bt_facebook ); ?>" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto bg-blue-600 text-white font-black py-3.5 px-6 sm:px-8 rounded-2xl shadow-lg hover:scale-105 hover:shadow-xl transition-all flex items-center justify-center gap-3">
-						<i data-lucide="facebook" class="w-5 h-5"></i>
-						<?php esc_html_e( 'Facebook', 'bigtricks' ); ?>
-					</a>
-					<?php endif; ?>
-					<?php if ( $bt_linkedin ) : ?>
-					<a href="<?php echo esc_url( $bt_linkedin ); ?>" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto bg-blue-700 text-white font-black py-3.5 px-6 sm:px-8 rounded-2xl shadow-lg hover:scale-105 hover:shadow-xl transition-all flex items-center justify-center gap-3">
-						<i data-lucide="linkedin" class="w-5 h-5"></i>
-						<?php esc_html_e( 'LinkedIn', 'bigtricks' ); ?>
-					</a>
-					<?php endif; ?>
 				</div>
 			</div>
 		</div>

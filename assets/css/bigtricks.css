@@ -96,14 +96,6 @@ nav a,
   text-align: center;
 }
 
-/* Center-aligned figures and images */
-figure.aligncenter,
-.wp-block-image.aligncenter {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 figure.aligncenter img,
 .wp-block-image.aligncenter img {
   margin-left: auto;

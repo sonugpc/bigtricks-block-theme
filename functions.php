@@ -116,8 +116,9 @@ add_action( 'wp_enqueue_scripts', function () {
 		true
 	);
 
-	// Forms JavaScript - only load if contact/advertise form blocks are present
-	if ( has_block( 'bigtricks/contact-form' ) || has_block( 'bigtricks/advertise-form' ) ) {
+	// Forms JavaScript - load when block is present OR on the dedicated page templates.
+	$form_page_slugs = [ 'contact', 'advertise-us-bigtricks', 'become-an-editor' ];
+	if ( has_block( 'bigtricks/contact-form' ) || has_block( 'bigtricks/advertise-form' ) || is_page( $form_page_slugs ) ) {
 		wp_enqueue_script(
 			'bigtricks-forms',
 			BIGTRICKS_URI . '/assets/js/forms.js',
@@ -155,9 +156,9 @@ add_action( 'wp_enqueue_scripts', function () {
 
 // Apply dark mode class before first paint.
 add_action( 'wp_head', function () {
-        // Anti-FOUC: apply dark mode class before first paint.
-        // Must be priority 5 so the class is set before any rendering.
-        echo '<script>!function(){var s=localStorage.getItem("bt_dark_mode");if(s==="1"||(s===null&&window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark")}}</script>' . "\n";
+	// Anti-FOUC: apply dark mode class before first paint.
+	// Must be priority 5 so the class is set before any rendering.
+	echo '<script>!function(){var k="bt_dark_mode",s=null,m=document.cookie.match(/(?:^|; )bt_dark_mode=(0|1)(?:;|$)/);try{s=localStorage.getItem(k)}catch(e){}if((s!="0"&&s!="1")&&m){s=m[1]}if(s==="1"||(s===null&&window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark")}}</script>' . "\n";
 }, 5 );
 
 // Help mobile LCP by preloading the singular featured image discovered as likely hero media.

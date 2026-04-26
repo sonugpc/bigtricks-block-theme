@@ -389,27 +389,74 @@
     const html = document.documentElement;
     const isDark = () => html.classList.contains("dark");
 
-    function applyDark(dark) {
-      html.classList.toggle("dark", dark);
-      localStorage.setItem(PREF_KEY, dark ? "1" : "0");
+    function getCookiePref() {
+      const match = document.cookie.match(/(?:^|; )bt_dark_mode=(0|1)(?:;|$)/);
+      return match ? match[1] : null;
     }
 
-    // The anti-FOUC inline script in wp_head already applied the correct dark
-    // state before first paint. Skip re-applying here to avoid a redundant
-    // localStorage read; only register the toggle listener and OS-change watcher.
+    function setCookiePref(pref) {
+      // Client-side persistence fallback when localStorage is blocked.
+      document.cookie =
+        "bt_dark_mode=" +
+        pref +
+        "; path=/; max-age=31536000; samesite=lax";
+    }
+
+    function getLocalPref() {
+      try {
+        return localStorage.getItem(PREF_KEY);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function getSavedPref() {
+      const local = getLocalPref();
+      if (local === "0" || local === "1") return local;
+      return getCookiePref();
+    }
+
+    function setLocalPref(pref) {
+      try {
+        localStorage.setItem(PREF_KEY, pref);
+      } catch (e) {
+        // Ignore storage quota/privacy mode failures.
+      }
+    }
+
+    function applyDark(dark, persist) {
+      const pref = dark ? "1" : "0";
+      html.classList.toggle("dark", dark);
+
+      if (!persist) return;
+
+      setLocalPref(pref);
+      setCookiePref(pref);
+    }
+
+    // Safety net: keep state correct even if the early wp_head script was blocked.
+    const initialPref = getSavedPref();
+    if (initialPref === "0" || initialPref === "1") {
+      applyDark(initialPref === "1", false);
+    }
 
     toggle.addEventListener("click", function () {
-      applyDark(!isDark());
+      applyDark(!isDark(), true);
     });
 
-    // Listen for OS-level change if no saved pref
-    window
-      .matchMedia("(prefers-color-scheme: dark)")
-      .addEventListener("change", function (e) {
-        if (localStorage.getItem(PREF_KEY) === null) {
-          applyDark(e.matches);
-        }
-      });
+    // Listen for OS-level change only when there is no explicit user preference.
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleSystemThemeChange = function (e) {
+      if (getSavedPref() === null) {
+        applyDark(e.matches, false);
+      }
+    };
+
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", handleSystemThemeChange);
+    } else if (typeof mediaQuery.addListener === "function") {
+      mediaQuery.addListener(handleSystemThemeChange);
+    }
   }
 
   /* ── 9. Bell / Notification Drawer ──────────────────── */

@@ -8,20 +8,45 @@
 get_header();
 ?>
 
-<main class="max-w-[1400px] mx-auto px-4 py-6 md:py-8 flex flex-col lg:flex-row gap-8 flex-1 w-full" id="main-content">
-	<div class="flex-1 min-w-0">
-		<h1 class="text-2xl font-black text-slate-900 mb-6 flex items-center gap-3">
-			<div class="bg-primary-100 p-2 rounded-xl text-primary-600">
-				<i data-lucide="search" class="w-6 h-6"></i>
-			</div>
+<!-- Search Hero CTA -->
+<div class="w-full bg-gradient-to-br from-primary-600 via-blue-600 to-cyan-500 py-12 md:py-16">
+	<div class="max-w-[1400px] mx-auto px-4 text-center">
+		<h1 class="text-3xl md:text-4xl font-black text-white mb-3">
 			<?php
-			printf(
-				/* translators: %s: search term */
-				esc_html__( 'Search: "%s"', 'bigtricks' ),
-				'<span class="text-primary-600">' . esc_html( get_search_query() ) . '</span>'
-			);
+			if ( get_search_query() ) {
+				printf(
+					/* translators: %s: search term */
+					esc_html__( 'Results for "%s"', 'bigtricks' ),
+					esc_html( get_search_query() )
+				);
+			} else {
+				esc_html_e( 'Search Bigtricks', 'bigtricks' );
+			}
 			?>
 		</h1>
+		<p class="text-primary-100 text-base md:text-lg font-medium mb-8"><?php esc_html_e( 'Find deals, credit cards, referral codes and more', 'bigtricks' ); ?></p>
+		<form role="search" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>" class="max-w-2xl mx-auto">
+			<label for="search-hero-input" class="sr-only"><?php esc_html_e( 'Search', 'bigtricks' ); ?></label>
+			<div class="relative flex items-center">
+				<input
+					id="search-hero-input"
+					type="search"
+					name="s"
+					value="<?php echo esc_attr( get_search_query() ); ?>"
+					placeholder="<?php esc_attr_e( 'Search deals, coupons, credit cards…', 'bigtricks' ); ?>"
+					class="w-full pl-6 pr-32 py-4 md:py-5 text-base md:text-lg font-medium rounded-2xl border-0 shadow-2xl focus:outline-none focus:ring-4 focus:ring-white/40 text-slate-900 placeholder:text-slate-400"
+					autocomplete="off"
+				>
+				<button type="submit" class="absolute right-2 bg-primary-600 hover:bg-primary-700 text-white font-black px-5 py-2.5 md:py-3 rounded-xl shadow-lg hover:shadow-xl transition-all active:scale-95 text-sm md:text-base">
+					<?php esc_html_e( 'Search', 'bigtricks' ); ?>
+				</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+<main class="max-w-[1400px] mx-auto px-4 py-6 md:py-8 flex flex-col lg:flex-row gap-8 flex-1 w-full" id="main-content">
+	<div class="flex-1 min-w-0">
 
 		<?php
 		// Note: post_type is already set to all CPTs via pre_get_posts in functions.php §10b
