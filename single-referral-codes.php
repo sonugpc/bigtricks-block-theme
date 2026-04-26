@@ -223,7 +223,8 @@ get_header();
 			</div>
 			<?php endif; ?>
 
-            <!-- Referral Codes Tabs -->
+
+			<!-- Referral Codes Tabs -->
 			<div class="bg-white dark:bg-slate-900 rounded-3xl shadow-soft p-6 md:p-8 overflow-hidden">
 				<!-- Tab Buttons -->
 				<div class="flex overflow-x-auto border-b border-slate-200 dark:border-slate-700 mb-8 whitespace-nowrap scrollbar-hide">
@@ -250,15 +251,23 @@ get_header();
 							) );
 						}
 
-						if ( $comments ) :
+						// Find if there are any user-submitted codes
+						$has_user_codes = false;
+						if ( $comments ) {
+							foreach ( $comments as $comment ) {
+								$user_referral_code = bigtricks_extract_referral_submission( $comment, $expects_code_submission );
+								if ( ! empty( $user_referral_code ) ) {
+									$has_user_codes = true;
+									break;
+								}
+							}
+						}
+
+						// Render user codes list
+						if ( $comments && $has_user_codes ) :
 							foreach ( $comments as $comment ) :
 								$user_referral_code = bigtricks_extract_referral_submission( $comment, $expects_code_submission );
-								
-								// Skip rendering if this comment doesn't actually contain a referral code (i.e. it's a regular discussion comment)
-								if ( empty( $user_referral_code ) ) {
-									continue;
-								}
-								
+								if ( empty( $user_referral_code ) ) continue;
 								$user_usage_count = (int) get_comment_meta( $comment->comment_ID, 'user_code_usage_count', true );
 						?>
 						<div class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
@@ -273,18 +282,17 @@ get_header();
 									</div>
 								</div>
 							</div>
-
 							<?php if ( $user_referral_code ) : ?>
 							<div class="bg-white dark:bg-slate-900 rounded-xl p-4 mb-4 border-2 border-dashed border-emerald-300 dark:border-emerald-700">
 								<div class="flex items-center justify-between">
 									<div class="flex-1">
-											<?php if ( $expects_code_submission ) : ?>
+										<?php if ( $expects_code_submission ) : ?>
 										<div class="font-mono font-black text-lg text-slate-800 dark:text-emerald-400 break-all"><?php echo esc_html( $user_referral_code ); ?></div>
 										<?php else : ?>
 										<a href="<?php echo esc_url( $user_referral_code ); ?>" target="_blank" rel="noopener" class="font-mono font-black text-lg text-blue-600 dark:text-blue-400 break-all hover:underline"><?php echo esc_html( $user_referral_code ); ?></a>
 										<?php endif; ?>
 									</div>
-										<?php if ( $expects_code_submission ) : ?>
+									<?php if ( $expects_code_submission ) : ?>
 									<button class="bt-copy-code ml-4 bg-emerald-500 hover:bg-emerald-600 text-white p-3 rounded-xl transition-colors" data-code="<?php echo esc_attr( $user_referral_code ); ?>" data-comment-id="<?php echo esc_attr( $comment->comment_ID ); ?>">
 										<i data-lucide="copy" class="w-5 h-5"></i>
 									</button>
@@ -294,7 +302,6 @@ get_header();
 									</a>
 									<?php endif; ?>
 								</div>
-
 								<?php if ( $user_usage_count > 0 && function_exists( 'rcp_format_usage_count' ) ) : ?>
 								<div class="flex items-center gap-2 mt-3 text-sm text-slate-600 dark:text-slate-400">
 									<i data-lucide="users" class="w-4 h-4"></i>
@@ -303,7 +310,6 @@ get_header();
 								<?php endif; ?>
 							</div>
 							<?php endif; ?>
-
 							<?php if ( $comment->comment_content ) : ?>
 							<div class="text-slate-600 dark:text-slate-400 leading-relaxed">
 								<?php echo wp_kses_post( $comment->comment_content ); ?>
@@ -311,6 +317,8 @@ get_header();
 							<?php endif; ?>
 						</div>
 						<?php endforeach; ?>
+						<!-- Show submission form below user codes if codes exist -->
+						<?php get_template_part( 'template-parts/referral-submit', null, [ 'referral_code' => $referral_code, 'is_submitted' => $is_submitted ] ); ?>
 						<?php else : ?>
 						<div class="text-center py-12">
 							<div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -381,68 +389,11 @@ get_header();
 
 			
 
-						<!-- Enhanced Submit Referral Code Section -->
-						<div class="bg-white dark:bg-slate-900 rounded-3xl shadow-soft p-5 md:p-6 mt-8" id="referral-submit">
-							<div class="max-w-4xl mx-auto">
-								<?php if ( $is_submitted ) : ?>
-									<div class="bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 rounded-xl p-4 mb-6 flex items-center gap-3">
-										<i data-lucide="check-circle" class="w-5 h-5 shrink-0"></i>
-										<div>
-											<p class="font-bold">Successfully Submitted!</p>
-											<p class="text-sm opacity-90 mt-0.5">Your code has been sent for moderation. It will appear once approved.</p>
-										</div>
-									</div>
-								<?php endif; ?>
-<h3 class="text-xl md:text-2xl font-black text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-									<div class="w-10 h-10 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center shrink-0">
-										<i data-lucide="plus-circle" class="w-5 h-5 text-primary-600 dark:text-primary-500"></i>
-									</div>
-									Share Your <?php echo $referral_code ? 'Referral Code' : 'Referral Link'; ?>
-								</h3>
-								
-								<p class="text-slate-600 dark:text-slate-400 mb-6 text-sm leading-relaxed">
-									Help the community by sharing your working <?php echo $referral_code ? 'referral code' : 'referral link'; ?>.
-								</p>
 
-								<?php if ( is_user_logged_in() ) : ?>
-									<form class="flex flex-col sm:flex-row sm:items-end gap-3" method="post" action="<?php echo esc_url( get_permalink() ); ?>#comments">
-										<?php wp_nonce_field( 'referral_comment_nonce', 'referral_nonce' ); ?>
-										<input type="hidden" name="comment_post_ID" value="<?php echo get_the_ID(); ?>">
-										<input type="hidden" name="comment_parent" value="0">
-										<input type="hidden" name="referral_code_submission" value="1">
-										<?php 
-										$current_user = wp_get_current_user();
-										?>
-										<input type="hidden" name="author" value="<?php echo esc_attr( $current_user->display_name ); ?>">
-										<input type="hidden" name="email" value="<?php echo esc_attr( $current_user->user_email ); ?>">
-										
-										<div class="flex-1">
-											<label for="user-code" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase tracking-wide">Your <?php echo $referral_code ? 'Code' : 'Link'; ?> *</label>
-											<input type="text" id="user-code" name="user_referral_code" required class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors">
-										</div>
-
-										<div class="flex-[1.5]">
-											<label for="comment" class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 uppercase tracking-wide">Instructions (Optional)</label>
-											<input type="text" id="comment" name="comment" class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors" placeholder="Any bonus details...">
-										</div>
-
-										<button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-xl font-bold text-base transition-all shadow-sm hover:shadow-md dark:shadow-slate-900/20 dark:hover:shadow-slate-900/40 shrink-0 h-[50px]">
-											<i data-lucide="send" class="w-4 h-4"></i>
-											Submit
-										</button>
-									</form>
-								<?php else : ?>
-									<div class="text-center py-8 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700">
-										<i data-lucide="lock" class="w-12 h-12 mx-auto text-slate-400 mb-3"></i>
-										<h4 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Login Required</h4>
-										<p class="text-slate-600 dark:text-slate-400 mb-5 text-sm">Please log in to share your referral code with the community.</p>
-										<a href="<?php echo esc_url( wp_login_url( get_permalink() ) ); ?>" class="inline-flex items-center justify-center bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-xl font-bold text-sm transition-colors shadow-sm hover:shadow-md dark:shadow-slate-900/20 dark:hover:shadow-slate-900/40">
-											Login to Post
-										</a>
-									</div>
-								<?php endif; ?>
-							</div>
-						</div>
+			<!-- Submission form only below content if no user codes exist -->
+			<?php if ( ! $has_user_codes ) : ?>
+				<?php get_template_part( 'template-parts/referral-submit', null, [ 'referral_code' => $referral_code, 'is_submitted' => $is_submitted ] ); ?>
+			<?php endif; ?>
 
 <!-- Content Section -->
 			<div class="bg-white dark:bg-slate-900 rounded-3xl shadow-soft p-6 md:p-8 overflow-hidden prose dark:prose-invert prose-emerald max-w-none">

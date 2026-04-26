@@ -765,12 +765,8 @@ ul.menu > li {
   max-width: 100%;
   height: auto;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-  display: block;
-  margin: 1.5rem 0;
-}
-
-.prose figure {
-  margin: 1.5rem 0;
+  /* display: block; */
+  /* margin: 1.5rem 0; */
 }
 
 .prose figcaption {
