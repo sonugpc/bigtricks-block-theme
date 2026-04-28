@@ -223,6 +223,58 @@ get_header();
 			</div>
 			<?php endif; ?>
 
+
+			<!-- Referral Code Table Section (Dynamic) -->
+			<div class="bg-white dark:bg-slate-900 rounded-3xl shadow-soft p-6 md:p-8 overflow-hidden mb-8">
+				<h2 class="text-xl md:text-2xl font-black text-primary-700 dark:text-primary-400 mb-6 flex items-center gap-3 not-prose">
+					<i data-lucide="crown" class="w-6 h-6 text-amber-500"></i>
+					<?php echo esc_html( $app_name ); ?> Referral Code
+				</h2>
+				<div class="overflow-x-auto">
+					<table class="min-w-full border border-slate-200 dark:border-slate-700 rounded-xl text-sm md:text-base">
+						<tbody>
+							<tr class="border-b border-slate-100 dark:border-slate-800">
+								<th class="text-left font-semibold py-3 px-4 w-44 bg-slate-50 dark:bg-slate-800">Name</th>
+								<td class="py-3 px-4"><?php echo esc_html( $app_name ); ?></td>
+							</tr>
+							<tr class="border-b border-slate-100 dark:border-slate-800">
+								<th class="text-left font-semibold py-3 px-4 bg-slate-50 dark:bg-slate-800">Referral Code</th>
+								<td class="py-3 px-4">
+									<?php if ( $referral_code ) : ?>
+										<span class="font-mono font-bold text-lg text-primary-700 dark:text-primary-400 mr-2"><?php echo esc_html( $referral_code ); ?></span>
+										<button class="bt-copy-code ml-2 bg-primary-500 hover:bg-primary-600 text-white p-2 rounded transition-colors" data-code="<?php echo esc_attr( $referral_code ); ?>" title="Copy Code"><i data-lucide="copy" class="w-4 h-4"></i></button>
+									<?php else : ?>
+										<span class="text-slate-400">—</span>
+									<?php endif; ?>
+								</td>
+							</tr>
+							<tr class="border-b border-slate-100 dark:border-slate-800">
+								<th class="text-left font-semibold py-3 px-4 bg-slate-50 dark:bg-slate-800">Referral Link</th>
+								<td class="py-3 px-4">
+									<?php if ( $referral_link ) : ?>
+										<a href="<?php echo esc_url( $referral_link ); ?>" target="_blank" rel="nofollow noopener" class="text-blue-600 dark:text-blue-400 font-bold hover:underline">Visit <?php echo esc_html( $app_name ); ?></a>
+									<?php else : ?>
+										<span class="text-slate-400">—</span>
+									<?php endif; ?>
+								</td>
+							</tr>
+							<tr class="border-b border-slate-100 dark:border-slate-800">
+								<th class="text-left font-semibold py-3 px-4 bg-slate-50 dark:bg-slate-800">Signup Bonus</th>
+								<td class="py-3 px-4"><?php echo $signup_bonus ? esc_html( $signup_bonus ) : '<span class="text-slate-400">—</span>'; ?></td>
+							</tr>
+							<tr class="border-b border-slate-100 dark:border-slate-800">
+								<th class="text-left font-semibold py-3 px-4 bg-slate-50 dark:bg-slate-800">Referral Rewards</th>
+								<td class="py-3 px-4"><?php echo $referral_rewards ? esc_html( $referral_rewards ) : '<span class="text-slate-400">—</span>'; ?></td>
+							</tr>
+							<tr>
+								<th class="text-left font-semibold py-3 px-4 bg-slate-50 dark:bg-slate-800">Last Updated</th>
+								<td class="py-3 px-4"><?php echo esc_html( get_the_modified_date( 'M j, Y' ) ); ?></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
 			<!-- Content Section -->
 			<div class="bg-white dark:bg-slate-900 rounded-3xl shadow-soft p-6 md:p-8 overflow-hidden prose dark:prose-invert prose-emerald max-w-none">
 				<h2 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-6 flex items-center gap-3 not-prose">
